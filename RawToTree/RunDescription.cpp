@@ -10,26 +10,26 @@ int GetChId(int array_position)
 	
 	int ch_id;
 	
-	//if you use 3PMT, 1PMT, GEM and 32 SiPM channels
-	if (array_position >= 0 && array_position <= 2)
-		ch_id = array_position;
-	else if (array_position >= 3 && array_position < 35)
-		ch_id = array_position + 32 - 3;
-	else
-	{
-		cout << "Unknown channel in GetChId " << endl;
-		system("pause");
-		exit(1);		
-	}
-
-	////if you use 32 SiPM channels only
-	//if (array_position >= 0 && array_position <= 31)
-	//	ch_id = array_position + 32;
+	////if you use 3PMT, 1PMT, GEM and 32 SiPM channels
+	//if (array_position >= 0 && array_position <= 2)
+	//	ch_id = array_position;
+	//else if (array_position >= 3 && array_position < 35)
+	//	ch_id = array_position + 32 - 3;
 	//else
 	//{
 	//	cout << "Unknown channel in GetChId " << endl;
-	//	exit(1);
+	//	system("pause");
+	//	exit(1);		
 	//}
+
+	//if you use 32 SiPM channels only
+	if (array_position >= 0 && array_position <= 31)
+		ch_id = array_position + 32;
+	else
+	{
+		cout << "Unknown channel in GetChId " << endl;
+		exit(1);
+	}
 
 
 	return ch_id;
@@ -44,14 +44,14 @@ const bool is_sipm_ch = true;
 
 ////---------------------------------------------
 //August 3 2017
-path_info PathInfo = {"", 0, /*1000*/ 50};
+path_info PathInfo = {"", 0, /*1000*/ 1000};
 
 /*Flashlight*/
 //
-//std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\sipm_46V\\";
-//std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\sipm_46V\\";
-//const int start_run_number = 1;
-//const int stop_run_number = /*146*/ 1;
+std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\sipm_46V\\";
+std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\sipm_46V\\";
+const int start_run_number = 1;
+const int stop_run_number = /*146*/ 1;
 //
 //std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\sipm_46V_run2\\";
 //std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\sipm_46V_run2\\";
@@ -83,10 +83,10 @@ path_info PathInfo = {"", 0, /*1000*/ 50};
 //const int stop_run_number = 611;
 //
 //35000 events, 20 kV, Cd, V(PMT) = 700V, V(SiPM) = 48V, dV(GEM) = 2000, internal 2mm, trigger from 3PMT (th = 128 mV) + 6 dB att.
-std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_48Vsipm_700Vpmt_int_coll_Cd_2000gem_offset\\";
-std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\event_20kV_48Vsipm_700Vpmt_int_coll_Cd_2000gem_offset\\";
-const int start_run_number = 612;
-const int stop_run_number = 646;
+//std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_48Vsipm_700Vpmt_int_coll_Cd_2000gem_offset\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\event_20kV_48Vsipm_700Vpmt_int_coll_Cd_2000gem_offset\\";
+//const int start_run_number = 612;
+//const int stop_run_number = /*646*/ 612;
 //
 //43000 events, 20 kV, Cd, V(PMT) = 700V, V(SiPM) = 46V, dV(GEM) = 2200, no collimator, trigger from 3PMT (th = 128 mV) + 6 dB att.
 //std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_46Vsipm_700Vpmt_without_coll_Cd_2200gem_offset\\";

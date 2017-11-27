@@ -33,6 +33,9 @@
     <ClCompile Include="RunDescription.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ReadData_Cean_OneFile.cpp">
+      <Filter>Source Files\ReadData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadData_CAEN.h">
@@ -43,6 +46,9 @@
     </ClInclude>
     <ClInclude Include="RunDescription.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadData_Cean_OneFile.h">
+      <Filter>Header Files\ReadData</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
