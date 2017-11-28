@@ -16,6 +16,7 @@
 #include "ReadData_CAEN.h"
 #include "RunDescription.h"
 #include "TreeInfo.h"
+#include  "CalcData.h"
 
 using namespace std;
 
@@ -30,14 +31,12 @@ int main(int argc, char *argv[])
 	gROOT->SetBatch(kTRUE);	
 	
 	//-----------------------------------------------------
-	const int n_ch = /*35*/ /*32*/ 32;
-
 	comm_info str_comm;
 	str_comm.HORIZ_INTERVAL = 16;//ns per point;
 	str_comm.WAVE_ARRAY_COUNT = 9999;//number of points in one event
 
 	//tree settings
-	const int runs_per_tree_file = 1;
+	const int runs_per_tree_file = 10;
 
 	//which raw files should be processed?
 	//this information in RunDescription.cpp
@@ -50,9 +49,7 @@ int main(int argc, char *argv[])
 	TTree* tree = NULL;	
 	//-----------------------------------------------------
 
-
 		
-	
 	//loop by chs
 	for (int i = 0; i < n_ch; i++)
 	{
@@ -79,7 +76,7 @@ int main(int argc, char *argv[])
 			
 			
 			PathInfo.run_number = run_number;
-			cout << "ch_id = " << GetChId(i) << "; run_number = " << run_number << endl;
+			cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << endl;
 			
 			TStopwatch timer_read_binary;
 			timer_read_binary.Start();
@@ -90,11 +87,19 @@ int main(int argc, char *argv[])
 			//loop by events
 			for (int temp_event_id = 0; temp_event_id < PathInfo.events_per_file; temp_event_id++)
 			{
+				CalcData calc_data(rdt.GetDataDouble()[temp_event_id][0]);
+				
 				//fill branches
 				tree_info_obj->ch_id = GetChId(i);
 				tree_info_obj->run_number = run_number;
 				tree_info_obj->event_id = temp_event_id;
 				
+				tree_info_obj->min_element = calc_data.Get_min_element();
+				tree_info_obj->max_element = calc_data.Get_max_element();				
+
+				tree_info_obj->data_raw = rdt.GetDataDouble()[temp_event_id][0];
+				tree_info_obj->data_der = calc_data.Get_data_der(true);
+
 				tree->Fill();
 
 			}// end loop by events
@@ -111,6 +116,8 @@ int main(int argc, char *argv[])
 				tree_info_obj = NULL;
 				f_tree = NULL;
 				tree = NULL;
+
+				counter_f_tree++;
 			}
 
 

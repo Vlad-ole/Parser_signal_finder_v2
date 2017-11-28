@@ -84,19 +84,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CalcData.cpp" />
+    <ClCompile Include="CalcDer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ReadData.cpp" />
     <ClCompile Include="ReadData_CAEN.cpp" />
     <ClCompile Include="ReadData_Cean_OneFile.cpp" />
     <ClCompile Include="RunDescription.cpp" />
     <ClCompile Include="TreeInfo.cpp" />
+    <ClCompile Include="TypeConvertion.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CalcData.h" />
+    <ClInclude Include="CalcDer.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="ReadData_CAEN.h" />
     <ClInclude Include="ReadData_Cean_OneFile.h" />
     <ClInclude Include="RunDescription.h" />
     <ClInclude Include="TreeInfo.h" />
+    <ClInclude Include="TypeConvertion.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

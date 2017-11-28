@@ -27,6 +27,13 @@ public:
 	int ch_id;
 
 //private:
-	TTree *tree;	
+	TTree *tree;
+	std::vector<double> data_raw;
+	std::vector<double> data_der;
+
+	double min_element;
+	double max_element;
+	double baseline;
+	
 };
 
