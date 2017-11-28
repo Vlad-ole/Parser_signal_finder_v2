@@ -15,6 +15,7 @@
 //my
 #include "ReadData_CAEN.h"
 #include "RunDescription.h"
+#include "TreeInfo.h"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
 	gROOT->SetBatch(kTRUE);	
 	
+	//-----------------------------------------------------
 	const int n_ch = /*35*/ /*32*/ 32;
 
 	comm_info str_comm;
@@ -35,7 +37,7 @@ int main(int argc, char *argv[])
 	str_comm.WAVE_ARRAY_COUNT = 9999;//number of points in one event
 
 	//tree settings
-	const int runs_per_tree_file = 10;
+	const int runs_per_tree_file = 1;
 
 	//which raw files should be processed?
 	//this information in RunDescription.cpp
@@ -45,21 +47,37 @@ int main(int argc, char *argv[])
 	cout << "n_runs = " << stop_run_number - start_run_number + 1 << endl;
 
 	TFile* f_tree = NULL;
-	TTree* tree = NULL;
-	int counter_f_tree = 0;
+	TTree* tree = NULL;	
+	//-----------------------------------------------------
+
 
 		
 	
-	//loop by ch
+	//loop by chs
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		//loop by run
+		TreeInfo *tree_info_obj = NULL;
+		
+		//loop by runs
+		int counter_f_tree = 0;
 		for (int run_number = start_run_number; run_number <= stop_run_number; run_number++)
 		{
+			//define tree
+			if ((run_number - start_run_number) % runs_per_tree_file == 0)
+			{
+				ostringstream f_tree_name;
+				f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
+				f_tree = TFile::Open(f_tree_name.str().c_str(), "RECREATE");
+				
+				tree_info_obj = new TreeInfo();
+				tree = tree_info_obj->GetTreePnt();
+			}
+			
+			
 			PathInfo.run_number = run_number;
 			cout << "ch_id = " << GetChId(i) << "; run_number = " << run_number << endl;
 			
@@ -68,10 +86,38 @@ int main(int argc, char *argv[])
 			ReadData_CAEN rdt(PathInfo, ch_list, str_comm);
 			timer_read_binary.Stop();
 			time_read_binary += timer_read_binary.RealTime();
-		}// end loop by run
+
+			//loop by events
+			for (int temp_event_id = 0; temp_event_id < PathInfo.events_per_file; temp_event_id++)
+			{
+				//fill branches
+				tree_info_obj->ch_id = GetChId(i);
+				tree_info_obj->run_number = run_number;
+				tree_info_obj->event_id = temp_event_id;
+				
+				tree->Fill();
+
+			}// end loop by events
 
 
-	}//end loop by ch
+			if (((run_number - start_run_number) % runs_per_tree_file == runs_per_tree_file - 1) || (run_number == stop_run_number))
+			{
+				tree->Write();
+				f_tree->Close();
+
+				delete f_tree;
+				delete tree_info_obj;
+
+				tree_info_obj = NULL;
+				f_tree = NULL;
+				tree = NULL;
+			}
+
+
+		}// end loop by runs
+				
+
+	}//end loop by chs
 
 
 	timer_total.Stop();

@@ -89,12 +89,14 @@
     <ClCompile Include="ReadData_CAEN.cpp" />
     <ClCompile Include="ReadData_Cean_OneFile.cpp" />
     <ClCompile Include="RunDescription.cpp" />
+    <ClCompile Include="TreeInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="ReadData_CAEN.h" />
     <ClInclude Include="ReadData_Cean_OneFile.h" />
     <ClInclude Include="RunDescription.h" />
+    <ClInclude Include="TreeInfo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

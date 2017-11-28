@@ -51,7 +51,7 @@ path_info PathInfo = {"", 0, /*1000*/ 1000};
 std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\sipm_46V\\";
 std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\sipm_46V\\";
 const int start_run_number = 1;
-const int stop_run_number = /*146*/ 1;
+const int stop_run_number = /*146*/ 5;
 //
 //std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\sipm_46V_run2\\";
 //std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\sipm_46V_run2\\";

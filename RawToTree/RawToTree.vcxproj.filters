@@ -36,6 +36,9 @@
     <ClCompile Include="ReadData_Cean_OneFile.cpp">
       <Filter>Source Files\ReadData</Filter>
     </ClCompile>
+    <ClCompile Include="TreeInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadData_CAEN.h">
@@ -49,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="ReadData_Cean_OneFile.h">
       <Filter>Header Files\ReadData</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeInfo.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
