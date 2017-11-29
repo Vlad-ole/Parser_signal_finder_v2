@@ -59,8 +59,47 @@ int GetChIdSiPM(int array_position)
 const bool is_sipm_ch = true;
 
 ////---------------------------------------------
+//November 23 2017
+path_info PathInfo = { "", 0, /*1000*/ 1 };
+
+//x-ray
+//
+std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_18kV_PMT550_0dB_coll_2mm\\";
+std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_18kV_PMT550_0dB_coll_2mm\\";
+const int start_run_number = 311;
+const int stop_run_number = 322;
+//
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_16kV_PMT550_0dB_coll_2mm\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_16kV_PMT550_0dB_coll_2mm\\";
+//const int start_run_number = 335;
+//const int stop_run_number = 347;
+//
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_14kV_PMT550_0dB_coll_2mm\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_14kV_PMT550_0dB_coll_2mm\\";
+//const int start_run_number = 348;
+//const int stop_run_number = 361;
+//
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_12kV_PMT550_0dB_coll_2mm\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_12kV_PMT550_0dB_coll_2mm\\";
+//const int start_run_number = 362;
+//const int stop_run_number = 373;
+//
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_6kV_PMT700_0dB_coll_6mm\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_6kV_PMT700_0dB_coll_6mm\\";
+//const int start_run_number = 1;
+//const int stop_run_number = 7;
+////
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_4kV_PMT700_0dB_coll_6mm\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_4kV_PMT700_0dB_coll_6mm\\";
+//const int start_run_number = 8;
+//const int stop_run_number = 12;
+
+////---------------------------------------------
+
+
+////---------------------------------------------
 //August 3 2017
-path_info PathInfo = {"", 0, /*1000*/ 1000};
+//path_info PathInfo = {"", 0, /*1000*/ 1000};
 
 /*Flashlight*/
 //
@@ -111,10 +150,10 @@ path_info PathInfo = {"", 0, /*1000*/ 1000};
 //const int stop_run_number = 43;
 //
 //100000 events, 20 kV, Cd, V(PMT) = 700V, V(SiPM) = 48V, dV(GEM) = 2200, no collimator, trigger from 3PMT (th = 128 mV) + 6 dB att.
-std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_48Vsipm_700Vpmt_without_coll_Cd_2200gem_offset\\";
-std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\event_20kV_48Vsipm_700Vpmt_without_coll_Cd_2200gem_offset\\";
-const int start_run_number = 1;
-const int stop_run_number = /*100*/ 1;
+//std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_48Vsipm_700Vpmt_without_coll_Cd_2200gem_offset\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\event_20kV_48Vsipm_700Vpmt_without_coll_Cd_2200gem_offset\\";
+//const int start_run_number = 1;
+//const int stop_run_number = /*100*/ 1;
 
 ////---------------------------------------------
 //July 13 2017

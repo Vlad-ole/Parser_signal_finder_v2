@@ -7,6 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Parser_signal_finder_v2", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RawToTree", "..\RawToTree\RawToTree.vcxproj", "{C38D18EA-8AAA-49B7-89B1-63A078CDA346}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69FB6439-C9A4-413E-891B-D170C4DA52C1}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IntermediateTreeProcessing", "IntermediateTreeProcessing\IntermediateTreeProcessing.vcxproj", "{0249AC55-B4D7-41BC-959D-90749EFFEAC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,8 +28,15 @@ Global
 		{C38D18EA-8AAA-49B7-89B1-63A078CDA346}.Debug|Win32.Build.0 = Debug|Win32
 		{C38D18EA-8AAA-49B7-89B1-63A078CDA346}.Release|Win32.ActiveCfg = Release|Win32
 		{C38D18EA-8AAA-49B7-89B1-63A078CDA346}.Release|Win32.Build.0 = Release|Win32
+		{0249AC55-B4D7-41BC-959D-90749EFFEAC4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0249AC55-B4D7-41BC-959D-90749EFFEAC4}.Debug|Win32.Build.0 = Debug|Win32
+		{0249AC55-B4D7-41BC-959D-90749EFFEAC4}.Release|Win32.ActiveCfg = Release|Win32
+		{0249AC55-B4D7-41BC-959D-90749EFFEAC4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

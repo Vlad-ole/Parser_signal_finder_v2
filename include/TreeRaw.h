@@ -14,11 +14,11 @@
 #include "TFile.h"
 #include "TTree.h"
 
-class TreeInfo
+class TreeRaw
 {
 public:
-	TreeInfo();
-	~TreeInfo();
+	TreeRaw();
+	~TreeRaw();
 
 	TTree* GetTreePnt();
 
@@ -30,6 +30,7 @@ public:
 	TTree *tree;
 	std::vector<double> data_raw;
 	std::vector<double> data_der;
+	std::vector<double> data_without_slope;
 
 	double min_element;
 	double max_element;

@@ -19,33 +19,54 @@
     <Filter Include="Source Files\ReadData">
       <UniqueIdentifier>{d4a3547e-bf39-41e6-8463-d985478cbc9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CalcData">
+      <UniqueIdentifier>{20ea68bb-1d83-473f-a631-99c03a223277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CalcData">
+      <UniqueIdentifier>{57d824c0-04cd-426a-8ae4-a01179216380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CalcData\CalcBaseline">
+      <UniqueIdentifier>{3cb6b95c-9b51-4380-90af-2d8d3e1cbc2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CalcData\CalcBaseline">
+      <UniqueIdentifier>{f7c55184-c38e-43e8-a8f6-b536b1a03990}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReadData.cpp">
+    <ClCompile Include="..\src\CalcBaseline.cpp">
+      <Filter>Source Files\CalcData\CalcBaseline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CalcBaselineTrivial.cpp">
+      <Filter>Source Files\CalcData\CalcBaseline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CalcBaselineZeroComp.cpp">
+      <Filter>Source Files\CalcData\CalcBaseline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CalcData.cpp">
+      <Filter>Source Files\CalcData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CalcDer.cpp">
+      <Filter>Source Files\CalcData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ReadData.cpp">
       <Filter>Source Files\ReadData</Filter>
     </ClCompile>
-    <ClCompile Include="ReadData_CAEN.cpp">
+    <ClCompile Include="..\src\ReadData_CAEN.cpp">
       <Filter>Source Files\ReadData</Filter>
     </ClCompile>
-    <ClCompile Include="RunDescription.cpp">
+    <ClCompile Include="..\src\RunDescription.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReadData_Cean_OneFile.cpp">
-      <Filter>Source Files\ReadData</Filter>
-    </ClCompile>
-    <ClCompile Include="TreeInfo.cpp">
+    <ClCompile Include="..\src\TypeConvertion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CalcData.cpp">
+    <ClCompile Include="..\src\TreeInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CalcDer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TypeConvertion.cpp">
+    <ClCompile Include="..\src\TreeRaw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,16 +83,28 @@
     <ClInclude Include="ReadData_Cean_OneFile.h">
       <Filter>Header Files\ReadData</Filter>
     </ClInclude>
-    <ClInclude Include="TreeInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CalcData.h">
+    <ClInclude Include="TypeConvertion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalcDer.h">
+      <Filter>Header Files\CalcData</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcData.h">
+      <Filter>Header Files\CalcData</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcBaseline.h">
+      <Filter>Header Files\CalcData\CalcBaseline</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcBaselineZeroComp.h">
+      <Filter>Header Files\CalcData\CalcBaseline</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcBaselineTrivial.h">
+      <Filter>Header Files\CalcData\CalcBaseline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TreeInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TypeConvertion.h">
+    <ClInclude Include="..\include\TreeRaw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

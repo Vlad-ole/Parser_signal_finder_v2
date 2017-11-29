@@ -1,10 +1,10 @@
-#include "TreeInfo.h"
+#include "TreeRaw.h"
 
 using namespace std;
 
-TreeInfo::TreeInfo()
+TreeRaw::TreeRaw()
 {
-	tree = new TTree("t1", "Parser tree");
+	tree = new TTree("tree_raw", "Tree raw");
 	
 	tree->Branch("run_id", &run_number);
 	tree->Branch("event_id", &event_id);
@@ -16,15 +16,16 @@ TreeInfo::TreeInfo()
 
 	tree->Branch("data_raw", &data_raw);
 	tree->Branch("data_der", &data_der);
+	tree->Branch("data_without_slope", &data_without_slope);
 }
 
 
-TreeInfo::~TreeInfo()
+TreeRaw::~TreeRaw()
 {
 	delete tree;
 }
 
-TTree* TreeInfo::GetTreePnt()
+TTree* TreeRaw::GetTreePnt()
 {
 	return tree;
 }
