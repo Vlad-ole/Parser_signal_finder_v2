@@ -57,9 +57,10 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <OpenMPSupport>true</OpenMPSupport>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -75,9 +76,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <OpenMPSupport>true</OpenMPSupport>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,15 +95,20 @@
     <ClCompile Include="..\src\CalcBaselineZeroComp.cpp" />
     <ClCompile Include="..\src\CalcData.cpp" />
     <ClCompile Include="..\src\CalcDer.cpp" />
+    <ClCompile Include="..\src\IntermediateTreeInfo.cpp" />
     <ClCompile Include="..\src\ReadData.cpp" />
     <ClCompile Include="..\src\ReadData_CAEN.cpp" />
     <ClCompile Include="..\src\RunDescription.cpp" />
     <ClCompile Include="..\src\TreeInfo.cpp" />
     <ClCompile Include="..\src\TreeRaw.cpp" />
     <ClCompile Include="..\src\TypeConvertion.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\IntermediateTreeInfo.h" />
     <ClInclude Include="..\include\TreeInfo.h" />
     <ClInclude Include="..\include\TreeRaw.h" />
     <ClInclude Include="CalcBaseline.h" />

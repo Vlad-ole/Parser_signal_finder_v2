@@ -21,8 +21,16 @@
 #include "IntermediateTreeInfo.h"
 #include "PeakFinderFind.h"
 #include "ChCharacteristics.h"
+#include "TreeRaw.h"
 
 using namespace std;
+
+std::vector<double> Get_vector()
+{
+	vector<double> tmp_vec_double_2(10, 2);
+	return tmp_vec_double_2;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -30,6 +38,7 @@ int main(int argc, char *argv[])
 	timer_total.Start();
 
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
+	gROOT->ProcessLine("#include <vector>");
 	gROOT->SetBatch(kTRUE);
 	
 
@@ -66,19 +75,27 @@ int main(int argc, char *argv[])
 
 
 	vector<int> tmp_vec_int_1(10, 1);
+	vector<double> tmp_vec_double_2(10, 2);
 
 	TFile* f_tree = NULL;
 	TTree* tree = NULL;
-	IntermediateTreeInfo *tree_raw_obj = NULL;
+	TreeRaw *tree_raw_obj = NULL;
 
 	ostringstream f_tree_name;
 	f_tree_name << path_name_tree << "tree_intermediate.root";
 	f_tree = TFile::Open(f_tree_name.str().c_str(), "RECREATE");
 
-	tree_raw_obj = new IntermediateTreeInfo();
+	tree_raw_obj = new TreeRaw();
 	tree = tree_raw_obj->tree;
-	tree_raw_obj->num_of_pe_in_event__positive_part_s_int = 14;
-	tree_raw_obj->signals_x_start = tmp_vec_int_1;
+	tree_raw_obj->baseline = 14;
+	tree_raw_obj->data_raw = tmp_vec_double_2;
+	//tree_raw_obj->data_raw = Get_vector();
+
+	cout << "tree_raw_obj->data_raw.size() = " << tree_raw_obj->data_raw.size() << endl;
+	for (int i = 0; i < tree_raw_obj->data_raw.size(); i++)
+	{
+		cout << i << " " <<  tree_raw_obj->data_raw[i] << endl;
+	}
 
 	tree->Fill();
 
