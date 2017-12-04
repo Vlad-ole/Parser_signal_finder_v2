@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	str_comm.WAVE_ARRAY_COUNT = 9999;//number of points in one event
 
 	//tree settings
-	const int runs_per_tree_file = 10;
+	const int runs_per_tree_file = 2;
 
 	const int n_runs = stop_run_number;
 	cout << "n_runs = " << stop_run_number - start_run_number + 1 << endl;
@@ -61,28 +61,33 @@ int main(int argc, char *argv[])
 
 		TFile* f_tree = NULL;
 		TTree* tree = NULL;
-
 		TreeRaw *tree_raw_obj = NULL;
 
 		//loop by runs
 		int counter_f_tree = 0;
 		for (int run_number = start_run_number; run_number <= stop_run_number; run_number++)
 		{
-			//create new tree and file
-			if ((run_number - start_run_number) % runs_per_tree_file == 0)
+			
+#pragma omp critical
 			{
-				ostringstream f_tree_name;
-				f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
-				f_tree = TFile::Open(f_tree_name.str().c_str(), "RECREATE");
+				//create new tree and file
+				if ((run_number - start_run_number) % runs_per_tree_file == 0)
+				{
 
-				tree_raw_obj = new TreeRaw();
-				tree = tree_raw_obj->GetTreePnt();
+					ostringstream f_tree_name;
+					f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
+					f_tree = TFile::Open(f_tree_name.str().c_str(), "RECREATE");
+
+					tree_raw_obj = new TreeRaw();
+					tree = tree_raw_obj->GetTreePnt();
+				}
 			}
+
 
 			PathInfo.run_number = run_number;
 #pragma omp critical
 			{
-				//std::cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << ";  thread = " << omp_get_thread_num() << std::endl;
+				std::cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << ";  thread = " << omp_get_thread_num() << std::endl;
 			}
 
 			TStopwatch timer_read_binary;
@@ -94,41 +99,44 @@ int main(int argc, char *argv[])
 			//loop by events
 			for (int temp_event_id = 0; temp_event_id < PathInfo.events_per_file; temp_event_id++)
 			{
-				//f_tree->cd();
-	#pragma omp critical
+				//#pragma omp critical
 				{
-					std::cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << ";  thread = " << omp_get_thread_num() << std::endl;
-					cout << "tree = " << tree << endl;
-					cout << f_tree->GetPath() << endl;
-					cout << endl;
+					//std::cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << ";  thread = " << omp_get_thread_num() << std::endl;
+					//cout << "tree = " << tree << endl;
+					//cout << f_tree->GetPath() << endl;
+					//cout << endl;
 					f_tree->cd();
 					tree->Fill();
-					
+
 				}
 
 			}// end loop by events
 
-			//write tree and close file
-			if (((run_number - start_run_number) % runs_per_tree_file == runs_per_tree_file - 1) || (run_number == stop_run_number))
+			
+#pragma omp critical
 			{
-			//	TStopwatch timer_write_and_close;
-			//	timer_write_and_close.Start();
+				//write tree and close file
+				if (((run_number - start_run_number) % runs_per_tree_file == runs_per_tree_file - 1) || (run_number == stop_run_number))
+				{
+					//	TStopwatch timer_write_and_close;
+					//	timer_write_and_close.Start();
 
-				f_tree->cd();
-				tree->Write();
-				f_tree->Close();
+					f_tree->cd();
+					tree->Write();
+					f_tree->Close();
 
-				delete f_tree;
-				delete tree_raw_obj;
+					delete f_tree;
+					delete tree_raw_obj;
 
-				tree_raw_obj = NULL;
-				f_tree = NULL;
-				tree = NULL;
+					tree_raw_obj = NULL;
+					f_tree = NULL;
+					tree = NULL;
 
-				counter_f_tree++;
+					counter_f_tree++;
 
-			//	timer_write_and_close.Stop();
-			//	//time_write_and_close += timer_write_and_close.RealTime();
+					//	timer_write_and_close.Stop();
+					//	//time_write_and_close += timer_write_and_close.RealTime();
+				}
 			}
 
 

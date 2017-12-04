@@ -4,6 +4,7 @@
 #include <vector>
 #include <iomanip>
 #include <fstream>
+#include <omp.h> 
 
 //root cern
 #include "TApplication.h"
@@ -41,11 +42,8 @@ int main(int argc, char *argv[])
 	str_comm.WAVE_ARRAY_COUNT = 9999;//number of points in one event
 
 	//tree settings
-	const int runs_per_tree_file = 10;
+	const int runs_per_tree_file = 1;
 
-	//which raw files should be processed?
-	//this information in RunDescription.cpp
-	//PathInfo.path_name = PathInfo_path_name;
 
 	const int n_runs = stop_run_number;
 	cout << "n_runs = " << stop_run_number - start_run_number + 1 << endl;
@@ -67,49 +65,47 @@ int main(int argc, char *argv[])
 
 	f_tree_info->Close();
 
-	/*TFile* f_tree = NULL;
-	TTree* tree = NULL;*/
 
 	//-----------------------------------------------------
 
-	TThread::Initialize();
+	TThread::Initialize();//we need additional magic!
 		
 	//loop by chs
-#pragma omp parallel for num_threads(4)
+#pragma omp parallel for num_threads(10)
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		path_info PathInfo = { "", 0, /*1000*/ 10 };
+		path_info PathInfo = {"", 0, /*1000*/ 100 };
 		PathInfo.path_name = PathInfo_path_name;
 
 		TFile* f_tree = NULL;
 		TTree* tree = NULL; 
-
 		TreeRaw *tree_raw_obj = NULL;
 		
 		//loop by runs
 		int counter_f_tree = 0;
 		for (int run_number = start_run_number; run_number <= stop_run_number; run_number++)
 		{
-			//create new tree and file
-			if ((run_number - start_run_number) % runs_per_tree_file == 0)
-			{
-				ostringstream f_tree_name;
-				f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
-				f_tree = TFile::Open(f_tree_name.str().c_str(), "RECREATE");
-				
-				tree_raw_obj = new TreeRaw();
-				tree = tree_raw_obj->GetTreePnt();
-			}
 			
-			PathInfo.run_number = run_number;
+#pragma omp critical
+			{
+				//create new tree and file
+				if ((run_number - start_run_number) % runs_per_tree_file == 0)
+				{
+					ostringstream f_tree_name;
+					f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
+					f_tree = TFile::Open(f_tree_name.str().c_str(), "RECREATE");
 
-			#pragma omp critical
-			{			
-				cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << endl;
+					tree_raw_obj = new TreeRaw();
+					tree = tree_raw_obj->GetTreePnt();
+				}
+
+				PathInfo.run_number = run_number;
+
+				std::cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << ";  thread = " << omp_get_thread_num() << std::endl;
 			}
 			
 			TStopwatch timer_read_binary;
@@ -151,39 +147,36 @@ int main(int argc, char *argv[])
 					tree_raw_obj->data_without_slope = calc_data.Get_data_without_slope();
 					timer_calc_der.Stop();
 					time_calc_der += timer_calc_der.RealTime();
-				}
-				
-				
-				
-
-				
+				}				
 
 				tree->Fill();
 
 			}// end loop by events
 
-
-			//write tree and close file
-			if (((run_number - start_run_number) % runs_per_tree_file == runs_per_tree_file - 1) || (run_number == stop_run_number))
+#pragma omp critical
 			{
-				TStopwatch timer_write_and_close;
-				timer_write_and_close.Start();
-				
-				f_tree->cd();//importamt if you have several threads
-				tree->Write();
-				f_tree->Close();
+				//write tree and close file
+				if (((run_number - start_run_number) % runs_per_tree_file == runs_per_tree_file - 1) || (run_number == stop_run_number))
+				{
+					TStopwatch timer_write_and_close;
+					timer_write_and_close.Start();
 
-				delete f_tree;
-				delete tree_raw_obj;
+					f_tree->cd();//importamt if you have several threads
+					tree->Write();
+					f_tree->Close();
 
-				tree_raw_obj = NULL;
-				f_tree = NULL;
-				tree = NULL;
+					delete f_tree;
+					delete tree_raw_obj;
 
-				counter_f_tree++;
+					tree_raw_obj = NULL;
+					f_tree = NULL;
+					tree = NULL;
 
-				timer_write_and_close.Stop();
-				time_write_and_close += timer_write_and_close.RealTime();
+					counter_f_tree++;
+
+					timer_write_and_close.Stop();
+					time_write_and_close += timer_write_and_close.RealTime();
+				}
 			}
 
 
