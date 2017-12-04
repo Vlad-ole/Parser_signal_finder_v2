@@ -25,7 +25,7 @@ CalcDer::CalcDer(std::vector<double> yv, const int param_n_points, const int ord
 
 	const int point_half = (param_n_points - 1) / 2.0;
 
-#pragma omp parallel for num_threads(4)
+//#pragma omp parallel for num_threads(4)
 	for (int i = 0; i < yv.size(); i++)
 	{
 

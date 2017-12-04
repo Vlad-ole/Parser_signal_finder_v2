@@ -2,7 +2,7 @@
 
 using namespace std;
 
-TreeRaw::TreeRaw()
+TreeRaw::TreeRaw() //: tree("tree_raw", "Tree raw")
 {
 	tree = new TTree("tree_raw", "Tree raw");
 	
@@ -22,10 +22,10 @@ TreeRaw::TreeRaw()
 
 TreeRaw::~TreeRaw()
 {
-	delete tree;
+	//delete tree;
 }
 
-TTree* TreeRaw::GetTreePnt()
+TTree *TreeRaw::GetTreePnt()
 {
 	return tree;
 }

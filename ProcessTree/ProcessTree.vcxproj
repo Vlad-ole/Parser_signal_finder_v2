@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C38D18EA-8AAA-49B7-89B1-63A078CDA346}</ProjectGuid>
+    <ProjectGuid>{3C83DDEF-34D8-417D-9F8C-94AA7FC4CC6E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>RawToTree</RootNamespace>
+    <RootNamespace>ProcessTree</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -57,11 +57,9 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <OpenMPSupport>false</OpenMPSupport>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <ForcedIncludeFiles>w32pragma.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -77,11 +75,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <OpenMPSupport>false</OpenMPSupport>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <ForcedIncludeFiles>w32pragma.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,45 +88,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\CalcBaseline.cpp" />
-    <ClCompile Include="..\src\CalcBaselineTrivial.cpp" />
-    <ClCompile Include="..\src\CalcBaselineZeroComp.cpp" />
-    <ClCompile Include="..\src\CalcData.cpp" />
-    <ClCompile Include="..\src\CalcDer.cpp" />
-    <ClCompile Include="..\src\IntermediateTreeInfo.cpp" />
-    <ClCompile Include="..\src\ReadData.cpp" />
-    <ClCompile Include="..\src\ReadData_CAEN.cpp" />
     <ClCompile Include="..\src\RunDescription.cpp" />
-    <ClCompile Include="..\src\TreeInfo.cpp" />
-    <ClCompile Include="..\src\TreeRaw.cpp" />
-    <ClCompile Include="..\src\TypeConvertion.cpp" />
-    <ClCompile Include="Main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Test.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Test_2.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\IntermediateTreeInfo.h" />
-    <ClInclude Include="..\include\TreeInfo.h" />
-    <ClInclude Include="..\include\TreeRaw.h" />
-    <ClInclude Include="CalcBaseline.h" />
-    <ClInclude Include="CalcBaselineTrivial.h" />
-    <ClInclude Include="CalcBaselineZeroComp.h" />
-    <ClInclude Include="CalcData.h" />
-    <ClInclude Include="CalcDer.h" />
-    <ClInclude Include="ReadData.h" />
-    <ClInclude Include="ReadData_CAEN.h" />
-    <ClInclude Include="ReadData_Cean_OneFile.h" />
-    <ClInclude Include="RunDescription.h" />
-    <ClInclude Include="TypeConvertion.h" />
+    <ClInclude Include="..\include\RunDescription.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

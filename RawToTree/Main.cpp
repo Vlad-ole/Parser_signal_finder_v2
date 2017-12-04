@@ -11,6 +11,7 @@
 #include "TStopwatch.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TThread.h"
 
 //my
 #include "ReadData_CAEN.h"
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
 
 	//which raw files should be processed?
 	//this information in RunDescription.cpp
-	PathInfo.path_name = PathInfo_path_name;
+	//PathInfo.path_name = PathInfo_path_name;
 
 	const int n_runs = stop_run_number;
 	cout << "n_runs = " << stop_run_number - start_run_number + 1 << endl;
@@ -66,18 +67,26 @@ int main(int argc, char *argv[])
 
 	f_tree_info->Close();
 
-	TFile* f_tree = NULL;
-	TTree* tree = NULL;
+	/*TFile* f_tree = NULL;
+	TTree* tree = NULL;*/
 
 	//-----------------------------------------------------
 
+	TThread::Initialize();
 		
 	//loop by chs
+#pragma omp parallel for num_threads(4)
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
+
+		path_info PathInfo = { "", 0, /*1000*/ 10 };
+		PathInfo.path_name = PathInfo_path_name;
+
+		TFile* f_tree = NULL;
+		TTree* tree = NULL; 
 
 		TreeRaw *tree_raw_obj = NULL;
 		
@@ -96,9 +105,12 @@ int main(int argc, char *argv[])
 				tree = tree_raw_obj->GetTreePnt();
 			}
 			
-			
 			PathInfo.run_number = run_number;
-			cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << endl;
+
+			#pragma omp critical
+			{			
+				cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << endl;
+			}
 			
 			TStopwatch timer_read_binary;
 			timer_read_binary.Start();
@@ -129,16 +141,20 @@ int main(int argc, char *argv[])
 				tree_raw_obj->data_raw = rdt.GetDataDouble()[temp_event_id][0];
 
 				TStopwatch timer_calc_der;
-				timer_calc_der.Start();
+				
 
 				if (GetChId(i) > 2) //for SiPM only
 				{
 					tree_raw_obj->data_der = calc_data.Get_data_der();
+
+					timer_calc_der.Start();
 					tree_raw_obj->data_without_slope = calc_data.Get_data_without_slope();
+					timer_calc_der.Stop();
+					time_calc_der += timer_calc_der.RealTime();
 				}
 				
-				timer_calc_der.Stop();
-				time_calc_der += timer_calc_der.RealTime();
+				
+				
 
 				
 
@@ -153,6 +169,7 @@ int main(int argc, char *argv[])
 				TStopwatch timer_write_and_close;
 				timer_write_and_close.Start();
 				
+				f_tree->cd();//importamt if you have several threads
 				tree->Write();
 				f_tree->Close();
 
