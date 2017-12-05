@@ -25,7 +25,7 @@ CalcDer::CalcDer(std::vector<double> yv, const int param_n_points, const int ord
 
 	const int point_half = (param_n_points - 1) / 2.0;
 
-//#pragma omp parallel for num_threads(4)
+//#pragma omp parallel for num_threads(4) //If you create threads during each event this can slow down you prog. Be accurately!
 	for (int i = 0; i < yv.size(); i++)
 	{
 
@@ -33,13 +33,13 @@ CalcDer::CalcDer(std::vector<double> yv, const int param_n_points, const int ord
 		//{
 		//	yv_der[i] = 0;//this works good only if you use signal without baseline
 		//}
-		if (i < point_half)  // I think, it's better solution
+		if (i < point_half) 
 		{
-			yv_der[i] = yv[point_half];
+			//yv_der[i] = yv[point_half];
 		}
 		else if ( i > (yv.size() - point_half - 1) )
 		{
-			yv_der[i] = yv[yv.size() - 1];
+			//yv_der[i] = yv[yv.size() - 1];
 		}
 		else
 		{
@@ -50,7 +50,34 @@ CalcDer::CalcDer(std::vector<double> yv, const int param_n_points, const int ord
 			}
 			yv_der[i] = value;
 		}
+	}
 
+	double yv_der_avr_left = 0;
+	const int n_points_to_avr = 5;
+	for (int i = point_half; i < (point_half + n_points_to_avr); i++)
+	{
+		yv_der_avr_left += yv_der[i];
+	}
+	yv_der_avr_left /= n_points_to_avr;
+
+
+	double yv_der_avr_right = 0;
+	for (int i = (yv.size() - point_half - 1 - n_points_to_avr); i < (yv.size() - point_half - 1); i++)
+	{
+		yv_der_avr_right += yv_der[i];
+	}
+	yv_der_avr_right /= n_points_to_avr;
+
+
+
+	for (int i = 0; i < point_half; i++)
+	{
+		yv_der[i] = yv_der_avr_left;
+	}
+
+	for (int i = (yv.size() - point_half/* - 1 + 1*/); i < yv.size(); i++)
+	{
+		yv_der[i] = yv_der_avr_right;
 	}
 
 }

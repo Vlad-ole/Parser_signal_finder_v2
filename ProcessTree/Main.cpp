@@ -19,6 +19,7 @@
 
 //my
 #include "RunDescription.h"
+#include  "TypeConvertion.h"
 
 using namespace std;
 
@@ -142,6 +143,7 @@ void Show_individual_signals()
 	chain_all_ch->SetBranchStatus("ch_id", 1);
 	chain_all_ch->SetBranchStatus("run_id", 1);
 	chain_all_ch->SetBranchStatus("event_id", 1);
+	chain_all_ch->SetBranchStatus("baseline", 1);
 
 	vector<double> time(WAVE_ARRAY_COUNT);
 	for (int i = 0; i < time.size(); i++)
@@ -163,11 +165,21 @@ void Show_individual_signals()
 
 		if (ch_id == 38 && run_id == 8 && event_id == 0)
 		{
-			chain_all_ch->SetBranchStatus("data_raw", 1);
-			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			chain_all_ch->SetBranchStatus("data_der", 1);
+			chain_all_ch->SetBranchAddress("data_der", &data_der);
 			chain_all_ch->GetEntry(i);
-			TGraph *gr = new TGraph( WAVE_ARRAY_COUNT, &time[0], &((*data_raw)[0]) );
-			gr->Draw();
+
+			TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_der)[0]));
+			gr->SetTitle("data_der");
+			gr->SetMarkerStyle(20);
+			gr->SetMarkerSize(1);
+			gr->SetLineColor(kPink);
+			gr->Draw("ALP");
+
+			/*TGraph *gr_2 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &(TypeConvertion::GetVectorFromScalar(WAVE_ARRAY_COUNT, baseline))[0]);
+			gr_2->SetLineColor(kGreen);
+			gr_2->Draw("same L");*/
+
 			break;
 		}
 	}

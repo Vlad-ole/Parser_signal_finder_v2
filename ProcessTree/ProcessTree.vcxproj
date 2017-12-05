@@ -89,10 +89,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\RunDescription.cpp" />
+    <ClCompile Include="..\src\TypeConvertion.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\RunDescription.h" />
+    <ClInclude Include="..\include\TypeConvertion.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

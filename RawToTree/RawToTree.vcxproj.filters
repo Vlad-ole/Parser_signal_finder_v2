@@ -95,9 +95,6 @@
     <ClInclude Include="ReadData_Cean_OneFile.h">
       <Filter>Header Files\ReadData</Filter>
     </ClInclude>
-    <ClInclude Include="TypeConvertion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CalcDer.h">
       <Filter>Header Files\CalcData</Filter>
     </ClInclude>
@@ -120,6 +117,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\IntermediateTreeInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TypeConvertion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

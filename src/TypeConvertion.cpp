@@ -10,6 +10,17 @@ TypeConvertion::~TypeConvertion()
 {
 }
 
+std::vector<double> TypeConvertion::GetVectorFromScalar(int size, double scalar)
+{
+	std::vector<double> vec(size);
+	for (int i = 0; i < size; i++)
+	{
+		vec[i] = scalar;
+	}
+
+	return vec;
+}
+
 std::vector<float> TypeConvertion::GetVectorFloat(std::vector<double>& yv_double)
 {
 	std::vector<float> yv_float(yv_double.size());

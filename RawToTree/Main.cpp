@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		path_info PathInfo = {"", 0, /*1000*/ 1000 };
+		path_info PathInfo = {"", 0, /*1000*/ 1 };
 		PathInfo.path_name = PathInfo_path_name;
 
 		TFile* f_tree = NULL;
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 					time_calc_der += timer_calc_der.RealTime();
 				}				
 
-#pragma omp critical //magic should be here
+#pragma omp critical //magic should be here too. Unfortunately :(
 				{
 					tree->Fill();
 				}

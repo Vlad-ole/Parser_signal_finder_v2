@@ -125,6 +125,7 @@
     <ClInclude Include="..\include\IntermediateTreeInfo.h" />
     <ClInclude Include="..\include\TreeInfo.h" />
     <ClInclude Include="..\include\TreeRaw.h" />
+    <ClInclude Include="..\include\TypeConvertion.h" />
     <ClInclude Include="CalcBaseline.h" />
     <ClInclude Include="CalcBaselineTrivial.h" />
     <ClInclude Include="CalcBaselineZeroComp.h" />
@@ -134,7 +135,6 @@
     <ClInclude Include="ReadData_CAEN.h" />
     <ClInclude Include="ReadData_Cean_OneFile.h" />
     <ClInclude Include="RunDescription.h" />
-    <ClInclude Include="TypeConvertion.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
