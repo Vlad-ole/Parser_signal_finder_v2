@@ -51,6 +51,27 @@ int GetChId(int array_position)
 	return ch_id;
 }
 
+int GetArrayPosition(int ch_id)
+{
+	int array_position;
+	
+	//if you use 3PMT, 1PMT, GEM and 25 SiPM channels
+	if (ch_id >= 0 && ch_id <= 2)
+		array_position = ch_id;
+	else if (ch_id >= 32 && ch_id <= 44)
+		array_position = ch_id - 29;
+	else if (ch_id >= 48 && ch_id <= 59)
+		array_position = ch_id - 32;
+	else
+	{
+		cout << "Unknown array_position in GetArrayPosition " << endl;
+		system("pause");
+		exit(1);
+	}
+	
+	return array_position;
+}
+
 int GetChIdSiPM(int array_position)
 {
 	return array_position + 32;

@@ -53,6 +53,10 @@ void wait(int n_sec, bool is_infinite = false)
 	std::cout << "exited. " << std::endl;
 }
 
+
+TChain* chain_all_ch;
+TTree *tree_itermediate;
+
 //---------------------------------------------
 //braches info for tree_raw
 std::vector<double> *data_raw = 0;
@@ -89,7 +93,85 @@ std::vector<double> *one_peak_y_maximum = 0;
 std::vector<double> *num_of_pe_in_one_peak = 0;
 //---------------------------------------------
 
+void Npe_sipm_matrix()
+{
+	//Npe_sipm_matrix
+	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 600);
+	const int ch_to_process = 38;
+	const int array_position = GetArrayPosition(ch_to_process);
 
+	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
+	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
+
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+
+	const int n_events = tree_itermediate->GetEntries();
+	cout << "tree_itermediate->GetEntries() = " << n_events << endl;
+	cout << "chain_all_ch->GetEntries() = " << chain_all_ch->GetEntries() << endl;
+
+	chain_all_ch->GetEntry(0);
+	cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
+
+	for (int i = 0; i < n_events; i++)
+	{
+		double val = 0;
+		tree_itermediate->GetEntry(i);
+		chain_all_ch->GetEntry(i);
+		if (i % 1000 == 0)
+		{
+			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
+		}
+
+		if (ch_id == ch_to_process)
+		{
+			hist->Fill(num_of_pe_in_event__positive_part_s_int);
+			cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
+		}
+
+	}
+
+	hist->Draw();
+}
+
+void Show_individual_signals()
+{
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+
+	vector<double> time(WAVE_ARRAY_COUNT);
+	for (int i = 0; i < time.size(); i++)
+	{
+		time[i] = i * HORIZ_INTERVAL;
+	}
+
+	const int n_events = chain_all_ch->GetEntries();
+	for (int i = 0; i < n_events; i++)
+	{
+		chain_all_ch->GetEntry(i);
+
+		if (i % 1000 == 0 || i == (n_events - 1))
+		{
+			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
+			cout << "event = " << i << " (" << val << " %)" << endl;
+		}
+
+
+		if (ch_id == 38 && run_id == 8 && event_id == 0)
+		{
+			chain_all_ch->SetBranchStatus("data_raw", 1);
+			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			chain_all_ch->GetEntry(i);
+			TGraph *gr = new TGraph( WAVE_ARRAY_COUNT, &time[0], &((*data_raw)[0]) );
+			gr->Draw();
+			break;
+		}
+	}
+}
 
 int main(int argc, char *argv[])
 {
@@ -126,7 +208,7 @@ int main(int argc, char *argv[])
 	f_tree_itermediate_name << path_name_tree << "tree_intermediate.root";
 
 	TFile *f_tree_itermediate = new TFile(f_tree_itermediate_name.str().c_str());
-	TTree *tree_itermediate = (TTree*)f_tree_itermediate->Get("tree_intermediate");
+	tree_itermediate = (TTree*)f_tree_itermediate->Get("tree_intermediate");
 
 	tree_itermediate->SetBranchAddress("num_of_pe_in_event__positive_part_s_int", &num_of_pe_in_event__positive_part_s_int);
 	tree_itermediate->SetBranchAddress("signals_x_start", &signals_x_start);
@@ -134,105 +216,81 @@ int main(int argc, char *argv[])
 	tree_itermediate->SetBranchAddress("local_baseline", &local_baseline);
 	tree_itermediate->SetBranchAddress("integral_one_peak", &integral_one_peak);
 	tree_itermediate->SetBranchAddress("one_peak_y_maximum", &one_peak_y_maximum);
-	tree_itermediate->SetBranchAddress("num_of_pe_in_one_peak", &num_of_pe_in_one_peak);		
+	tree_itermediate->SetBranchAddress("num_of_pe_in_one_peak", &num_of_pe_in_one_peak);
 	//---------------------------------------------
 
 
+
 	//---------------------------------------------
-	//tree_raw
-	vector<TChain*> chain_v;
+	chain_all_ch = new TChain("tree_raw");
 	for (int i = 0; i < N_ch; i++)
 	{
-		TChain *chain = new TChain("tree_raw");
 		for (int counter_f_tree = 0; counter_f_tree < n_blocks; counter_f_tree++)
 		{
 			ostringstream f_tree_name;
 			f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
-			chain->Add(f_tree_name.str().c_str());
-			//chain.Show();
+			chain_all_ch->Add(f_tree_name.str().c_str());
 		}
-
-		chain_v.push_back(chain);
-		//chain_v[i]->Show();
 	}
+
+	//SetBranchAddress
+	chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+	chain_all_ch->SetBranchAddress("data_der", &data_der);
+	chain_all_ch->SetBranchAddress("data_without_slope", &data_without_slope);
+
+	chain_all_ch->SetBranchAddress("min_element", &min_element);
+	chain_all_ch->SetBranchAddress("max_element", &max_element);
+	chain_all_ch->SetBranchAddress("baseline", &baseline);
+
+	chain_all_ch->SetBranchAddress("run_id", &run_id);
+	chain_all_ch->SetBranchAddress("event_id", &event_id);
+	chain_all_ch->SetBranchAddress("ch_id", &ch_id);
+
 	//---------------------------------------------
 
-	//-----------------------------------
-	//SetBranchAddress
-	chain_v[3]->SetBranchAddress("data_raw", &data_raw);
-	chain_v[3]->SetBranchAddress("data_der", &data_der);
-	chain_v[3]->SetBranchAddress("data_without_slope", &data_without_slope);
-
-	chain_v[3]->SetBranchAddress("min_element", &min_element);
-	chain_v[3]->SetBranchAddress("max_element", &max_element);
-	chain_v[3]->SetBranchAddress("baseline", &baseline);
-
-	chain_v[3]->SetBranchAddress("run_id", &run_id);
-	chain_v[3]->SetBranchAddress("event_id", &event_id);
-	chain_v[3]->SetBranchAddress("ch_id", &ch_id);
-	//-----------------------------------
-
-
-
-	//tree_itermediate->GetEntry(0);
-
+	Show_individual_signals();
 	
-	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 600);
+	////Npe_sipm_matrix
+	//TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 600);
+	//const int ch_to_process = 38;
+	//const int array_position = GetArrayPosition(ch_to_process);
 
-	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
-	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
+	//tree_itermediate->SetBranchStatus("*", 0); //disable all branches
+	//tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
 
-	const int n_events = tree_itermediate->GetEntries();
-	cout << "n_events = " << n_events << endl;
-	for (int i = 0; i < n_events; i++)
-	{
-		double val = 0;
-		tree_itermediate->GetEntry(i);
-		chain_v[3]->GetEntry(i);
-		if (i % 1000 == 0)
-		{
-			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
-		}
+	//chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	//chain_all_ch->SetBranchStatus("ch_id", 1);
+	//chain_all_ch->SetBranchStatus("run_id", 1);
+	//chain_all_ch->SetBranchStatus("event_id", 1);
 
-		cout << "ch_id = " << ch_id << endl;
-	}
+	//const int n_events = tree_itermediate->GetEntries();
+	//cout << "tree_itermediate->GetEntries() = " << n_events << endl;
+	//cout << "chain_all_ch->GetEntries() = " << chain_all_ch->GetEntries() << endl;
 
+	//chain_all_ch->GetEntry(0);
+	//cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
 
-	{
-		//int n_events;
-		////loop by chs
-		//for (int i = 0; i < N_ch; i++)
-		//{
-		//	if (GetChId(i) < 3) //process only SiPM ch
-		//		continue;
-		//
-		//	
-		//	TChain chain("tree_raw");
-		//	const int n_blocks = 1;
-		//	for (int counter_f_tree = 0; counter_f_tree < n_blocks; counter_f_tree++)
-		//	{
-		//		ostringstream f_tree_name;
-		//		f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
-		//		chain.Add(f_tree_name.str().c_str());
-		//	}
-		//	n_events = chain.GetEntries();
-		//	cout << "i = " << i << "; ch_id = " << GetChId(i) << "; GetEntries = " << n_events << endl;
-	}
+	//for (int i = 0; i < n_events; i++)
+	//{
+	//	double val = 0;
+	//	tree_itermediate->GetEntry(i);
+	//	chain_all_ch->GetEntry(i);
+	//	if (i % 1000 == 0)
+	//	{
+	//		cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
+	//	}
 
-	//	//-----------------------------------
-	//	//SetBranchAddress
-	//	chain.SetBranchAddress("data_raw", &data_raw);
-	//	chain.SetBranchAddress("data_der", &data_der);
-	//	chain.SetBranchAddress("data_without_slope", &data_without_slope);
-
-	//	chain.SetBranchAddress("min_element", &min_element);
-	//	chain.SetBranchAddress("max_element", &max_element);
-	//	chain.SetBranchAddress("baseline", &baseline);
-	//	//-----------------------------------
+	//	if (ch_id == ch_to_process)
+	//	{
+	//		hist->Fill(num_of_pe_in_event__positive_part_s_int);
+	//		cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
+	//	}		
 
 	//}
-
+	
+	
+	cout << "all is ok" << endl;
+	theApp.Run();
 
 	f_tree_itermediate->Close();
 	timer_total.Stop();	
@@ -240,12 +298,12 @@ int main(int argc, char *argv[])
 	
 	//cout << "n_events = " << n_events << endl;
 	cout << "total time = " << timer_total.RealTime() << " sec" << endl;
-	cout << "all is ok" << endl;
+	//cout << "all is ok" << endl;
 
 
 	system("pause");
-	theApp.Terminate();
-	theApp.Run();
+	//theApp.Terminate();
+	//theApp.Run();
 
 	return 0;
 

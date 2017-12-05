@@ -181,8 +181,8 @@ int main(int argc, char *argv[])
 				//----------------------------------------
 
 
-				int point_from = 45000 / HORIZ_INTERVAL;
-				int point_to = 80000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				int point_from = 35000 / HORIZ_INTERVAL;
+				int point_to = 158000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
 
 

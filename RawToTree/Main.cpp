@@ -24,6 +24,10 @@
 
 using namespace std;
 
+//#pragma link C++ class vector<double>
+//#pragma link C++ class TreeRaw
+
+
 int main(int argc, char *argv[])
 {
 	TStopwatch timer_total;	
@@ -59,7 +63,8 @@ int main(int argc, char *argv[])
 	tree_info.HORIZ_INTERVAL = str_comm.HORIZ_INTERVAL;
 	tree_info.runs_per_tree_file = runs_per_tree_file;	
 	tree_info.WAVE_ARRAY_COUNT = str_comm.WAVE_ARRAY_COUNT;
-	tree_info.n_blocks = ((stop_run_number - start_run_number + 1) / runs_per_tree_file) + 1;
+	tree_info.n_blocks = ((stop_run_number - start_run_number + 1) / runs_per_tree_file);
+	tree_info.n_blocks += ((stop_run_number - start_run_number + 1) % runs_per_tree_file) == 0 ? 0 : 1;
 	
 	tree_info.tree->Fill();
 	tree_info.tree->Write();
@@ -79,7 +84,7 @@ int main(int argc, char *argv[])
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		path_info PathInfo = {"", 0, /*1000*/ 10 };
+		path_info PathInfo = {"", 0, /*1000*/ 1000 };
 		PathInfo.path_name = PathInfo_path_name;
 
 		TFile* f_tree = NULL;
@@ -150,7 +155,10 @@ int main(int argc, char *argv[])
 					time_calc_der += timer_calc_der.RealTime();
 				}				
 
-				tree->Fill();
+#pragma omp critical //magic should be here
+				{
+					tree->Fill();
+				}
 
 			}// end loop by events
 

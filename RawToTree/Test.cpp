@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		path_info PathInfo = { "", 0, /*1000*/ 1 };
+		path_info PathInfo = { "", 0, /*1000*/ 1000 };
 		PathInfo.path_name = PathInfo_path_name;
 
 		TFile* f_tree = NULL;
@@ -99,13 +99,13 @@ int main(int argc, char *argv[])
 			//loop by events
 			for (int temp_event_id = 0; temp_event_id < PathInfo.events_per_file; temp_event_id++)
 			{
-				//#pragma omp critical
+				#pragma omp critical
 				{
 					//std::cout << "i = " << i << "; ch_id = " << GetChId(i) << "; run_number = " << run_number << ";  thread = " << omp_get_thread_num() << std::endl;
 					//cout << "tree = " << tree << endl;
 					//cout << f_tree->GetPath() << endl;
 					//cout << endl;
-					f_tree->cd();
+					//f_tree->cd();
 					tree->Fill();
 
 				}

@@ -22,7 +22,7 @@ TreeRaw::TreeRaw() //: tree("tree_raw", "Tree raw")
 
 TreeRaw::~TreeRaw()
 {
-	//delete tree;
+	delete tree;
 }
 
 TTree *TreeRaw::GetTreePnt()
