@@ -9,6 +9,7 @@ TreeInfo::TreeInfo()
 	tree->Branch("WAVE_ARRAY_COUNT", &WAVE_ARRAY_COUNT);
 	tree->Branch("runs_per_tree_file", &runs_per_tree_file);
 	tree->Branch("n_ch", &n_ch);
+	tree->Branch("n_blocks", &n_blocks);
 }
 
 

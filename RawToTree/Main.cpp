@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	str_comm.WAVE_ARRAY_COUNT = 9999;//number of points in one event
 
 	//tree settings
-	const int runs_per_tree_file = 1;
+	const int runs_per_tree_file = 5;
 
 
 	const int n_runs = stop_run_number;
@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 	tree_info.HORIZ_INTERVAL = str_comm.HORIZ_INTERVAL;
 	tree_info.runs_per_tree_file = runs_per_tree_file;	
 	tree_info.WAVE_ARRAY_COUNT = str_comm.WAVE_ARRAY_COUNT;
+	tree_info.n_blocks = ((stop_run_number - start_run_number + 1) / runs_per_tree_file) + 1;
 	
 	tree_info.tree->Fill();
 	tree_info.tree->Write();
@@ -71,14 +72,14 @@ int main(int argc, char *argv[])
 	TThread::Initialize();//we need additional magic!
 		
 	//loop by chs
-#pragma omp parallel for num_threads(10)
+#pragma omp parallel for num_threads(5)
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		path_info PathInfo = {"", 0, /*1000*/ 100 };
+		path_info PathInfo = {"", 0, /*1000*/ 10 };
 		PathInfo.path_name = PathInfo_path_name;
 
 		TFile* f_tree = NULL;
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
 		for (int run_number = start_run_number; run_number <= stop_run_number; run_number++)
 		{
 			
-#pragma omp critical
+#pragma omp critical //magic should be here
 			{
 				//create new tree and file
 				if ((run_number - start_run_number) % runs_per_tree_file == 0)
@@ -153,7 +154,7 @@ int main(int argc, char *argv[])
 
 			}// end loop by events
 
-#pragma omp critical
+#pragma omp critical //magic should be here
 			{
 				//write tree and close file
 				if (((run_number - start_run_number) % runs_per_tree_file == runs_per_tree_file - 1) || (run_number == stop_run_number))

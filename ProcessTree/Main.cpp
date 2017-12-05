@@ -61,6 +61,9 @@ std::vector<double> *data_without_slope = 0;
 double min_element;
 double max_element;
 double baseline;
+int run_id;
+int event_id;
+int ch_id;
 //---------------------------------------------
 
 
@@ -70,6 +73,7 @@ double HORIZ_INTERVAL; //in ns
 int WAVE_ARRAY_COUNT;
 int runs_per_tree_file;
 int N_ch;
+int n_blocks;
 //---------------------------------------------
 
 
@@ -108,6 +112,7 @@ int main(int argc, char *argv[])
 	tree_info->SetBranchAddress("WAVE_ARRAY_COUNT", &WAVE_ARRAY_COUNT);
 	tree_info->SetBranchAddress("runs_per_tree_file", &runs_per_tree_file);
 	tree_info->SetBranchAddress("n_ch", &N_ch);
+	tree_info->SetBranchAddress("n_blocks", &n_blocks);
 
 	tree_info->GetEntry(0);
 	f_tree_info->Close();//hmmmm
@@ -132,6 +137,43 @@ int main(int argc, char *argv[])
 	tree_itermediate->SetBranchAddress("num_of_pe_in_one_peak", &num_of_pe_in_one_peak);		
 	//---------------------------------------------
 
+
+	//---------------------------------------------
+	//tree_raw
+	vector<TChain*> chain_v;
+	for (int i = 0; i < N_ch; i++)
+	{
+		TChain *chain = new TChain("tree_raw");
+		for (int counter_f_tree = 0; counter_f_tree < n_blocks; counter_f_tree++)
+		{
+			ostringstream f_tree_name;
+			f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
+			chain->Add(f_tree_name.str().c_str());
+			//chain.Show();
+		}
+
+		chain_v.push_back(chain);
+		//chain_v[i]->Show();
+	}
+	//---------------------------------------------
+
+	//-----------------------------------
+	//SetBranchAddress
+	chain_v[3]->SetBranchAddress("data_raw", &data_raw);
+	chain_v[3]->SetBranchAddress("data_der", &data_der);
+	chain_v[3]->SetBranchAddress("data_without_slope", &data_without_slope);
+
+	chain_v[3]->SetBranchAddress("min_element", &min_element);
+	chain_v[3]->SetBranchAddress("max_element", &max_element);
+	chain_v[3]->SetBranchAddress("baseline", &baseline);
+
+	chain_v[3]->SetBranchAddress("run_id", &run_id);
+	chain_v[3]->SetBranchAddress("event_id", &event_id);
+	chain_v[3]->SetBranchAddress("ch_id", &ch_id);
+	//-----------------------------------
+
+
+
 	//tree_itermediate->GetEntry(0);
 
 	
@@ -142,10 +184,12 @@ int main(int argc, char *argv[])
 	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
 
 	const int n_events = tree_itermediate->GetEntries();
-	for (int i = 0; i < 50; i++)
+	cout << "n_events = " << n_events << endl;
+	for (int i = 0; i < n_events; i++)
 	{
 		double val = 0;
 		tree_itermediate->GetEntry(i);
+		chain_v[3]->GetEntry(i);
 		if (i % 1000 == 0)
 		{
 			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;

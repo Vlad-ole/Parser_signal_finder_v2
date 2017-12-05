@@ -23,5 +23,6 @@ public:
 	int WAVE_ARRAY_COUNT;
 	int runs_per_tree_file;
 	int n_ch;
+	int n_blocks;
 };
 

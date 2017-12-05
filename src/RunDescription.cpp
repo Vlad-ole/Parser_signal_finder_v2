@@ -92,7 +92,7 @@ const bool is_sipm_ch = true;
 std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_4kV_PMT700_0dB_coll_6mm\\";
 std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_4kV_PMT700_0dB_coll_6mm\\";
 const int start_run_number = 8;
-const int stop_run_number = /*12*/ 8;
+const int stop_run_number = /*12*/ 12;
 
 ////---------------------------------------------
 

@@ -32,10 +32,6 @@ int main(int argc, char *argv[])
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
 	gROOT->SetBatch(kTRUE);
 
-	const int n_blocks = 1;
-
-
-
 	//---------------------------------------------
 	//braches info for tree_raw
 	std::vector<double> *data_raw = 0;
@@ -55,6 +51,7 @@ int main(int argc, char *argv[])
 	int WAVE_ARRAY_COUNT;
 	int runs_per_tree_file;
 	int N_ch;
+	int n_blocks;
 
 	ostringstream f_tree_info_name;
 	f_tree_info_name << path_name_tree << "tree_info.root";
@@ -66,6 +63,7 @@ int main(int argc, char *argv[])
 	tree_info->SetBranchAddress("WAVE_ARRAY_COUNT", &WAVE_ARRAY_COUNT);
 	tree_info->SetBranchAddress("runs_per_tree_file", &runs_per_tree_file);
 	tree_info->SetBranchAddress("n_ch", &N_ch);
+	tree_info->SetBranchAddress("n_blocks", &n_blocks);
 
 	tree_info->GetEntry(0);
 	f_tree_info->Close();//hmmmm
