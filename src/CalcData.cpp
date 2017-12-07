@@ -42,14 +42,15 @@ double CalcData::Get_max_element()
 
 std::vector<double> CalcData::Get_data_der()
 {
+	const int n_points = 21;
 	if (is_invert)
 	{
-		CalcDer calc_der_tmp(invert_data, 101, 1);
+		CalcDer calc_der_tmp(invert_data, n_points, 1);
 		return calc_der_tmp.GetDer();
 	}
 	else
 	{
-		CalcDer calc_der_tmp(data_raw, 101, 1);
+		CalcDer calc_der_tmp(data_raw, n_points, 1);
 		return calc_der_tmp.GetDer();
 	}	
 	

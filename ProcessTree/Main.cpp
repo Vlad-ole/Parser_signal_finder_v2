@@ -16,6 +16,7 @@
 #include "TH1F.h"
 #include "TSystem.h"
 #include "TGraph.h"
+#include "TCut.h"
 
 //my
 #include "RunDescription.h"
@@ -23,6 +24,12 @@
 
 using namespace std;
 
+#define COUT(x) cout << #x " = " << x << endl;
+
+string cut_condition_srt;
+bool cut_condition_bool = false;
+TCut total_cut;
+#define REMEMBER_CUT(x) cut_condition_srt = #x; cut_condition_bool = x; total_cut = cut_condition_srt.c_str();
 
 void wait(int n_sec, bool is_infinite = false)
 {
@@ -161,24 +168,82 @@ void Show_individual_signals()
 			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
-
-
-		if (ch_id == 38 && run_id == 8 && event_id == 0)
+					
+		REMEMBER_CUT(ch_id == 44 && run_id == 145 && event_id == 0)
+		if (cut_condition_bool)
 		{
+			cout << "in if (cut_condition_bool)" << endl;
+			
 			chain_all_ch->SetBranchStatus("data_der", 1);
 			chain_all_ch->SetBranchAddress("data_der", &data_der);
+			chain_all_ch->SetBranchStatus("data_raw", 1);
+			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			chain_all_ch->SetBranchStatus("data_without_slope", 1);
+			chain_all_ch->SetBranchAddress("data_without_slope", &data_without_slope);
+
 			chain_all_ch->GetEntry(i);
 
-			TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_der)[0]));
+			//TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &( TypeConvertion::GetVectorMultiplyToScalar( (*data_der), 1 )  [0]));
+			/*TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_der)[0]));
 			gr->SetTitle("data_der");
 			gr->SetMarkerStyle(20);
 			gr->SetMarkerSize(1);
 			gr->SetLineColor(kPink);
-			gr->Draw("ALP");
+			gr->Draw("ALP");*/
+
+			TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_without_slope)[0]));
+			gr_3->SetMarkerStyle(20);
+			gr_3->SetMarkerSize(0.5);
+			//gr_3->SetMarkerColor(kRed);
+			gr_3->SetLineColor(kPink);
+			gr_3->SetTitle(cut_condition_srt.c_str());
+			gr_3->Draw("ALP");
 
 			/*TGraph *gr_2 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &(TypeConvertion::GetVectorFromScalar(WAVE_ARRAY_COUNT, baseline))[0]);
 			gr_2->SetLineColor(kGreen);
 			gr_2->Draw("same L");*/
+
+
+			tree_itermediate->GetEntry(i);			
+			COUT((*signals_x_start).size());
+			COUT((*signals_x_stop).size());
+			COUT((*local_baseline).size());
+			COUT((*integral_one_peak).size());
+			COUT((*one_peak_y_maximum).size());
+			COUT((*num_of_pe_in_one_peak).size());			
+
+			vector<double> signals_x_values;
+			vector<double> signals_y_values;
+			vector<double> local_baseline_y_values;			
+			for (int j = 0; j < (*signals_x_start).size(); j++)
+			{
+				for (int k = (*signals_x_start)[j]; k < (*signals_x_stop)[j]; k++)
+				{
+					signals_x_values.push_back(k * HORIZ_INTERVAL);					
+					signals_y_values.push_back((*data_without_slope)[k]);
+					local_baseline_y_values.push_back((*local_baseline)[j]);					
+				}
+			}
+
+			if (signals_x_values.size() > 0)
+			{
+				TGraph *gr_peaks = new TGraph(signals_x_values.size(), &signals_x_values[0], &signals_y_values[0]);
+				gr_peaks->SetMarkerSize(1);
+				gr_peaks->SetMarkerStyle(29);
+				gr_peaks->SetMarkerColor(kBlue);
+				gr_peaks->GetXaxis()->SetLimits(0, 160E3);
+				gr_peaks->Draw("same P");
+
+				TGraph *gr_local_baseline = new TGraph(signals_x_values.size(), &signals_x_values[0], &local_baseline_y_values[0]);
+				gr_local_baseline->SetMarkerSize(1);
+				gr_local_baseline->SetMarkerStyle(20);
+				gr_local_baseline->SetMarkerColor(kGreen);
+				gr_local_baseline->Draw("same P");
+			}
+
+			COUT(signals_x_values.size());
+			COUT(signals_y_values.size());
+			COUT(local_baseline_y_values.size());
 
 			break;
 		}
@@ -259,6 +324,9 @@ int main(int argc, char *argv[])
 	chain_all_ch->SetBranchAddress("ch_id", &ch_id);
 
 	//---------------------------------------------
+
+	COUT(tree_itermediate->GetEntries());
+	COUT(chain_all_ch->GetEntries());
 
 	Show_individual_signals();
 	

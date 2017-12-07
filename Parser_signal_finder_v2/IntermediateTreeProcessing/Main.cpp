@@ -125,12 +125,12 @@ int main(int argc, char *argv[])
 			{
 				tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int = 0;
 
-				tree_intermediate_obj.signals_x_start.resize(1);
-				tree_intermediate_obj.signals_x_stop.resize(1);
-				tree_intermediate_obj.local_baseline.resize(1);
-				tree_intermediate_obj.integral_one_peak.resize(1);
-				tree_intermediate_obj.one_peak_y_maximum.resize(1);
-				tree_intermediate_obj.num_of_pe_in_one_peak.resize(1);
+				tree_intermediate_obj.signals_x_start.resize(0);
+				tree_intermediate_obj.signals_x_stop.resize(0);
+				tree_intermediate_obj.local_baseline.resize(0);
+				tree_intermediate_obj.integral_one_peak.resize(0);
+				tree_intermediate_obj.one_peak_y_maximum.resize(0);
+				tree_intermediate_obj.num_of_pe_in_one_peak.resize(0);
 			}
 			else
 			{
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 				for (int j = 0; j < pair_vec.size(); j++)
 				{
 					//choose region (for calib only) 
-					if ((tree_intermediate_obj.signals_x_stop[j] * HORIZ_INTERVAL) > 80000 && (tree_intermediate_obj.signals_x_start[j] * HORIZ_INTERVAL) < 150000)
+					//if ((tree_intermediate_obj.signals_x_stop[j] * HORIZ_INTERVAL) > 80000 && (tree_intermediate_obj.signals_x_start[j] * HORIZ_INTERVAL) < 150000)
 					{
 						double integral_tmp = 0;
 						double one_peak_y_maximum_tmp = -1100;

@@ -12,6 +12,7 @@ public:
 	static std::vector<double> GetVectorDouble(std::vector<float> & yv_float);
 
 	static std::vector<double> GetVectorFromScalar(int size, double scalar);
+	static std::vector<double> GetVectorMultiplyToScalar(std::vector<double> & yv_double, double scalar);
 	
 	static std::vector<double> GetVectorDoubleInvert(std::vector<double> & yv_double);
 	static std::vector<double> GetDifference(std::vector<double> yv_minuend, std::vector<double> yv_subtrahend);

@@ -35,11 +35,11 @@ CalcDer::CalcDer(std::vector<double> yv, const int param_n_points, const int ord
 		//}
 		if (i < point_half) 
 		{
-			//yv_der[i] = yv[point_half];
+			yv_der[i] = yv[point_half];
 		}
 		else if ( i > (yv.size() - point_half - 1) )
 		{
-			//yv_der[i] = yv[yv.size() - 1];
+			yv_der[i] = yv[yv.size() - 1];
 		}
 		else
 		{
