@@ -21,6 +21,8 @@
 #include "IntermediateTreeInfo.h"
 #include "PeakFinderFind.h"
 #include "ChCharacteristics.h"
+#include "TreeInfoAllCh.h"
+#include "CoGBase.h"
 
 using namespace std;
 
@@ -52,6 +54,9 @@ int main(int argc, char *argv[])
 	int runs_per_tree_file;
 	int N_ch;
 	int n_blocks;
+	int n_events_per_file;
+	int run_from;
+	int run_to;
 
 	ostringstream f_tree_info_name;
 	f_tree_info_name << path_name_tree << "tree_info.root";
@@ -64,14 +69,27 @@ int main(int argc, char *argv[])
 	tree_info->SetBranchAddress("runs_per_tree_file", &runs_per_tree_file);
 	tree_info->SetBranchAddress("n_ch", &N_ch);
 	tree_info->SetBranchAddress("n_blocks", &n_blocks);
+	tree_info->SetBranchAddress("n_events_per_file", &n_events_per_file);
+	tree_info->SetBranchAddress("run_from", &run_from);
+	tree_info->SetBranchAddress("run_to", &run_to);
 
 	tree_info->GetEntry(0);
 	f_tree_info->Close();//hmmmm
 	//---------------------------------------------
 
 
+	const int n_ch_sipm = 25;
 
+	//Yes, it will take too many RAM. But how to write better?
+	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+	vector< vector<double> > num_of_pe_in_event_all_ch__positive_part_s_int;
+	num_of_pe_in_event_all_ch__positive_part_s_int.resize(n_ch_sipm);
+	for (int i = 0; i < n_ch_sipm; i++)
+	{
+		num_of_pe_in_event_all_ch__positive_part_s_int[i].resize(n_events_one_ch);
+	}
 
+	
 
 	ostringstream f_tree_intermediate_name;
 	f_tree_intermediate_name << path_name_tree << "tree_intermediate.root";
@@ -94,6 +112,7 @@ int main(int argc, char *argv[])
 			chain.Add(f_tree_name.str().c_str());
 		}
 		n_events = chain.GetEntries();
+		//n_events = 1;
 		cout << "i = " << i << "; ch_id = " << GetChId(i) << "; GetEntries = " << n_events << endl;
 
 
@@ -181,8 +200,8 @@ int main(int argc, char *argv[])
 				//----------------------------------------
 
 
-				int point_from = 35000 / HORIZ_INTERVAL;
-				int point_to = 158000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				int point_from = 40000 / HORIZ_INTERVAL;
+				int point_to = 80000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
 
 
@@ -214,6 +233,7 @@ int main(int argc, char *argv[])
 				}
 
 				tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int = num_of_pe_in_event__positive_part_s_int_tmp;
+				num_of_pe_in_event_all_ch__positive_part_s_int[i - 3][temp_event_id] = num_of_pe_in_event__positive_part_s_int_tmp;
 				////----------------------------------------
 
 			}
@@ -228,13 +248,61 @@ int main(int argc, char *argv[])
 
 	}//end loop by chs
 
-
-
+	//f_tree_intermediate->cd();
 	tree_intermediate_obj.tree->Write();
 	f_tree_intermediate->Close();
 
+
+	//----------------------------------------------------------
+	ostringstream f_TreeInfoAllCh_name;
+	f_TreeInfoAllCh_name << path_name_tree << "TreeInfoAllCh.root";
+	cout << f_TreeInfoAllCh_name.str().c_str() << endl;
+	TFile* f_TreeInfoAllCh = TFile::Open(f_TreeInfoAllCh_name.str().c_str(), "RECREATE");
+	TreeInfoAllCh TreeInfoAllCh_obj;
+
+	for (int i = 0; i < n_events_one_ch; i++)
+	{
+		
+		vector<double> num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec;
+		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec.resize(n_ch_sipm);
+
+		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int = 0;
+		for (int j = 0; j < n_ch_sipm; j++)
+		{
+			if (GetChIdSiPM(j) != 44)
+			{
+				TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+					num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+
+				num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+			}			
+		}
+
+		//add special channels
+		//ch 44
+		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] = 
+			(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] + 
+			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
+			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
+
+		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int += 
+			num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
+
+		CoGBase cog_obj(num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec);
+		TreeInfoAllCh_obj.x_cog = cog_obj.GetX();
+		TreeInfoAllCh_obj.y_cog = cog_obj.GetY();
+
+		TreeInfoAllCh_obj.tree->Fill();
+	}	
+
+	f_TreeInfoAllCh->cd();
+	TreeInfoAllCh_obj.tree->Write();
+	f_TreeInfoAllCh->Close();
+	//----------------------------------------------------------
+
+
 	timer_total.Stop();
-	cout << "n_events = " << n_events << endl;
+	//cout << "n_events = " << n_events << endl;
 	cout << "total time = " << timer_total.RealTime() << " sec" << endl;
 	cout << "all is ok" << endl;
 

@@ -31,6 +31,12 @@
     <Filter Include="Header Files\CalcData\CalcBaseline">
       <UniqueIdentifier>{f7c55184-c38e-43e8-a8f6-b536b1a03990}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Trees">
+      <UniqueIdentifier>{02c0d7b9-6edf-42aa-9144-97633d691073}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Trees">
+      <UniqueIdentifier>{58c8bc1a-f7ca-48f2-a136-d4fd1a5c33ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -63,12 +69,6 @@
     <ClCompile Include="..\src\TypeConvertion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\TreeInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\TreeRaw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\IntermediateTreeInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -80,6 +80,12 @@
     </ClCompile>
     <ClCompile Include="Main_2.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TreeInfo.cpp">
+      <Filter>Source Files\Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TreeRaw.cpp">
+      <Filter>Source Files\Trees</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,17 +116,17 @@
     <ClInclude Include="CalcBaselineTrivial.h">
       <Filter>Header Files\CalcData\CalcBaseline</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TreeInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\TreeRaw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\IntermediateTreeInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\TypeConvertion.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TreeRaw.h">
+      <Filter>Header Files\Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TreeInfo.h">
+      <Filter>Header Files\Trees</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

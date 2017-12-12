@@ -65,7 +65,10 @@ int main(int argc, char *argv[])
 	tree_info.WAVE_ARRAY_COUNT = str_comm.WAVE_ARRAY_COUNT;
 	tree_info.n_blocks = ((stop_run_number - start_run_number + 1) / runs_per_tree_file);
 	tree_info.n_blocks += ((stop_run_number - start_run_number + 1) % runs_per_tree_file) == 0 ? 0 : 1;
-	
+	tree_info.n_events_per_file = 1000;/* <--- here*/
+	tree_info.run_from = start_run_number;
+	tree_info.run_to = stop_run_number;
+
 	tree_info.tree->Fill();
 	tree_info.tree->Write();
 
@@ -84,7 +87,7 @@ int main(int argc, char *argv[])
 		ch_list.resize(1);
 		ch_list[0].id = GetChId(i);
 
-		path_info PathInfo = {"", 0, /*1000*/ 1 };
+		path_info PathInfo = { "", 0, /*1000*/ tree_info.n_events_per_file };
 		PathInfo.path_name = PathInfo_path_name;
 
 		TFile* f_tree = NULL;

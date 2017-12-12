@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Trees">
+      <UniqueIdentifier>{979d2f5c-68a3-4377-afae-6802a2537e37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Trees">
+      <UniqueIdentifier>{4edc829f-82ce-4a70-ba27-9a12cd4de961}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -27,13 +33,19 @@
     <ClCompile Include="..\..\src\PeakFinderBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\IntermediateTreeInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ChCharacteristics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\IntermediateTreeInfo.cpp">
+      <Filter>Source Files\Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeInfoAllCh.cpp">
+      <Filter>Source Files\Trees</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CoGBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,7 +62,13 @@
     <ClInclude Include="..\..\include\ChCharacteristics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TreeInfoAllCh.h">
+      <Filter>Header Files\Trees</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\include\IntermediateTreeInfo.h">
+      <Filter>Header Files\Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\CoGBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

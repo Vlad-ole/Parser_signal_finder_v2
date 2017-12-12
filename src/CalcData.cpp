@@ -58,6 +58,6 @@ std::vector<double> CalcData::Get_data_der()
 
 std::vector<double> CalcData::Get_data_without_slope()
 {
-	CalcBaselineZeroComp calc_baseline_zero_comp(invert_data, /*0*/ 35000, /*HORIZ_INTERVAL * 9999*/ 140000 , -baseline, HORIZ_INTERVAL);
+	CalcBaselineZeroComp calc_baseline_zero_comp(invert_data, /*0*/ 35000, /*HORIZ_INTERVAL * 9999*/ 100000 , -baseline, HORIZ_INTERVAL);
 	return TypeConvertion::GetDifference(invert_data, calc_baseline_zero_comp.GetBaselineVec());
 }

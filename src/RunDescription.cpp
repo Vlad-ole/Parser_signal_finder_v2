@@ -77,6 +77,25 @@ int GetChIdSiPM(int array_position)
 	return array_position + 32;
 }
 
+int GetArrayPositionSiPM(int ch_id)
+{
+	int array_position;
+
+	//if 25 SiPM channels
+	if (ch_id >= 32 && ch_id <= 44)
+		array_position = ch_id - 32;
+	else if (ch_id >= 48 && ch_id <= 59)
+		array_position = ch_id - 3 - 32;
+	else
+	{
+		cout << "Unknown array_position in GetArrayPosition " << endl;
+		system("pause");
+		exit(1);
+	}
+
+	return array_position;
+}
+
 const bool is_sipm_ch = true;
 
 
@@ -89,7 +108,7 @@ const bool is_sipm_ch = true;
 //
 
 
-//Cd
+/*Cd*/
 //
 //std::string folder_name = "Cd_18kV_SiPM_46V_THGEM_2000V_coll_2mm\\";
 //const int start_run_number = 1;
@@ -134,6 +153,10 @@ const bool is_sipm_ch = true;
 //path_info PathInfo = { "", 0, /*1000*/ 10 };
 
 /*x-ray*/
+std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_20kV_PMT550_0dB_coll_2mm\\";
+std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_20kV_PMT550_0dB_coll_2mm\\";
+const int start_run_number = 323;
+const int stop_run_number = 334;
 //
 //std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_18kV_PMT550_0dB_coll_2mm\\";
 //std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_18kV_PMT550_0dB_coll_2mm\\";
@@ -167,10 +190,10 @@ const bool is_sipm_ch = true;
 
 /*Cd*/
 //
-std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\Cd_20kV_PMT750_12dB_coll_6mm_real\\";
-std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\Cd_20kV_PMT750_12dB_coll_6mm_real\\";
-const int start_run_number = 140;
-const int stop_run_number = 161;
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\Cd_20kV_PMT750_12dB_coll_6mm_real\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\Cd_20kV_PMT750_12dB_coll_6mm_real\\";
+//const int start_run_number = 140;
+//const int stop_run_number = 161;
 
 
 ////---------------------------------------------

@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ChCharacteristics.cpp" />
+    <ClCompile Include="..\..\src\CoGBase.cpp" />
     <ClCompile Include="..\..\src\IntermediateTreeInfo.cpp" />
     <ClCompile Include="..\..\src\PeakFinderBase.cpp" />
     <ClCompile Include="..\..\src\PeakFinderFind.cpp" />
@@ -103,13 +104,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="TreeInfoAllCh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\ChCharacteristics.h" />
+    <ClInclude Include="..\..\include\CoGBase.h" />
     <ClInclude Include="..\..\include\IntermediateTreeInfo.h" />
     <ClInclude Include="..\..\include\PeakFinderBase.h" />
     <ClInclude Include="..\..\include\PeakFinderFind.h" />
     <ClInclude Include="..\..\include\RunDescription.h" />
+    <ClInclude Include="TreeInfoAllCh.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

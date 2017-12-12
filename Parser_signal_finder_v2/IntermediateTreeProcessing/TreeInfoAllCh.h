@@ -1,5 +1,8 @@
 #pragma once
 
+//c++
+#include <iostream>
+#include <sstream>
 #include <vector>
 #include <iomanip>
 #include <fstream>
@@ -11,21 +14,16 @@
 #include "TFile.h"
 #include "TTree.h"
 
-class TreeInfo
+class TreeInfoAllCh
 {
 public:
-	TreeInfo();
-	~TreeInfo();
+	TreeInfoAllCh();
+	~TreeInfoAllCh();
 
 	TTree *tree;
 
-	double HORIZ_INTERVAL; //in ns
-	int WAVE_ARRAY_COUNT;
-	int runs_per_tree_file;
-	int n_ch;
-	int n_blocks;
-	int n_events_per_file;
-	int run_from;
-	int run_to;
+	double num_of_pe_in_event_all_ch__positive_part_s_int;
+	double x_cog;
+	double y_cog;
 };
 

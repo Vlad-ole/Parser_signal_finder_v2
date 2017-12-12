@@ -7,6 +7,7 @@
 int GetChId(int array_position);
 int GetArrayPosition(int ch_id);
 int GetChIdSiPM(int array_position);
+int GetArrayPositionSiPM(int ch_id);
 extern const bool is_sipm_ch;
 extern const int n_ch;
 
