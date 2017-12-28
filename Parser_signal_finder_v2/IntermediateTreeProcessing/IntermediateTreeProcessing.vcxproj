@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\CalcIntegral.cpp" />
     <ClCompile Include="..\..\src\ChCharacteristics.cpp" />
     <ClCompile Include="..\..\src\CoGBase.cpp" />
     <ClCompile Include="..\..\src\IntermediateTreeInfo.cpp" />
@@ -107,6 +108,7 @@
     <ClCompile Include="TreeInfoAllCh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\CalcIntegral.h" />
     <ClInclude Include="..\..\include\ChCharacteristics.h" />
     <ClInclude Include="..\..\include\CoGBase.h" />
     <ClInclude Include="..\..\include\IntermediateTreeInfo.h" />

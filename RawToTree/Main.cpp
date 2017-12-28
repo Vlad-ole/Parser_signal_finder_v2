@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 					TStopwatch timer_write_and_close;
 					timer_write_and_close.Start();
 
-					f_tree->cd();//importamt if you have several threads
+					f_tree->cd();//important if you have several threads
 					tree->Write();
 					f_tree->Close();
 

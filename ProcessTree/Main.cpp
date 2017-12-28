@@ -162,7 +162,7 @@ void Npe_sipm_one_ch()
 void Npe_sipm_matrix()
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 600);
+	TH1F *hist = new TH1F("hist", "hist", 100, 0, 600);
 	
 	ostringstream oss;
 	oss << path_name_tree << "hist.txt";
@@ -219,6 +219,86 @@ void Npe_sipm_matrix()
 	hist->Draw();
 }
 
+void Npe_sipm_matrix_cuts()
+{
+	//Npe_sipm_matrix
+	TH1F *hist = new TH1F("hist", "hist", 200, 0, 70);
+
+	ostringstream oss;
+	oss << path_name_tree << "hist.txt";
+	ofstream file_out(oss.str().c_str());
+
+	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
+	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
+
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+	chain_all_ch->SetBranchStatus("min_element", 1);
+	chain_all_ch->SetBranchStatus("max_element", 1);
+
+	const int n_events_in_one_ch = tree_itermediate->GetEntries() / N_ch;
+
+	/*too slow*/
+	//for (int i = 0; i < n_events_in_one_ch; i++)
+	//{
+	//	double n_pe_total = 0;
+	//	int index;
+	//	for (int j = 0; j < N_ch; j++)
+	//	{
+	//		index = i + j * n_events_in_one_ch;
+	//		chain_all_ch->GetEntry(index);
+	//		tree_itermediate->GetEntry(index);
+	//
+	//		//cout << "index = " << index << endl;
+	//
+	//		if (index % 1000 == 0)
+	//		{
+	//			//cout << "event = " << index << " (" << (100 * index / (double)(N_ch*n_events_in_one_ch)) << " %)" << endl;
+	//		}
+	//		
+	//		if (ch_id > 2)
+	//		{
+	//			n_pe_total += num_of_pe_in_event__positive_part_s_int;
+	//		}
+	//
+	//	}
+	//	cout << "INDEX = " << index << endl;
+	//	hist->Fill(n_pe_total);			
+	//}
+
+	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+	COUT(n_events_one_ch);
+	COUT(N_ch);
+
+	for (int i = 0; i < n_events_one_ch; i++)
+	{
+		TreeInfoAllCh_tree->GetEntry(i);
+		const int index = i;
+		//COUT(index);
+		tree_itermediate->GetEntry(index);
+		chain_all_ch->GetEntry(index);
+		
+		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
+		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
+
+		if (N_pe_3PMT > 18 && N_pe_3PMT < 81 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900)*/ /*true*/)
+		{
+			double val = N_pe_total_SiPM;
+			hist->Fill(val);
+			//file_out << val << endl;
+			file_out << x_cog << " " << y_cog << endl;
+			//file_out << N_pe_total_SiPM << endl;
+		}
+
+		
+	}
+
+
+	hist->Draw();
+}
+
 void XY_cog()
 {
 	ostringstream oss;
@@ -259,8 +339,8 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 					
-		REMEMBER_CUT(ch_id == 38 && run_id == 330 && event_id == 0)
-		if (cut_condition_bool)
+		REMEMBER_CUT(ch_id == 38 && run_id == 676 && event_id == 500)
+		if (cut_condition_bool && ch_id > 2)
 		{
 			cout << "in if (cut_condition_bool)" << endl;
 			
@@ -337,6 +417,22 @@ void Show_individual_signals()
 
 			break;
 		}
+		else if (cut_condition_bool && ch_id <= 2)
+		{
+			chain_all_ch->SetBranchStatus("data_raw", 1);
+			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			chain_all_ch->GetEntry(i);
+
+			TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_raw)[0]));
+			gr_3->SetMarkerStyle(20);
+			gr_3->SetMarkerSize(0.5);
+			//gr_3->SetMarkerColor(kRed);
+			gr_3->SetLineColor(kPink);
+			gr_3->SetTitle(cut_condition_srt.c_str());
+			gr_3->Draw("ALP");
+
+			break;
+		}
 	}
 }
 
@@ -349,7 +445,7 @@ void Calibration()
 
 	
 
-	TH1F *h = new TH1F("hist","", 200, 0, 10000);
+	TH1F *h = new TH1F("hist","", 1500, 0, 10000);
 	
 	const int n_events = chain_all_ch->GetEntries();
 	for (int i = 0; i < n_events; i++)
@@ -379,6 +475,164 @@ void Calibration()
 	//h->GetBinWidth(1);
 	h->SetTitle(cut_condition_srt.c_str());
 	h->Draw();
+
+}
+
+void TimeSpectrum()
+{
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+	
+	vector<double> time_position;
+	vector<double> n_pe_in_peak;
+
+	const int n_events = chain_all_ch->GetEntries();
+	for (int i = 0; i < n_events; i++)
+	{
+		chain_all_ch->GetEntry(i);
+		tree_itermediate->GetEntry(i);
+
+		if (i % 1000 == 0 || i == (n_events - 1))
+		{
+			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
+			cout << "event = " << i << " (" << val << " %)" << endl;
+		}
+
+		if (ch_id > 2)
+		{
+			for (int j = 0; j < (*signals_x_start).size(); j++)
+			{
+				time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
+				//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
+				n_pe_in_peak.push_back((*integral_one_peak)[j]);
+				//cout << time_position[j] << "; " << n_pe_in_peak[j] << endl;
+			}
+		}
+
+	}
+
+
+	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
+	gr->Draw("AP");
+
+}
+
+void Npe_PMT()
+{
+	
+	ostringstream oss;
+	oss << path_name_tree << "Npe_pmt.txt";
+	ofstream file_out(oss.str().c_str());
+
+	TH1F *hist = new TH1F("hist", "hist", 100, -50E3, 10000E3);
+	const int ch_to_process = 0;
+	//const int array_position = GetArrayPosition(ch_to_process);
+
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("min_element", 1);
+	chain_all_ch->SetBranchStatus("max_element", 1);
+
+	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
+	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
+	
+
+	const int n_events = tree_itermediate->GetEntries();
+	cout << " = " << n_events << endl;
+
+	for (int i = 0; i < n_events; i++)
+	{
+		double val = 0;
+
+		chain_all_ch->GetEntry(i);
+		tree_itermediate->GetEntry(i);
+
+		if (i % 1000 == 0)
+		{
+			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
+		}
+
+		if (ch_id == ch_to_process  && (max_element < 900) && (min_element > -900) )
+		{
+			const int calib_const = 1;
+			const double val = num_of_pe_in_event__positive_part_s_int * calib_const;
+			hist->Fill(val);
+			file_out << val << endl;
+		}		
+
+		if (ch_id > ch_to_process)
+		{
+			break;
+		}
+
+	}
+
+	hist->Draw();
+}
+
+void AvrSignal()
+{
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+	chain_all_ch->SetBranchStatus("baseline", 1);
+	chain_all_ch->SetBranchStatus("min_element", 1);
+	chain_all_ch->SetBranchStatus("max_element", 1);
+
+	const int ch_to_process = 0;
+	vector<double> data_raw_average;
+	data_raw_average.resize(WAVE_ARRAY_COUNT);
+
+	int cut_pass_counter = 0;
+	const int n_events = chain_all_ch->GetEntries();
+	for (int i = 0; i < n_events; i++)
+	{
+		chain_all_ch->GetEntry(i);
+
+		if (i % 1000 == 0 || i == (n_events - 1))
+		{
+			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
+			cout << "event = " << i << " (" << val << " %)" << endl;
+		}
+
+		if (ch_id == ch_to_process && (max_element < 900) && (min_element > -900))
+		{
+			cut_pass_counter++;
+			chain_all_ch->SetBranchStatus("data_raw", 1);
+			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			chain_all_ch->GetEntry(i);
+
+			for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
+			{
+				data_raw_average[j] += ((*data_raw)[j] - baseline);
+			}
+		}
+
+		if (ch_id > ch_to_process)
+		{
+			break;
+		}
+	}
+
+	for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
+	{
+		//	data_raw_average[j] = -((data_raw_average[j] / cut_pass_counter) - baseline_average);
+		data_raw_average[j] /= cut_pass_counter;
+	}
+	COUT(cut_pass_counter);
+
+	vector<double> time(WAVE_ARRAY_COUNT);
+	for (int i = 0; i < time.size(); i++)
+	{
+		time[i] = i * HORIZ_INTERVAL;
+	}
+
+	TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &data_raw_average[0]);
+	gr->SetTitle("Average signal");
+	gr->Draw("APL");
 
 }
 
@@ -487,11 +741,14 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
+	//Npe_PMT();
+	//Npe_sipm_matrix_cuts();
 	//Npe_sipm_matrix();
-	Show_individual_signals();
-	//Calibration();
+	//Show_individual_signals();
+	Calibration();
 	//XY_cog();
-
+	//TimeSpectrum();
+	//AvrSignal();
 	
 	
 	cout << "all is ok" << endl;

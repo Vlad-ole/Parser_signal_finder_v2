@@ -23,6 +23,7 @@
 #include "ChCharacteristics.h"
 #include "TreeInfoAllCh.h"
 #include "CoGBase.h"
+#include "CalcIntegral.h"
 
 using namespace std;
 
@@ -142,14 +143,16 @@ int main(int argc, char *argv[])
 
 			if (GetChId(i) < 3) //process only SiPM ch
 			{
-				tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int = 0;
-
 				tree_intermediate_obj.signals_x_start.resize(0);
 				tree_intermediate_obj.signals_x_stop.resize(0);
 				tree_intermediate_obj.local_baseline.resize(0);
-				tree_intermediate_obj.integral_one_peak.resize(0);
 				tree_intermediate_obj.one_peak_y_maximum.resize(0);
 				tree_intermediate_obj.num_of_pe_in_one_peak.resize(0);
+				tree_intermediate_obj.integral_one_peak.resize(0);
+
+				CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
+				tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int = 
+					calc_integral.GetIntegrtal();
 			}
 			else
 			{
@@ -199,9 +202,9 @@ int main(int argc, char *argv[])
 				}
 				//----------------------------------------
 
-
-				int point_from = 40000 / HORIZ_INTERVAL;
-				int point_to = 80000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				//for sipm
+				int point_from = 35000 / HORIZ_INTERVAL;
+				int point_to = 150000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
 
 

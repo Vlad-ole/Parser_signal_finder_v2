@@ -77,3 +77,14 @@ std::vector<double> TypeConvertion::GetDifference(std::vector<double> yv_minuend
 
 	return result;
 }
+
+std::vector<double> TypeConvertion::GetDifference(std::vector<double> yv_minuend, double y_subtrahend)
+{
+	std::vector<double> result(yv_minuend.size());
+	for (int i = 0; i < yv_minuend.size(); i++)
+	{
+		result[i] = yv_minuend[i] - y_subtrahend;
+	}
+
+	return result;
+}
