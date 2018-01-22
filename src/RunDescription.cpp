@@ -98,6 +98,28 @@ int GetArrayPositionSiPM(int ch_id)
 
 const bool is_sipm_ch = true;
 
+////---------------------------------------------
+//December 21 2017
+//
+//1000 events per file
+//
+
+/*Cd*/
+//
+std::string folder_name = "Cd_20kV_SiPM_48V_THGEM_0V_coll_6mm_without_int\\";
+const int start_run_number = 153;
+const int stop_run_number = 193;
+
+std::string common_path = "E:\\171221\\";
+std::string date = "171221";
+std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+
+////---------------------------------------------
+
+
+
+
 
 
 
@@ -159,16 +181,16 @@ const bool is_sipm_ch = true;
 
 /*x-ray*/
 //
-std::string folder_name = "X_ray_4kV_SiPM_46V_THGEM_0V_coll_6mm\\";
-const int start_run_number = 660;
-const int stop_run_number = 676;
+//std::string folder_name = "X_ray_4kV_SiPM_46V_THGEM_0V_coll_6mm\\";
+//const int start_run_number = 660;
+//const int stop_run_number = 676;
 
 
 
-std::string common_path = "E:\\171130\\";
-std::string date = "171130";
-std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
-std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+//std::string common_path = "E:\\171130\\";
+//std::string date = "171130";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
 ////---------------------------------------------
 

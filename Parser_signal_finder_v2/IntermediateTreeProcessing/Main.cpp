@@ -203,8 +203,8 @@ int main(int argc, char *argv[])
 				//----------------------------------------
 
 				//for sipm
-				int point_from = 35000 / HORIZ_INTERVAL;
-				int point_to = 150000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				int point_from = 25000 / HORIZ_INTERVAL;
+				int point_to = 55000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
 
 

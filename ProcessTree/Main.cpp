@@ -14,6 +14,7 @@
 #include "TTree.h"
 #include "TChain.h"
 #include "TH1F.h"
+#include "TH2F.h"
 #include "TSystem.h"
 #include "TGraph.h"
 #include "TCut.h"
@@ -114,6 +115,46 @@ double x_cog;
 double y_cog;
 //---------------------------------------------
 
+void Correlations()
+{
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+
+	ostringstream oss;
+	oss << path_name_tree << "Npe_ch_i.txt";
+	ofstream file_out_ch_i(oss.str().c_str());
+
+	oss.str("");
+	oss << path_name_tree << "Npe_ch_j.txt";
+	ofstream file_out_ch_j(oss.str().c_str());
+
+	const int n_events = chain_all_ch->GetEntries();
+	for (int i = 0; i < n_events; i++)
+	{
+		chain_all_ch->GetEntry(i);
+		tree_itermediate->GetEntry(i);
+
+		if (i % 1000 == 0 || i == (n_events - 1))
+		{
+			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
+			cout << "event = " << i << " (" << val << " %)" << endl;
+		}
+
+		if (ch_id == 38)
+		{
+			//cout << "ch 38; " << num_of_pe_in_event__positive_part_s_int << endl;
+			file_out_ch_i << num_of_pe_in_event__positive_part_s_int << "\n";
+		}
+		if (ch_id == 41)
+		{
+			//cout << "ch 41 " << num_of_pe_in_event__positive_part_s_int << endl;
+			file_out_ch_j << num_of_pe_in_event__positive_part_s_int << "\n";
+		}
+
+	}
+}
 
 void Npe_sipm_one_ch()
 {
@@ -222,7 +263,7 @@ void Npe_sipm_matrix()
 void Npe_sipm_matrix_cuts()
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 200, 0, 70);
+	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 500);
 
 	ostringstream oss;
 	oss << path_name_tree << "hist.txt";
@@ -283,7 +324,7 @@ void Npe_sipm_matrix_cuts()
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		if (N_pe_3PMT > 18 && N_pe_3PMT < 81 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900)*/ /*true*/)
+		if (N_pe_3PMT > 20 && N_pe_3PMT < 60 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900) */ /*true*/)
 		{
 			double val = N_pe_total_SiPM;
 			hist->Fill(val);
@@ -339,7 +380,7 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 					
-		REMEMBER_CUT(ch_id == 38 && run_id == 676 && event_id == 500)
+		REMEMBER_CUT(ch_id == 38 && run_id == 192 && event_id == 500)
 		if (cut_condition_bool && ch_id > 2)
 		{
 			cout << "in if (cut_condition_bool)" << endl;
@@ -475,7 +516,7 @@ void Calibration()
 	//h->GetBinWidth(1);
 	h->SetTitle(cut_condition_srt.c_str());
 	h->Draw();
-
+	
 }
 
 void TimeSpectrum()
@@ -504,18 +545,30 @@ void TimeSpectrum()
 		{
 			for (int j = 0; j < (*signals_x_start).size(); j++)
 			{
-				time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
-				//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
-				n_pe_in_peak.push_back((*integral_one_peak)[j]);
-				//cout << time_position[j] << "; " << n_pe_in_peak[j] << endl;
+				if ((*integral_one_peak)[j] > 2281)
+				{
+					time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
+					//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
+					n_pe_in_peak.push_back((*integral_one_peak)[j]);
+					//cout << time_position[j] << "; " << n_pe_in_peak[j] << endl;
+				}
+				
 			}
 		}
 
 	}
 
+	TH2F *hist2 = new TH2F("h2", "hist2", 160, 0, 160E3, 1000, 0, 50000);
+	for (int i = 0; i < time_position.size(); i++)
+	{
+		hist2->Fill(time_position[i], n_pe_in_peak[i]/*, n_pe_in_peak[i]*/);
+	}
+	//hist2->Draw();
+	TH1D * projh2X = hist2->ProjectionX();
+	projh2X->Draw();
 
-	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
-	gr->Draw("AP");
+	/*TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
+	gr->Draw("AP");*/
 
 }
 
@@ -634,10 +687,16 @@ void AvrSignal()
 	gr->SetTitle("Average signal");
 	gr->Draw("APL");
 
+	vector<double> baseline(WAVE_ARRAY_COUNT);
+	TGraph *gr_baseline = new TGraph(WAVE_ARRAY_COUNT, &time[0], &baseline[0]);
+	gr_baseline->Draw("same");
+
 }
 
 int main(int argc, char *argv[])
 {
+	cout << "\a \a \a \a";
+	
 	TStopwatch timer_total;
 	timer_total.Start();
 
@@ -741,11 +800,13 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
-	//Npe_PMT();
-	//Npe_sipm_matrix_cuts();
+	//Npe_PMT();	
 	//Npe_sipm_matrix();
-	//Show_individual_signals();
-	Calibration();
+
+	//Correlations();
+	//Npe_sipm_matrix_cuts();
+	Show_individual_signals();
+	//Calibration();
 	//XY_cog();
 	//TimeSpectrum();
 	//AvrSignal();
