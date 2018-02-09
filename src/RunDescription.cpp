@@ -98,6 +98,46 @@ int GetArrayPositionSiPM(int ch_id)
 
 const bool is_sipm_ch = true;
 
+
+////---------------------------------------------
+//January 25  2018
+//
+//1000 events per file
+//
+
+/*x-ray*/
+//
+//std::string folder_name = "x_ray_0kV_PMT650_6dB_without_coll\\";
+//const int start_run_number = 1;
+//const int stop_run_number = 5;
+
+
+/*Am*/
+//
+//std::string folder_name = "Am_20kV_PMT_750_12dB_6mm_coll\\";
+//const int start_run_number = 17;
+//const int stop_run_number = 63;
+//
+std::string folder_name = "Am_20kV_PMT_750_12dB_14mm_coll\\";
+const int start_run_number = 65;
+const int stop_run_number = 106;
+//
+//std::string folder_name = "Am_20kV_PMT_750_12dB_without_coll\\";
+//const int start_run_number = 108;
+//const int stop_run_number = 151;
+
+
+std::string common_path = "E:\\180125\\";
+std::string date = "180125";
+std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+
+////---------------------------------------------
+
+
+
+
+
 ////---------------------------------------------
 //December 21 2017
 //
@@ -106,14 +146,20 @@ const bool is_sipm_ch = true;
 
 /*Cd*/
 //
-std::string folder_name = "Cd_20kV_SiPM_48V_THGEM_0V_coll_6mm_without_int\\";
-const int start_run_number = 153;
-const int stop_run_number = 193;
+//std::string folder_name = "Cd_20kV_SiPM_48V_THGEM_0V_coll_6mm_without_int\\";
+//const int start_run_number = 153;
+//const int stop_run_number = 193;
 
-std::string common_path = "E:\\171221\\";
-std::string date = "171221";
-std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
-std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+//std::string folder_name = "Cd_20kV_SiPM_48V_THGEM_0V_coll_2mm_without_int\\";
+//const int start_run_number = 195;
+//const int stop_run_number = 226;
+
+
+
+//std::string common_path = "E:\\171221\\";
+//std::string date = "171221";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
 ////---------------------------------------------
 

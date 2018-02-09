@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 				tree_intermediate_obj.one_peak_y_maximum.clear();
 				tree_intermediate_obj.num_of_pe_in_one_peak.clear();
 
-				PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 0, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
+				PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
 				tree_intermediate_obj.local_baseline = peak_finder_find.GetLocalBaselineV();
 
 				//----------------------------------------

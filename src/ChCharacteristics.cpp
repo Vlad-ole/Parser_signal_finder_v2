@@ -5,6 +5,8 @@ using namespace std;
 double ChCharacteristics::step_x = 10; //mm
 double ChCharacteristics::step_y = 10; //mm
 
+const double th = 1000;
+
 std::vector<ChCharacteristicsStruct> ChCharacteristics::ch_characteristics_struct =
 //amp#1, V(SiPM) = 46V
 //{
@@ -93,33 +95,33 @@ std::vector<ChCharacteristicsStruct> ChCharacteristics::ch_characteristics_struc
 //	{ 59, true, true, 2267, 1800, 3000, step_x, -2 * step_y }
 //};
 //
-//amp#5, V(SiPM) = 48V (spe by mean, including afterpulses)
+//amp#5, V(SiPM) = 48V (spe by mean, including afterpulses); th=1800(low noise), th=1000(high noise)
 {
-	{ 32, true, true, 2647, 1800, 3000, -2 * step_x, 2 * step_y },
-	{ 33, true, true, 2281, 1800, 3000, -step_x, 2 * step_y },
-	{ 34, true, true, 2834, 1800, 3000, 2 * step_x, 2 * step_y },
-	{ 35, true, true, 2837, 1800, 3000, -2 * step_x, step_y },
-	{ 36, true, true, 2887, 1800, 3000, step_x, step_y },
-	{ 37, true, true, 2519, 1800, 3000, 2 * step_x, step_y },
-	{ 38, true, true, 3005, 1800, 3000, 0, 0 },
-	{ 39, true, true, 2779, 1800, 3000, step_x, 0 },
-	{ 40, true, true, 2718, 1800, 3000, -step_x, -step_y },
-	{ 41, true, true, 2806, 1800, 3000, 0, -step_y },
-	{ 42, true, true, 2784, 1800, 3000, -2 * step_x, -2 * step_y },
-	{ 43, true, true, 2813, 1800, 3000, -step_x, -2 * step_y },
-	{ 44, true, false, 0, 1800, 3000, 2 * step_x, -2 * step_y },
-	{ 48, true, true, 2736, 1800, 3000, 0, 2 * step_y },
-	{ 49, true, true, 2229, 1800, 3000, step_x, 2 * step_y },
-	{ 50, true, true, 2303, 1800, 3000, -step_x, step_y },
-	{ 51, true, true, 2694, 1800, 3000, 0, step_y },
-	{ 52, true, true, 2890, 1800, 3000, -2 * step_x, 0 },
-	{ 53, true, true, 3064, 1800, 3000, -step_x, 0 },
-	{ 54, true, true, 2621, 1800, 3000, 2 * step_x, 0 },
-	{ 55, true, true, 2654, 1800, 3000, -2 * step_x, -step_y },
-	{ 56, true, true, 2756, 1800, 3000, step_x, -step_y },
-	{ 57, true, true, 2781, 1800, 3000, 2 * step_x, -step_y },
-	{ 58, true, true, 2735, 1800, 3000, 0, -2 * step_y },
-	{ 59, true, true, 2804, 1800, 3000, step_x, -2 * step_y }
+	{ 32, true, true, 2647, th, 3000, -2 * step_x, 2 * step_y },
+	{ 33, true, true, 2281, th, 3000, -step_x, 2 * step_y },
+	{ 34, true, true, 2834, th, 3000, 2 * step_x, 2 * step_y },
+	{ 35, true, true, 2837, th, 3000, -2 * step_x, step_y },
+	{ 36, true, true, 2887, th, 3000, step_x, step_y },
+	{ 37, true, true, 2519, th, 3000, 2 * step_x, step_y },
+	{ 38, true, true, 3005, th, 3000, 0, 0 },
+	{ 39, true, true, 2779, th, 3000, step_x, 0 },
+	{ 40, true, true, 2718, th, 3000, -step_x, -step_y },
+	{ 41, true, true, 2806, th, 3000, 0, -step_y },
+	{ 42, true, true, 2784, th, 3000, -2 * step_x, -2 * step_y },
+	{ 43, true, true, 2813, th, 3000, -step_x, -2 * step_y },
+	{ 44, true, false, 0, th, 3000, 2 * step_x, -2 * step_y },
+	{ 48, true, true, 2736, th, 3000, 0, 2 * step_y },
+	{ 49, true, true, 2229, th, 3000, step_x, 2 * step_y },
+	{ 50, true, true, 2303, th, 3000, -step_x, step_y },
+	{ 51, true, true, 2694, th, 3000, 0, step_y },
+	{ 52, true, true, 2890, th, 3000, -2 * step_x, 0 },
+	{ 53, true, true, 3064, th, 3000, -step_x, 0 },
+	{ 54, true, true, 2621, th, 3000, 2 * step_x, 0 },
+	{ 55, true, true, 2654, th, 3000, -2 * step_x, -step_y },
+	{ 56, true, true, 2756, th, 3000, step_x, -step_y },
+	{ 57, true, true, 2781, th, 3000, 2 * step_x, -step_y },
+	{ 58, true, true, 2735, th, 3000, 0, -2 * step_y },
+	{ 59, true, true, 2804, th, 3000, step_x, -2 * step_y }
 };
 //
 //amp#5, V(SiPM) = 46V (spe by mean, including afterpulses)

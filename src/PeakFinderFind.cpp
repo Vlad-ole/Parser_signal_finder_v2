@@ -23,18 +23,95 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 	const int local_baseline_window_shift_p = local_baseline_window_shift / HORIZ_INTERVAL;
 	const int check_overlapping_window_p = check_overlapping_window / HORIZ_INTERVAL;
 
+	////th by der
+	//for (int i = 0; i < yv.size(); i++)
+	//{
+	//	//cout << yv_der[i] << endl;
+	//	
+	//	if ((yv_der[i] > th_der) && is_search)
+	//	{
+	//		is_search = false;
+	//		position_tmp = i;
+
+	//		local_baseline = 0;
+	//		const double j_from = (i - local_baseline_window_shift_p - local_baseline_window_p) > 0 ? i - local_baseline_window_shift_p - local_baseline_window_p : 0;
+ //
+	//		for (int j = j_from; j < i - local_baseline_window_shift_p; j++)
+	//		{
+	//			local_baseline += yv[j];
+	//		}
+
+	//		local_baseline /= (i - local_baseline_window_shift_p - j_from);
+	//		local_baseline_v.push_back(local_baseline);
+	//		//cout << "local_baseline = " << local_baseline << endl;
+
+	//		for (int j = i; j > j_from; j--)
+	//		{
+	//			if (yv[j] < local_baseline)
+	//			{
+	//				pair_var.first = j;
+	//				break;
+	//			}
+	//		}
+
+	//	}
+
+	//	if (!is_search && (i > position_tmp) && (yv_der[i] < th_der) )
+	//	{
+	//		if (yv[i] < local_baseline)
+	//		{
+	//			bool is_overlapped = false;
+	//			for (int j = i; j < i + check_overlapping_window_p; j++)
+	//			{
+	//				if ( abs(yv_der[j]) > th_der)
+	//				{
+	//					is_overlapped = true;
+	//					break;
+	//				}
+	//			}
+	//			
+	//			if (!is_overlapped)
+	//			{
+	//				is_search = true;
+	//				pair_var.second = i;
+	//				pair_v.push_back(pair_var);
+	//				//cout << pair_var.first << "\t" << pair_var.second << endl;
+	//			}
+	//		}			
+	//	}
+
+	//	//if (!is_search)
+	//	//{
+	//	//	if (yv[i] > pair_value.second)
+	//	//	{
+	//	//		pair_value.first = i;
+	//	//		pair_value.second = yv[i];
+	//	//	}
+	//	//}
+
+	//	//if ((yv[i] < th) && !is_search)
+	//	//{
+	//	//	is_search = true;
+	//	//	peak_position.push_back(pair_value.first);
+	//	//}
+	//}
+
+
+
+
+	//th by amp
 	for (int i = 0; i < yv.size(); i++)
 	{
 		//cout << yv_der[i] << endl;
-		
-		if ((yv_der[i] > th_der) && is_search)
+
+		if ((yv[i] > th) && is_search)
 		{
 			is_search = false;
 			position_tmp = i;
 
 			local_baseline = 0;
 			const double j_from = (i - local_baseline_window_shift_p - local_baseline_window_p) > 0 ? i - local_baseline_window_shift_p - local_baseline_window_p : 0;
- 
+
 			for (int j = j_from; j < i - local_baseline_window_shift_p; j++)
 			{
 				local_baseline += yv[j];
@@ -55,20 +132,20 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 
 		}
 
-		if (!is_search && (i > position_tmp) && (yv_der[i] < th_der) )
+		if (!is_search && (i > position_tmp) && (yv[i] < th))
 		{
 			if (yv[i] < local_baseline)
 			{
 				bool is_overlapped = false;
 				for (int j = i; j < i + check_overlapping_window_p; j++)
 				{
-					if ( abs(yv_der[j]) > th_der)
+					if (yv[j] > th)
 					{
 						is_overlapped = true;
 						break;
 					}
 				}
-				
+
 				if (!is_overlapped)
 				{
 					is_search = true;
@@ -76,7 +153,7 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 					pair_v.push_back(pair_var);
 					//cout << pair_var.first << "\t" << pair_var.second << endl;
 				}
-			}			
+			}
 		}
 
 		//if (!is_search)
@@ -94,6 +171,8 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 		//	peak_position.push_back(pair_value.first);
 		//}
 	}
+
+
 }
 
 

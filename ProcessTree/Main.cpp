@@ -38,16 +38,16 @@ void wait(int n_sec, bool is_infinite = false)
 	{
 		char c;
 		std::cout << "press esc to exit! " << std::endl;
-		
+
 		while (true)
 		{
 			c = _getch();
 			if (c == 27)
 				break;
 
-			gSystem->ProcessEvents();			
+			gSystem->ProcessEvents();
 			gSystem->Sleep(100);
-		}		
+		}
 	}
 	else
 	{
@@ -58,7 +58,7 @@ void wait(int n_sec, bool is_infinite = false)
 			gSystem->Sleep(100);
 		}
 	}
-	
+
 	std::cout << "exited. " << std::endl;
 }
 
@@ -181,7 +181,7 @@ void Npe_sipm_one_ch()
 	for (int i = 0; i < n_events; i++)
 	{
 		double val = 0;
-		
+
 		chain_all_ch->GetEntry(i);
 		if (i % 1000 == 0)
 		{
@@ -190,7 +190,7 @@ void Npe_sipm_one_ch()
 
 		if (ch_id == ch_to_process)
 		{
-			tree_itermediate->GetEntry(i);			
+			tree_itermediate->GetEntry(i);
 			hist->Fill(num_of_pe_in_event__positive_part_s_int);
 			//cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
 		}
@@ -204,7 +204,7 @@ void Npe_sipm_matrix()
 {
 	//Npe_sipm_matrix
 	TH1F *hist = new TH1F("hist", "hist", 100, 0, 600);
-	
+
 	ostringstream oss;
 	oss << path_name_tree << "hist.txt";
 	ofstream file_out(oss.str().c_str());
@@ -255,7 +255,7 @@ void Npe_sipm_matrix()
 		hist->Fill(num_of_pe_in_event_all_ch__positive_part_s_int);
 		file_out << num_of_pe_in_event_all_ch__positive_part_s_int << endl;
 	}
-		
+
 
 	hist->Draw();
 }
@@ -263,7 +263,7 @@ void Npe_sipm_matrix()
 void Npe_sipm_matrix_cuts()
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 500);
+	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 100);
 
 	ostringstream oss;
 	oss << path_name_tree << "hist.txt";
@@ -320,20 +320,21 @@ void Npe_sipm_matrix_cuts()
 		//COUT(index);
 		tree_itermediate->GetEntry(index);
 		chain_all_ch->GetEntry(index);
-		
+
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		if (N_pe_3PMT > 20 && N_pe_3PMT < 60 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900) */ /*true*/)
+		if (N_pe_3PMT > 90 && N_pe_3PMT < 350 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900)*/  /*true*/)
 		{
 			double val = N_pe_total_SiPM;
+			//double val = N_pe_3PMT;
 			hist->Fill(val);
 			//file_out << val << endl;
 			file_out << x_cog << " " << y_cog << endl;
 			//file_out << N_pe_total_SiPM << endl;
 		}
 
-		
+
 	}
 
 
@@ -379,102 +380,215 @@ void Show_individual_signals()
 			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
-					
-		REMEMBER_CUT(ch_id == 38 && run_id == 192 && event_id == 500)
-		if (cut_condition_bool && ch_id > 2)
-		{
-			cout << "in if (cut_condition_bool)" << endl;
-			
-			chain_all_ch->SetBranchStatus("data_der", 1);
-			chain_all_ch->SetBranchAddress("data_der", &data_der);
-			chain_all_ch->SetBranchStatus("data_raw", 1);
-			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
-			chain_all_ch->SetBranchStatus("data_without_slope", 1);
-			chain_all_ch->SetBranchAddress("data_without_slope", &data_without_slope);
 
-			chain_all_ch->GetEntry(i);
-
-			//TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &( TypeConvertion::GetVectorMultiplyToScalar( (*data_der), 1 )  [0]));
-			/*TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_der)[0]));
-			gr->SetTitle("data_der");
-			gr->SetMarkerStyle(20);
-			gr->SetMarkerSize(1);
-			gr->SetLineColor(kPink);
-			gr->Draw("ALP");*/
-
-			TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_without_slope)[0]));
-			gr_3->SetMarkerStyle(20);
-			gr_3->SetMarkerSize(0.5);
-			//gr_3->SetMarkerColor(kRed);
-			gr_3->SetLineColor(kPink);
-			gr_3->SetTitle(cut_condition_srt.c_str());
-			gr_3->Draw("ALP");
-
-			/*TGraph *gr_2 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &(TypeConvertion::GetVectorFromScalar(WAVE_ARRAY_COUNT, baseline))[0]);
-			gr_2->SetLineColor(kGreen);
-			gr_2->Draw("same L");*/
-
-
-			tree_itermediate->GetEntry(i);			
-			COUT((*signals_x_start).size());
-			COUT((*signals_x_stop).size());
-			COUT((*local_baseline).size());
-			COUT((*integral_one_peak).size());
-			COUT((*one_peak_y_maximum).size());
-			COUT((*num_of_pe_in_one_peak).size());			
-
-			vector<double> signals_x_values;
-			vector<double> signals_y_values;
-			vector<double> local_baseline_y_values;			
-			for (int j = 0; j < (*signals_x_start).size(); j++)
+		REMEMBER_CUT(ch_id == 38 && run_id == 106 && event_id == 500)
+			if (cut_condition_bool && ch_id > 2)
 			{
-				for (int k = (*signals_x_start)[j]; k < (*signals_x_stop)[j]; k++)
+				cout << "in if (cut_condition_bool)" << endl;
+
+				chain_all_ch->SetBranchStatus("data_der", 1);
+				chain_all_ch->SetBranchAddress("data_der", &data_der);
+				chain_all_ch->SetBranchStatus("data_raw", 1);
+				chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+				chain_all_ch->SetBranchStatus("data_without_slope", 1);
+				chain_all_ch->SetBranchAddress("data_without_slope", &data_without_slope);
+
+				chain_all_ch->GetEntry(i);
+
+				//TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &( TypeConvertion::GetVectorMultiplyToScalar( (*data_der), 1 )  [0]));
+				/*TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_der)[0]));
+				gr->SetTitle("data_der");
+				gr->SetMarkerStyle(20);
+				gr->SetMarkerSize(1);
+				gr->SetLineColor(kPink);
+				gr->Draw("ALP");*/
+
+				TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_without_slope)[0]));
+				gr_3->SetMarkerStyle(20);
+				gr_3->SetMarkerSize(0.5);
+				//gr_3->SetMarkerColor(kRed);
+				gr_3->SetLineColor(kPink);
+				gr_3->SetTitle(cut_condition_srt.c_str());
+				gr_3->Draw("ALP");
+
+				/*TGraph *gr_2 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &(TypeConvertion::GetVectorFromScalar(WAVE_ARRAY_COUNT, baseline))[0]);
+				gr_2->SetLineColor(kGreen);
+				gr_2->Draw("same L");*/
+
+
+				tree_itermediate->GetEntry(i);
+				COUT((*signals_x_start).size());
+				COUT((*signals_x_stop).size());
+				COUT((*local_baseline).size());
+				COUT((*integral_one_peak).size());
+				COUT((*one_peak_y_maximum).size());
+				COUT((*num_of_pe_in_one_peak).size());
+
+				vector<double> signals_x_values;
+				vector<double> signals_y_values;
+				vector<double> local_baseline_y_values;
+				for (int j = 0; j < (*signals_x_start).size(); j++)
 				{
-					signals_x_values.push_back(k * HORIZ_INTERVAL);					
-					signals_y_values.push_back((*data_without_slope)[k]);
-					local_baseline_y_values.push_back((*local_baseline)[j]);					
+					for (int k = (*signals_x_start)[j]; k < (*signals_x_stop)[j]; k++)
+					{
+						signals_x_values.push_back(k * HORIZ_INTERVAL);
+						signals_y_values.push_back((*data_without_slope)[k]);
+						local_baseline_y_values.push_back((*local_baseline)[j]);
+					}
+				}
+
+				if (signals_x_values.size() > 0)
+				{
+					TGraph *gr_peaks = new TGraph(signals_x_values.size(), &signals_x_values[0], &signals_y_values[0]);
+					gr_peaks->SetMarkerSize(1);
+					gr_peaks->SetMarkerStyle(29);
+					gr_peaks->SetMarkerColor(kBlue);
+					gr_peaks->GetXaxis()->SetLimits(0, 160E3);
+					gr_peaks->Draw("same P");
+
+					TGraph *gr_local_baseline = new TGraph(signals_x_values.size(), &signals_x_values[0], &local_baseline_y_values[0]);
+					gr_local_baseline->SetMarkerSize(1);
+					gr_local_baseline->SetMarkerStyle(20);
+					gr_local_baseline->SetMarkerColor(kGreen);
+					gr_local_baseline->Draw("same P");
+				}
+
+				COUT(signals_x_values.size());
+				COUT(signals_y_values.size());
+				COUT(local_baseline_y_values.size());
+
+				for (int k = 0; k < (*integral_one_peak).size(); k++)
+				{
+					cout << (*signals_x_start)[k] << "; " << (*signals_x_stop)[k] << "; " << (*integral_one_peak)[k] << endl;
+				}
+
+				break;
+			}
+			else if (cut_condition_bool && ch_id <= 2)
+			{
+				chain_all_ch->SetBranchStatus("data_raw", 1);
+				chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+				chain_all_ch->GetEntry(i);
+
+				TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_raw)[0]));
+				gr_3->SetMarkerStyle(20);
+				gr_3->SetMarkerSize(0.5);
+				//gr_3->SetMarkerColor(kRed);
+				gr_3->SetLineColor(kPink);
+				gr_3->SetTitle(cut_condition_srt.c_str());
+				gr_3->Draw("ALP");
+
+				break;
+			}
+	}
+}
+
+void Show_individual_signals_in_3d()
+{
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+
+	const int n_events = chain_all_ch->GetEntries();
+
+	vector<double> n_pe;
+	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
+	n_pe.resize(n_pe_size);
+
+	int your_run_id = 65;
+	int your_event_id = 2;
+	bool cut_is_ok = false;
+
+	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+	for (int i = 0; i < n_events_one_ch; i++)
+	{
+		chain_all_ch->GetEntry(i);		
+
+		if (i % 10000 == 0 || i == (n_events - 1))
+		{
+			double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
+			cout << "event = " << i << " (" << val << " %)" << endl;
+		}
+
+		if (run_id == your_run_id && event_id == your_event_id)
+		{
+			tree_itermediate->GetEntry(i);
+			double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
+			if (N_pe_3PMT > 90 && N_pe_3PMT < 350)
+			{
+				cut_is_ok = true;
+			}			
+			break;			
+		}
+		if (i == (n_events_one_ch - 1))
+		{
+			cout << "Error: there are no such combination of (run_id && event_id)" << endl;
+		}		
+	}
+
+
+	if (cut_is_ok)
+	{
+		cout << "run_id = " << your_run_id << " and event_id = " << your_event_id <<
+			" inside range: " << "N_pe_3PMT > 90 && N_pe_3PMT < 350" << endl;
+		
+		for (int m = 0; m < n_pe_size; m++)
+		{
+			cout << "ch = " << GetChIdSiPM(m) << endl;
+
+			for (int i = 0; i < n_events; i++)
+			{
+				chain_all_ch->GetEntry(i);
+
+				//if (i % 50000 == 0 || i == (n_events - 1))
+				//{
+				//	double val = n_events > 1 ? (100 * i / (double)(n_events - 1)) : 100;
+				//	cout << "event = " << i << " (" << val << " %)" << endl;
+				//	cout << "ch_id = " << ch_id << "; GetChIdSiPM(m) = " << GetChIdSiPM(m) << endl;
+				//}			
+
+				if (ch_id == GetChIdSiPM(m) && run_id == your_run_id && event_id == your_event_id)
+				{
+					tree_itermediate->GetEntry(i);
+					n_pe[m] = num_of_pe_in_event__positive_part_s_int;
+					break;
+				}
+
+				if (i == (n_events - 1))
+				{
+					cout << "There are no such combination of (ch_id,run_id,event_id)" << endl;
 				}
 			}
-
-			if (signals_x_values.size() > 0)
-			{
-				TGraph *gr_peaks = new TGraph(signals_x_values.size(), &signals_x_values[0], &signals_y_values[0]);
-				gr_peaks->SetMarkerSize(1);
-				gr_peaks->SetMarkerStyle(29);
-				gr_peaks->SetMarkerColor(kBlue);
-				gr_peaks->GetXaxis()->SetLimits(0, 160E3);
-				gr_peaks->Draw("same P");
-
-				TGraph *gr_local_baseline = new TGraph(signals_x_values.size(), &signals_x_values[0], &local_baseline_y_values[0]);
-				gr_local_baseline->SetMarkerSize(1);
-				gr_local_baseline->SetMarkerStyle(20);
-				gr_local_baseline->SetMarkerColor(kGreen);
-				gr_local_baseline->Draw("same P");
-			}
-
-			COUT(signals_x_values.size());
-			COUT(signals_y_values.size());
-			COUT(local_baseline_y_values.size());
-
-			break;
 		}
-		else if (cut_condition_bool && ch_id <= 2)
-		{
-			chain_all_ch->SetBranchStatus("data_raw", 1);
-			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
-			chain_all_ch->GetEntry(i);
 
-			TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_raw)[0]));
-			gr_3->SetMarkerStyle(20);
-			gr_3->SetMarkerSize(0.5);
-			//gr_3->SetMarkerColor(kRed);
-			gr_3->SetLineColor(kPink);
-			gr_3->SetTitle(cut_condition_srt.c_str());
-			gr_3->Draw("ALP");
+		string file_out_s = path_name_tree + "xy_cog_event.txt";
+		ofstream file_out(file_out_s.c_str());
 
-			break;
-		}
+		//-----------------------
+		n_pe[44 - 32] = (n_pe[59 - 32] + n_pe[57 - 32] + n_pe[56 - 32] / sqrt(2)) / 3.0;
+
+		//row1
+		file_out << n_pe[32 - 32] /*ch32*/ << " " << n_pe[33 - 32]  /*ch33*/ << " " << n_pe[48 - 32]  /*ch48*/ << " " << n_pe[49 - 32]  /*ch49*/ << " " << n_pe[34 - 32]  /*ch34*/ << endl;
+
+		//row2
+		file_out << n_pe[35 - 32] /*ch35*/ << " " << n_pe[50 - 32]  /*ch50*/ << " " << n_pe[51 - 32]  /*ch51*/ << " " << n_pe[36 - 32]  /*ch36*/ << " " << n_pe[37 - 32]  /*ch37*/ << endl;
+
+		//row3
+		file_out << n_pe[52 - 32] /*ch52*/ << " " << n_pe[53 - 32]  /*ch53*/ << " " << n_pe[38 - 32]  /*ch38*/ << " " << n_pe[39 - 32]  /*ch39*/ << " " << n_pe[54 - 32]  /*ch54*/ << endl;
+
+		//row4
+		file_out << n_pe[55 - 32] /*ch55*/ << " " << n_pe[40 - 32]  /*ch40*/ << " " << n_pe[41 - 32]  /*ch41*/ << " " << n_pe[56 - 32]  /*ch56*/ << " " << n_pe[57 - 32]  /*ch57*/ << endl;
+
+		//row5
+		file_out << n_pe[42 - 32] /*ch42*/ << " " << n_pe[43 - 32]  /*ch33*/ << " " << n_pe[58 - 32]  /*ch58*/ << " " << n_pe[59 - 32]  /*ch59*/ << " " << n_pe[44 - 32]  /*ch44*/ << endl;
+		//-----------------------
 	}
+	else
+	{
+		cout << "Sorry, but this event is out of cuts" << endl;
+	}
+
 }
 
 void Calibration()
@@ -484,10 +598,10 @@ void Calibration()
 	chain_all_ch->SetBranchStatus("run_id", 1);
 	chain_all_ch->SetBranchStatus("event_id", 1);
 
-	
 
-	TH1F *h = new TH1F("hist","", 1500, 0, 10000);
-	
+
+	TH1F *h = new TH1F("hist", "", 1500, 0, 50000);
+
 	const int n_events = chain_all_ch->GetEntries();
 	for (int i = 0; i < n_events; i++)
 	{
@@ -499,24 +613,25 @@ void Calibration()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 59)
-		if (cut_condition_bool)
-		{
-			tree_itermediate->GetEntry(i);
-
-			for (int j = 0; j < (*integral_one_peak).size(); j++)
+		REMEMBER_CUT(ch_id == 33)
+			if (cut_condition_bool)
 			{
-				h->Fill((*integral_one_peak)[j]);
+				tree_itermediate->GetEntry(i);
+
+				for (int j = 0; j < (*integral_one_peak).size(); j++)
+				{
+					//h->Fill((*integral_one_peak)[j]);
+					h->Fill((*integral_one_peak)[j]);
+				}
+
 			}
-			
-		}
 
 	}
 
 	//h->GetBinWidth(1);
 	h->SetTitle(cut_condition_srt.c_str());
 	h->Draw();
-	
+
 }
 
 void TimeSpectrum()
@@ -525,7 +640,7 @@ void TimeSpectrum()
 	chain_all_ch->SetBranchStatus("ch_id", 1);
 	chain_all_ch->SetBranchStatus("run_id", 1);
 	chain_all_ch->SetBranchStatus("event_id", 1);
-	
+
 	vector<double> time_position;
 	vector<double> n_pe_in_peak;
 
@@ -545,14 +660,14 @@ void TimeSpectrum()
 		{
 			for (int j = 0; j < (*signals_x_start).size(); j++)
 			{
-				if ((*integral_one_peak)[j] > 2281)
+				if ((*integral_one_peak)[j] > 1000)
 				{
 					time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
 					//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
 					n_pe_in_peak.push_back((*integral_one_peak)[j]);
 					//cout << time_position[j] << "; " << n_pe_in_peak[j] << endl;
 				}
-				
+
 			}
 		}
 
@@ -565,16 +680,16 @@ void TimeSpectrum()
 	}
 	//hist2->Draw();
 	TH1D * projh2X = hist2->ProjectionX();
-	projh2X->Draw();
+	//projh2X->Draw();
 
-	/*TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
-	gr->Draw("AP");*/
+	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
+	gr->Draw("AP");
 
 }
 
 void Npe_PMT()
 {
-	
+
 	ostringstream oss;
 	oss << path_name_tree << "Npe_pmt.txt";
 	ofstream file_out(oss.str().c_str());
@@ -590,7 +705,7 @@ void Npe_PMT()
 
 	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
 	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
-	
+
 
 	const int n_events = tree_itermediate->GetEntries();
 	cout << " = " << n_events << endl;
@@ -607,13 +722,13 @@ void Npe_PMT()
 			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
 		}
 
-		if (ch_id == ch_to_process  && (max_element < 900) && (min_element > -900) )
+		if (ch_id == ch_to_process && (max_element < 900) && (min_element > -900))
 		{
 			const int calib_const = 1;
 			const double val = num_of_pe_in_event__positive_part_s_int * calib_const;
 			hist->Fill(val);
 			file_out << val << endl;
-		}		
+		}
 
 		if (ch_id > ch_to_process)
 		{
@@ -696,7 +811,7 @@ void AvrSignal()
 int main(int argc, char *argv[])
 {
 	cout << "\a \a \a \a";
-	
+
 	TStopwatch timer_total;
 	timer_total.Start();
 
@@ -793,7 +908,7 @@ int main(int argc, char *argv[])
 
 	if (tree_itermediate->GetEntries() != chain_all_ch->GetEntries())
 	{
-		cout << "Sorry, but tree_itermediate->GetEntries() != chain_all_ch->GetEntries(): " << 
+		cout << "Sorry, but tree_itermediate->GetEntries() != chain_all_ch->GetEntries(): " <<
 			tree_itermediate->GetEntries() << " != " << chain_all_ch->GetEntries() << endl;
 
 		system("pause");
@@ -805,20 +920,21 @@ int main(int argc, char *argv[])
 
 	//Correlations();
 	//Npe_sipm_matrix_cuts();
-	Show_individual_signals();
+	//Show_individual_signals();
+	Show_individual_signals_in_3d();
 	//Calibration();
 	//XY_cog();
 	//TimeSpectrum();
 	//AvrSignal();
-	
-	
+
+
 	cout << "all is ok" << endl;
 	theApp.Run();
 
 	f_tree_itermediate->Close();
-	timer_total.Stop();	
+	timer_total.Stop();
 	//wait(0, true);
-	
+
 	//cout << "n_events = " << n_events << endl;
 	cout << "total time = " << timer_total.RealTime() << " sec" << endl;
 	//cout << "all is ok" << endl;
