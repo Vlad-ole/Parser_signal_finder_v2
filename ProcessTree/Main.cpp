@@ -159,9 +159,8 @@ void Correlations()
 void Npe_sipm_one_ch()
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 600);
-	const int ch_to_process = 38;
-	const int array_position = GetArrayPosition(ch_to_process);
+	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 30);
+	const int ch_to_process = 44;
 
 	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
 	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
@@ -178,24 +177,48 @@ void Npe_sipm_one_ch()
 	chain_all_ch->GetEntry(0);
 	cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
 
+	const int n_events_in_one_ch = tree_itermediate->GetEntries() / N_ch;
+	vector<bool> cut_is_good;
+	cut_is_good.resize(n_events_in_one_ch);
+	
+	//check 3PMT amplitude for cuts
+	for (int i = 0; i < n_events_in_one_ch; i++)
+	{
+		//chain_all_ch->GetEntry(i);
+		tree_itermediate->GetEntry(i);
+		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
+		//COUT(N_pe_3PMT);
+		if (N_pe_3PMT > 90 && N_pe_3PMT < 350)
+		{
+			cut_is_good[i] = true;
+		}
+	}
+
+	int internal_counter = 0;
 	for (int i = 0; i < n_events; i++)
 	{
-		double val = 0;
-
 		chain_all_ch->GetEntry(i);
-		if (i % 1000 == 0)
+		
+		if (i % 10000 == 0)
 		{
 			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
 		}
-
+		
 		if (ch_id == ch_to_process)
 		{
 			tree_itermediate->GetEntry(i);
-			hist->Fill(num_of_pe_in_event__positive_part_s_int);
+			if (cut_is_good[internal_counter])
+			{
+				hist->Fill(num_of_pe_in_event__positive_part_s_int);
+			}			
+			internal_counter++;
 			//cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
 		}
 
 	}
+
+	//COUT(internal_counter);
+	//COUT(n_events_in_one_ch);
 
 	hist->Draw();
 }
@@ -329,8 +352,8 @@ void Npe_sipm_matrix_cuts()
 			double val = N_pe_total_SiPM;
 			//double val = N_pe_3PMT;
 			hist->Fill(val);
-			//file_out << val << endl;
-			file_out << x_cog << " " << y_cog << endl;
+			file_out << val << endl;
+			//file_out << x_cog << " " << y_cog << endl;
 			//file_out << N_pe_total_SiPM << endl;
 		}
 
@@ -496,8 +519,8 @@ void Show_individual_signals_in_3d()
 	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
 	n_pe.resize(n_pe_size);
 
-	int your_run_id = 65;
-	int your_event_id = 2;
+	int your_run_id = 80;
+	int your_event_id = 999;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -920,8 +943,11 @@ int main(int argc, char *argv[])
 
 	//Correlations();
 	//Npe_sipm_matrix_cuts();
+
 	//Show_individual_signals();
-	Show_individual_signals_in_3d();
+	//Show_individual_signals_in_3d();
+	Npe_sipm_one_ch();
+
 	//Calibration();
 	//XY_cog();
 	//TimeSpectrum();
