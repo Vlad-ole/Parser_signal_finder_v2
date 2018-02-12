@@ -352,8 +352,8 @@ void Npe_sipm_matrix_cuts()
 			double val = N_pe_total_SiPM;
 			//double val = N_pe_3PMT;
 			hist->Fill(val);
-			file_out << val << endl;
-			//file_out << x_cog << " " << y_cog << endl;
+			//file_out << val << endl;
+			file_out << x_cog << " " << y_cog << endl;
 			//file_out << N_pe_total_SiPM << endl;
 		}
 
@@ -404,7 +404,7 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 38 && run_id == 106 && event_id == 500)
+		REMEMBER_CUT(ch_id == 44 && run_id == 65 && event_id == 0)
 			if (cut_condition_bool && ch_id > 2)
 			{
 				cout << "in if (cut_condition_bool)" << endl;
@@ -520,7 +520,7 @@ void Show_individual_signals_in_3d()
 	n_pe.resize(n_pe_size);
 
 	int your_run_id = 90;
-	int your_event_id = 0;
+	int your_event_id = 998;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -549,7 +549,7 @@ void Show_individual_signals_in_3d()
 			ofstream file_out(oss.str().c_str());
 			file_out << "x_cog = " << x_cog << endl <<
 						"y_cog = " << y_cog << endl;
-			system("pause");
+			//system("pause");
 
 			break;			
 		}
@@ -601,19 +601,19 @@ void Show_individual_signals_in_3d()
 		n_pe[44 - 32] = (n_pe[59 - 32] + n_pe[57 - 32] + n_pe[56 - 32] / sqrt(2)) / 3.0;
 
 		//row1
-		file_out << n_pe[32 - 32] /*ch32*/ << " " << n_pe[33 - 32]  /*ch33*/ << " " << n_pe[48 - 32]  /*ch48*/ << " " << n_pe[49 - 32]  /*ch49*/ << " " << n_pe[34 - 32]  /*ch34*/ << endl;
+		file_out << n_pe[32 - 32] /*ch32*/ << "\t" << n_pe[33 - 32]  /*ch33*/ << "\t" << n_pe[48 - 32]  /*ch48*/ << "\t" << n_pe[49 - 32]  /*ch49*/ << "\t" << n_pe[34 - 32]  /*ch34*/ << endl;
 
 		//row2
-		file_out << n_pe[35 - 32] /*ch35*/ << " " << n_pe[50 - 32]  /*ch50*/ << " " << n_pe[51 - 32]  /*ch51*/ << " " << n_pe[36 - 32]  /*ch36*/ << " " << n_pe[37 - 32]  /*ch37*/ << endl;
+		file_out << n_pe[35 - 32] /*ch35*/ << "\t" << n_pe[50 - 32]  /*ch50*/ << "\t" << n_pe[51 - 32]  /*ch51*/ << "\t" << n_pe[36 - 32]  /*ch36*/ << "\t" << n_pe[37 - 32]  /*ch37*/ << endl;
 
 		//row3
-		file_out << n_pe[52 - 32] /*ch52*/ << " " << n_pe[53 - 32]  /*ch53*/ << " " << n_pe[38 - 32]  /*ch38*/ << " " << n_pe[39 - 32]  /*ch39*/ << " " << n_pe[54 - 32]  /*ch54*/ << endl;
+		file_out << n_pe[52 - 32] /*ch52*/ << "\t" << n_pe[53 - 32]  /*ch53*/ << "\t" << n_pe[38 - 32]  /*ch38*/ << "\t" << n_pe[39 - 32]  /*ch39*/ << "\t" << n_pe[54 - 32]  /*ch54*/ << endl;
 
 		//row4
-		file_out << n_pe[55 - 32] /*ch55*/ << " " << n_pe[40 - 32]  /*ch40*/ << " " << n_pe[41 - 32]  /*ch41*/ << " " << n_pe[56 - 32]  /*ch56*/ << " " << n_pe[57 - 32]  /*ch57*/ << endl;
+		file_out << n_pe[55 - 32] /*ch55*/ << "\t" << n_pe[40 - 32]  /*ch40*/ << "\t" << n_pe[41 - 32]  /*ch41*/ << "\t" << n_pe[56 - 32]  /*ch56*/ << "\t" << n_pe[57 - 32]  /*ch57*/ << endl;
 
 		//row5
-		file_out << n_pe[42 - 32] /*ch42*/ << " " << n_pe[43 - 32]  /*ch33*/ << " " << n_pe[58 - 32]  /*ch58*/ << " " << n_pe[59 - 32]  /*ch59*/ << " " << n_pe[44 - 32]  /*ch44*/ << endl;
+		file_out << n_pe[42 - 32] /*ch42*/ << "\t" << n_pe[43 - 32]  /*ch33*/ << "\t" << n_pe[58 - 32]  /*ch58*/ << "\t" << n_pe[59 - 32]  /*ch59*/ << "\t" << n_pe[44 - 32]  /*ch44*/ << endl;
 		//-----------------------
 	}
 	else
@@ -953,8 +953,8 @@ int main(int argc, char *argv[])
 	//Correlations();
 	//Npe_sipm_matrix_cuts();
 
-	//Show_individual_signals();
-	Show_individual_signals_in_3d();
+	Show_individual_signals();
+	//Show_individual_signals_in_3d();
 	//Npe_sipm_one_ch();
 
 	//Calibration();
