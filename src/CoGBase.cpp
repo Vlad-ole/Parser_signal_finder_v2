@@ -18,38 +18,38 @@ CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec)
 	
 	for (int i = 0; i < num_of_pe_in_event_vec.size(); i++)
 	{
-		int ch = GetChIdSiPM(i);
+		int ch = GetChIdSiPMCorrect(i);
 
-		//central row & col
-		bool is_central_row = ch == 52 || ch == 53 || ch == 38 || ch == 39 || ch == 54;
-		bool is_cental_col = ch == 48 || ch == 51 || ch == 38 || ch == 41 || ch == 58;
+		////central row & col
+		//bool is_central_row = ch == 52 || ch == 53 || ch == 38 || ch == 39 || ch == 54;
+		//bool is_cental_col = ch == 48 || ch == 51 || ch == 38 || ch == 41 || ch == 58;
 
-		//3x5 & 5x3
-		bool is_ch_for_x_5x3 =
-			ch == 32 || ch == 33 || ch == 48 || ch == 49 || ch == 34 ||
-			ch == 35 || ch == 50 || ch == 51 || ch == 36 || ch == 37 ||
-			ch == 52 || ch == 53 || ch == 38 || ch == 39 || ch == 54;
+		////3x5 & 5x3
+		//bool is_ch_for_x_5x3 =
+		//	ch == 32 || ch == 33 || ch == 48 || ch == 49 || ch == 34 ||
+		//	ch == 35 || ch == 50 || ch == 51 || ch == 36 || ch == 37 ||
+		//	ch == 52 || ch == 53 || ch == 38 || ch == 39 || ch == 54;
 
-		bool is_ch_for_y_3x5 =
-			ch == 32 || ch == 33 || ch == 48 ||
-			ch == 35 || ch == 50 ||	ch == 51 || 
-			ch == 52 || ch == 53 || ch == 38 || 
-			ch == 55 || ch == 40 || ch == 41 || 
-			ch == 42 || ch == 43 || ch == 58;
+		//bool is_ch_for_y_3x5 =
+		//	ch == 32 || ch == 33 || ch == 48 ||
+		//	ch == 35 || ch == 50 ||	ch == 51 || 
+		//	ch == 52 || ch == 53 || ch == 38 || 
+		//	ch == 55 || ch == 40 || ch == 41 || 
+		//	ch == 42 || ch == 43 || ch == 58;
 
-		//4x5 & 5x4
-		bool is_ch_for_x_5x4 =
-			ch == 32 || ch == 33 || ch == 48 || ch == 49 || ch == 34 ||
-			ch == 35 || ch == 50 || ch == 51 || ch == 36 || ch == 37 ||
-			ch == 52 || ch == 53 || ch == 38 || ch == 39 || ch == 54 ||
-			ch == 55 || ch == 40 || ch == 41 || ch == 56 || ch == 57;
+		////4x5 & 5x4
+		//bool is_ch_for_x_5x4 =
+		//	ch == 32 || ch == 33 || ch == 48 || ch == 49 || ch == 34 ||
+		//	ch == 35 || ch == 50 || ch == 51 || ch == 36 || ch == 37 ||
+		//	ch == 52 || ch == 53 || ch == 38 || ch == 39 || ch == 54 ||
+		//	ch == 55 || ch == 40 || ch == 41 || ch == 56 || ch == 57;
 
-		bool is_ch_for_y_4x5 =
-			ch == 32 || ch == 33 || ch == 48 || ch == 49 || 
-			ch == 35 || ch == 50 || ch == 51 || ch == 36 || 
-			ch == 52 || ch == 53 || ch == 38 || ch == 39 ||
-			ch == 55 || ch == 40 || ch == 41 || ch == 56 ||
-			ch == 42 || ch == 43 || ch == 58 || ch == 59;
+		//bool is_ch_for_y_4x5 =
+		//	ch == 32 || ch == 33 || ch == 48 || ch == 49 || 
+		//	ch == 35 || ch == 50 || ch == 51 || ch == 36 || 
+		//	ch == 52 || ch == 53 || ch == 38 || ch == 39 ||
+		//	ch == 55 || ch == 40 || ch == 41 || ch == 56 ||
+		//	ch == 42 || ch == 43 || ch == 58 || ch == 59;
 
 		////var 1
 		//bool ch_for_x = is_central_row;

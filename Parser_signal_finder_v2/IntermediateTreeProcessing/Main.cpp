@@ -82,7 +82,8 @@ int main(int argc, char *argv[])
 	const int n_ch_sipm = 25;
 
 	//Yes, it will take too many RAM. But how to write better?
-	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+	//const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+	const int n_events_one_ch = 1;	//test 
 	vector< vector<double> > num_of_pe_in_event_all_ch__positive_part_s_int;
 	num_of_pe_in_event_all_ch__positive_part_s_int.resize(n_ch_sipm);
 	for (int i = 0; i < n_ch_sipm; i++)
@@ -105,6 +106,10 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < N_ch; i++)
 	{
 
+		//test
+		n_events = 1;
+		n_blocks = 1;
+
 		TChain chain("tree_raw");
 		for (int counter_f_tree = 0; counter_f_tree < n_blocks; counter_f_tree++)
 		{
@@ -112,7 +117,7 @@ int main(int argc, char *argv[])
 			f_tree_name << path_name_tree << "ch_" << GetChId(i) << "__block_" << setfill('0') << setw(7) << counter_f_tree << ".root";
 			chain.Add(f_tree_name.str().c_str());
 		}
-		n_events = chain.GetEntries();
+		//n_events = chain.GetEntries();
 		//n_events = 1;
 		cout << "i = " << i << "; ch_id = " << GetChId(i) << "; GetEntries = " << n_events << endl;
 
@@ -294,6 +299,9 @@ int main(int argc, char *argv[])
 		CoGBase cog_obj(num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec);
 		TreeInfoAllCh_obj.x_cog = cog_obj.GetX();
 		TreeInfoAllCh_obj.y_cog = cog_obj.GetY();
+
+		/*cout << "x_cog = " << TreeInfoAllCh_obj.x_cog << endl;
+		cout << "y_cog = " << TreeInfoAllCh_obj.y_cog << endl;*/
 
 		TreeInfoAllCh_obj.tree->Fill();
 	}	

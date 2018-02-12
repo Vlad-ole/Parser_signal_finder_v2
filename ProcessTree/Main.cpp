@@ -519,8 +519,8 @@ void Show_individual_signals_in_3d()
 	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
 	n_pe.resize(n_pe_size);
 
-	int your_run_id = 80;
-	int your_event_id = 999;
+	int your_run_id = 90;
+	int your_event_id = 0;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -541,7 +541,16 @@ void Show_individual_signals_in_3d()
 			if (N_pe_3PMT > 90 && N_pe_3PMT < 350)
 			{
 				cut_is_ok = true;
-			}			
+			}	
+
+			TreeInfoAllCh_tree->GetEntry(i);
+			ostringstream oss;
+			oss << path_name_tree << "xy_one_event.txt";
+			ofstream file_out(oss.str().c_str());
+			file_out << "x_cog = " << x_cog << endl <<
+						"y_cog = " << y_cog << endl;
+			system("pause");
+
 			break;			
 		}
 		if (i == (n_events_one_ch - 1))
@@ -945,8 +954,8 @@ int main(int argc, char *argv[])
 	//Npe_sipm_matrix_cuts();
 
 	//Show_individual_signals();
-	//Show_individual_signals_in_3d();
-	Npe_sipm_one_ch();
+	Show_individual_signals_in_3d();
+	//Npe_sipm_one_ch();
 
 	//Calibration();
 	//XY_cog();

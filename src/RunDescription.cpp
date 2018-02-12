@@ -77,6 +77,21 @@ int GetChIdSiPM(int array_position)
 	return array_position + 32;
 }
 
+int GetChIdSiPMCorrect(int array_position)
+{
+	int ch_id;
+	if (array_position <= 12)
+	{
+		ch_id = array_position + 32;
+	}
+	else if (array_position >= 13 && array_position < 25)
+	{
+		ch_id = array_position + 32 + 3;
+	}
+
+	return ch_id;
+}
+
 int GetArrayPositionSiPM(int ch_id)
 {
 	int array_position;
