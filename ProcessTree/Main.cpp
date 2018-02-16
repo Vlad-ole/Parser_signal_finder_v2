@@ -156,11 +156,14 @@ void Correlations()
 	}
 }
 
-void Npe_sipm_one_ch()
+
+
+double Npe_sipm_one_ch(int ch_to_process, bool is_draw_hist)
 {
 	//Npe_sipm_matrix
 	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 30);
-	const int ch_to_process = 44;
+	//const int ch_to_process = 59;
+	COUT(ch_to_process);
 
 	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
 	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
@@ -171,11 +174,19 @@ void Npe_sipm_one_ch()
 	chain_all_ch->SetBranchStatus("event_id", 1);
 
 	const int n_events = tree_itermediate->GetEntries();
-	cout << "tree_itermediate->GetEntries() = " << n_events << endl;
-	cout << "chain_all_ch->GetEntries() = " << chain_all_ch->GetEntries() << endl;
+	if (is_draw_hist)
+	{
+		cout << "tree_itermediate->GetEntries() = " << n_events << endl;
+		cout << "chain_all_ch->GetEntries() = " << chain_all_ch->GetEntries() << endl;
+	}
+	
 
 	chain_all_ch->GetEntry(0);
-	cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
+	if (is_draw_hist)
+	{
+		cout << ch_id << "; " << run_id << "; " << event_id << "; " << num_of_pe_in_event__positive_part_s_int << endl;
+	}
+	
 
 	const int n_events_in_one_ch = tree_itermediate->GetEntries() / N_ch;
 	vector<bool> cut_is_good;
@@ -188,7 +199,7 @@ void Npe_sipm_one_ch()
 		tree_itermediate->GetEntry(i);
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		//COUT(N_pe_3PMT);
-		if (N_pe_3PMT > 90 && N_pe_3PMT < 350)
+		if (N_pe_3PMT > 145 && N_pe_3PMT < 285)//------------------ IMPORTANT ----------------------------------//
 		{
 			cut_is_good[i] = true;
 		}
@@ -199,9 +210,12 @@ void Npe_sipm_one_ch()
 	{
 		chain_all_ch->GetEntry(i);
 		
-		if (i % 10000 == 0)
+		if (is_draw_hist)
 		{
-			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
+			if (i % 10000 == 0)
+			{
+				cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
+			}
 		}
 		
 		if (ch_id == ch_to_process)
@@ -220,7 +234,58 @@ void Npe_sipm_one_ch()
 	//COUT(internal_counter);
 	//COUT(n_events_in_one_ch);
 
-	hist->Draw();
+	double result = hist->GetMean();
+
+	if (is_draw_hist)
+	{
+		hist->Draw();
+	}
+	else
+	{
+		delete hist;
+	}
+	
+
+
+	return result;
+}
+
+
+void Npe_sipm_one_ch_loop()
+{
+	//for (int i = 0; i < /*28*/ 2; i++)
+	//{
+	//	cout << i << "\t" << GetChIdSiPMCorrect(i) << "\t" << (Npe_sipm_one_ch(GetChIdSiPMCorrect(i), true)) << endl;
+	//}
+	
+	string file_out_s = path_name_tree + "xy_cog_avr.txt";
+	ofstream file_out(file_out_s.c_str());
+
+	bool is_drar_hist = false;
+
+	
+	//-----------------------
+	double N_pe_56 = Npe_sipm_one_ch(56, is_drar_hist);
+	double N_pe_57 = Npe_sipm_one_ch(57, is_drar_hist);
+	double N_pe_59 = Npe_sipm_one_ch(59, is_drar_hist);
+	double N_pe_44 = (N_pe_59 + N_pe_57 + N_pe_56 / sqrt(2)) / 3.0;
+	//n_pe[44 - 32] = (n_pe[59 - 32] + n_pe[57 - 32] + n_pe[56 - 32] / sqrt(2)) / 3.0;
+
+	//row1
+	file_out << Npe_sipm_one_ch(32, is_drar_hist) /*ch32*/ << "\t" << Npe_sipm_one_ch(33, is_drar_hist)  /*ch33*/ << "\t" << Npe_sipm_one_ch(48, is_drar_hist)  /*ch48*/ << "\t" << Npe_sipm_one_ch(49, is_drar_hist)  /*ch49*/ << "\t" << Npe_sipm_one_ch(34, is_drar_hist)  /*ch34*/ << endl;
+
+	//row2
+	file_out << Npe_sipm_one_ch(35, is_drar_hist) /*ch35*/ << "\t" << Npe_sipm_one_ch(50, is_drar_hist)  /*ch50*/ << "\t" << Npe_sipm_one_ch(51, is_drar_hist)  /*ch51*/ << "\t" << Npe_sipm_one_ch(36, is_drar_hist)  /*ch36*/ << "\t" << Npe_sipm_one_ch(37, is_drar_hist)  /*ch37*/ << endl;
+
+	//row3
+	file_out << Npe_sipm_one_ch(52, is_drar_hist) /*ch52*/ << "\t" << Npe_sipm_one_ch(53, is_drar_hist)  /*ch53*/ << "\t" << Npe_sipm_one_ch(38, is_drar_hist)  /*ch38*/ << "\t" << Npe_sipm_one_ch(39, is_drar_hist)  /*ch39*/ << "\t" << Npe_sipm_one_ch(54, is_drar_hist)  /*ch54*/ << endl;
+
+	//row4
+	file_out << Npe_sipm_one_ch(55, is_drar_hist) /*ch55*/ << "\t" << Npe_sipm_one_ch(40, is_drar_hist)  /*ch40*/ << "\t" << Npe_sipm_one_ch(41, is_drar_hist)  /*ch41*/ << "\t" << N_pe_56  /*ch56*/ << "\t" << N_pe_57  /*ch57*/ << endl;
+
+	//row5
+	file_out << Npe_sipm_one_ch(42, is_drar_hist) /*ch42*/ << "\t" << Npe_sipm_one_ch(43, is_drar_hist)  /*ch43*/ << "\t" << Npe_sipm_one_ch(58, is_drar_hist)  /*ch58*/ << "\t" << N_pe_59  /*ch59*/ << "\t" << N_pe_44  /*ch44*/ << endl;
+	//-----------------------
 }
 
 void Npe_sipm_matrix()
@@ -347,7 +412,7 @@ void Npe_sipm_matrix_cuts()
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		if (N_pe_3PMT > 90 && N_pe_3PMT < 350 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900)*/  /*true*/)
+		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900)*/  /*true*/)
 		{
 			double val = N_pe_total_SiPM;
 			//double val = N_pe_3PMT;
@@ -362,6 +427,97 @@ void Npe_sipm_matrix_cuts()
 
 
 	hist->Draw();
+}
+
+void Experimental_distribution_xy()
+{
+	//Npe_sipm_matrix
+
+	ostringstream oss;
+	oss << path_name_tree << "hist.txt";
+	ofstream file_out(oss.str().c_str());
+
+	tree_itermediate->SetBranchStatus("*", 0); //disable all branches
+	tree_itermediate->SetBranchStatus("num_of_pe_in_event__positive_part_s_int", 1);
+
+	chain_all_ch->SetBranchStatus("*", 0); //disable all branches
+	chain_all_ch->SetBranchStatus("ch_id", 1);
+	chain_all_ch->SetBranchStatus("run_id", 1);
+	chain_all_ch->SetBranchStatus("event_id", 1);
+	chain_all_ch->SetBranchStatus("min_element", 1);
+	chain_all_ch->SetBranchStatus("max_element", 1);
+
+	const int n_events = tree_itermediate->GetEntries();
+	const int n_events_in_one_ch = tree_itermediate->GetEntries() / N_ch;
+
+	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+	COUT(n_events_one_ch);
+	COUT(N_ch);
+
+	vector<bool> is_good;
+	is_good.resize(n_events_one_ch);
+
+	for (int i = 0; i < n_events_one_ch; i++)
+	{
+		TreeInfoAllCh_tree->GetEntry(i);
+		const int index = i;
+		//COUT(index);
+		tree_itermediate->GetEntry(index);
+		chain_all_ch->GetEntry(index);
+
+		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
+		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
+
+		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1 && x_cog == 0 && y_cog == 0)
+		{
+			is_good[i] = true;
+		}
+	}
+
+	vector<double> n_pe;
+	n_pe.resize(25);
+	int internal_counter = 0;
+	for (int i = 0; i < n_events; i++)
+	{
+		chain_all_ch->GetEntry(i);
+
+		if (true)
+		{
+			if (i % 10000 == 0)
+			{
+				cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
+			}
+		}
+
+		int event_index = i % n_events_one_ch;
+		if (ch_id >= 32 && is_good[event_index])
+		{
+			tree_itermediate->GetEntry(i);
+			TreeInfoAllCh_tree->GetEntry(event_index);
+			n_pe[GetArrayPositionSiPM(ch_id)] += (num_of_pe_in_event__positive_part_s_int / num_of_pe_in_event_all_ch__positive_part_s_int);
+		}
+	}
+
+	//-----------------------
+	n_pe[GetArrayPositionSiPM(44)] = (n_pe[GetArrayPositionSiPM(59)] + n_pe[GetArrayPositionSiPM(57)] + n_pe[GetArrayPositionSiPM(56)] / sqrt(2)) / 3.0;
+
+	//row1
+	file_out << n_pe[GetArrayPositionSiPM(32)] /*ch32*/ << "\t" << n_pe[GetArrayPositionSiPM(33)]  /*ch33*/ << "\t" << n_pe[GetArrayPositionSiPM(48)]  /*ch48*/ << "\t" << n_pe[GetArrayPositionSiPM(49)]  /*ch49*/ << "\t" << n_pe[GetArrayPositionSiPM(34)]  /*ch34*/ << endl;
+
+	//row2
+	file_out << n_pe[GetArrayPositionSiPM(35)] /*ch35*/ << "\t" << n_pe[GetArrayPositionSiPM(50)]  /*ch50*/ << "\t" << n_pe[GetArrayPositionSiPM(51)]  /*ch51*/ << "\t" << n_pe[GetArrayPositionSiPM(36)]  /*ch36*/ << "\t" << n_pe[GetArrayPositionSiPM(37)]  /*ch37*/ << endl;
+
+	//row3
+	file_out << n_pe[GetArrayPositionSiPM(52)] /*ch52*/ << "\t" << n_pe[GetArrayPositionSiPM(53)]  /*ch53*/ << "\t" << n_pe[GetArrayPositionSiPM(38)]  /*ch38*/ << "\t" << n_pe[GetArrayPositionSiPM(39)]  /*ch39*/ << "\t" << n_pe[GetArrayPositionSiPM(54)]  /*ch54*/ << endl;
+
+	//row4
+	file_out << n_pe[GetArrayPositionSiPM(55)] /*ch55*/ << "\t" << n_pe[GetArrayPositionSiPM(40)]  /*ch40*/ << "\t" << n_pe[GetArrayPositionSiPM(41)]  /*ch41*/ << "\t" << n_pe[GetArrayPositionSiPM(56)]  /*ch56*/ << "\t" << n_pe[GetArrayPositionSiPM(57)]  /*ch57*/ << endl;
+
+	//row5
+	file_out << n_pe[GetArrayPositionSiPM(42)] /*ch42*/ << "\t" << n_pe[GetArrayPositionSiPM(43)]  /*ch43*/ << "\t" << n_pe[GetArrayPositionSiPM(58)]  /*ch58*/ << "\t" << n_pe[GetArrayPositionSiPM(59)]  /*ch59*/ << "\t" << n_pe[GetArrayPositionSiPM(44)]  /*ch44*/ << endl;
+	//-----------------------
+
+
 }
 
 void XY_cog()
@@ -404,7 +560,7 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 44 && run_id == 65 && event_id == 0)
+		REMEMBER_CUT(ch_id == 38 && run_id == 63 && event_id == 500)
 			if (cut_condition_bool && ch_id > 2)
 			{
 				cout << "in if (cut_condition_bool)" << endl;
@@ -519,8 +675,8 @@ void Show_individual_signals_in_3d()
 	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
 	n_pe.resize(n_pe_size);
 
-	int your_run_id = 90;
-	int your_event_id = 998;
+	int your_run_id = 30;
+	int your_event_id = 500;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -538,7 +694,7 @@ void Show_individual_signals_in_3d()
 		{
 			tree_itermediate->GetEntry(i);
 			double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
-			if (N_pe_3PMT > 90 && N_pe_3PMT < 350)
+			if (N_pe_3PMT > 145 && N_pe_3PMT < 285) //-------------------* important! * ---------------------------------------------//
 			{
 				cut_is_ok = true;
 			}	
@@ -563,7 +719,7 @@ void Show_individual_signals_in_3d()
 	if (cut_is_ok)
 	{
 		cout << "run_id = " << your_run_id << " and event_id = " << your_event_id <<
-			" inside range: " << "N_pe_3PMT > 90 && N_pe_3PMT < 350" << endl;
+			" inside range" << endl;
 		
 		for (int m = 0; m < n_pe_size; m++)
 		{
@@ -613,7 +769,7 @@ void Show_individual_signals_in_3d()
 		file_out << n_pe[55 - 32] /*ch55*/ << "\t" << n_pe[40 - 32]  /*ch40*/ << "\t" << n_pe[41 - 32]  /*ch41*/ << "\t" << n_pe[56 - 32]  /*ch56*/ << "\t" << n_pe[57 - 32]  /*ch57*/ << endl;
 
 		//row5
-		file_out << n_pe[42 - 32] /*ch42*/ << "\t" << n_pe[43 - 32]  /*ch33*/ << "\t" << n_pe[58 - 32]  /*ch58*/ << "\t" << n_pe[59 - 32]  /*ch59*/ << "\t" << n_pe[44 - 32]  /*ch44*/ << endl;
+		file_out << n_pe[42 - 32] /*ch42*/ << "\t" << n_pe[43 - 32]  /*ch43*/ << "\t" << n_pe[58 - 32]  /*ch58*/ << "\t" << n_pe[59 - 32]  /*ch59*/ << "\t" << n_pe[44 - 32]  /*ch44*/ << endl;
 		//-----------------------
 	}
 	else
@@ -712,10 +868,10 @@ void TimeSpectrum()
 	}
 	//hist2->Draw();
 	TH1D * projh2X = hist2->ProjectionX();
-	//projh2X->Draw();
+	projh2X->Draw();
 
 	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
-	gr->Draw("AP");
+	//gr->Draw("AP");
 
 }
 
@@ -953,9 +1109,11 @@ int main(int argc, char *argv[])
 	//Correlations();
 	//Npe_sipm_matrix_cuts();
 
-	Show_individual_signals();
+	//Show_individual_signals();
 	//Show_individual_signals_in_3d();
 	//Npe_sipm_one_ch();
+	//Npe_sipm_one_ch_loop();
+	Experimental_distribution_xy();
 
 	//Calibration();
 	//XY_cog();

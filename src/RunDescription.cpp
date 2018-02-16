@@ -129,13 +129,13 @@ const bool is_sipm_ch = true;
 
 /*Am*/
 //
-//std::string folder_name = "Am_20kV_PMT_750_12dB_6mm_coll\\";
-//const int start_run_number = 17;
-//const int stop_run_number = 63;
+std::string folder_name = "Am_20kV_PMT_750_12dB_6mm_coll\\";
+const int start_run_number = 17;
+const int stop_run_number = 63;
 //
-std::string folder_name = "Am_20kV_PMT_750_12dB_14mm_coll\\";
-const int start_run_number = 65;
-const int stop_run_number = 106;
+//std::string folder_name = "Am_20kV_PMT_750_12dB_14mm_coll\\";
+//const int start_run_number = 65;
+//const int stop_run_number = 106;
 //
 //std::string folder_name = "Am_20kV_PMT_750_12dB_without_coll\\";
 //const int start_run_number = 108;
