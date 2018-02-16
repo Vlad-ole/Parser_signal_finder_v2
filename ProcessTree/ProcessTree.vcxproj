@@ -88,11 +88,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\ChCharacteristics.cpp" />
     <ClCompile Include="..\src\RunDescription.cpp" />
     <ClCompile Include="..\src\TypeConvertion.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\ChCharacteristics.h" />
     <ClInclude Include="..\include\RunDescription.h" />
     <ClInclude Include="..\include\TypeConvertion.h" />
   </ItemGroup>

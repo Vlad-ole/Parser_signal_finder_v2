@@ -18,12 +18,18 @@
 #include "TSystem.h"
 #include "TGraph.h"
 #include "TCut.h"
+#include "TGraph2D.h"
+#include "TRandom3.h"
+#include "TCanvas.h"
 
 //my
 #include "RunDescription.h"
-#include  "TypeConvertion.h"
+#include "TypeConvertion.h"
+#include "ChCharacteristics.h"
 
 using namespace std;
+
+TCanvas* c;
 
 #define COUT(x) cout << #x " = " << x << endl;
 
@@ -429,7 +435,7 @@ void Npe_sipm_matrix_cuts()
 	hist->Draw();
 }
 
-void Experimental_distribution_xy()
+TGraph2D* Experimental_distribution_xy()
 {
 	//Npe_sipm_matrix
 
@@ -516,8 +522,234 @@ void Experimental_distribution_xy()
 	//row5
 	file_out << n_pe[GetArrayPositionSiPM(42)] /*ch42*/ << "\t" << n_pe[GetArrayPositionSiPM(43)]  /*ch43*/ << "\t" << n_pe[GetArrayPositionSiPM(58)]  /*ch58*/ << "\t" << n_pe[GetArrayPositionSiPM(59)]  /*ch59*/ << "\t" << n_pe[GetArrayPositionSiPM(44)]  /*ch44*/ << endl;
 	//-----------------------
+	
+	
+	
+	//interpolation
+	vector<double> x_position;
+	vector<double> y_position;
+	vector<double> n_pe_corrected;
+
+	const int n_x_SiPM = 5;
+	const int y_x_SiPM = 5;
+	int N_ch = n_x_SiPM * y_x_SiPM;
+	double x_pos = 0;
+	double y_pos = 0;
+	double step = 10;
+	/*for (int i = 0; i < N_ch; i++)
+	{
+		x_pos = (i % n_x_SiPM - 2) * step;
+		y_pos = (i / y_x_SiPM - 2) * step;
+
+		x_position.push_back(x_pos);
+		y_position.push_back(y_pos);
+		cout << x_position[i] << "\t" << y_position[i] << "\t" << n_pe[i] << endl;
+	}*/
+
+	for (int i = 0; i < N_ch; i++)
+	{
+		int ch = GetChIdSiPMCorrect(i);
+
+		for (int j = 0; j < ChCharacteristics::GetChCharacteristics().size(); j++)
+		{
+			if (ChCharacteristics::GetChCharacteristics()[j].ch_id == ch)
+			{
+				x_position.push_back(ChCharacteristics::GetChCharacteristics()[j].x_position);
+				y_position.push_back(ChCharacteristics::GetChCharacteristics()[j].y_position);
+				n_pe_corrected.push_back(n_pe[i]);
+				break;
+			}
+		}
+	}
+
+	//additional ch for proper extrapolation
+	{
+		int step_multiplier = 5;
+		//
+		x_position.push_back(-step_multiplier*step);
+		y_position.push_back(-step_multiplier * step);
+		n_pe_corrected.push_back(0);
+		//
+		x_position.push_back(0);
+		y_position.push_back(-step_multiplier * step);
+		n_pe_corrected.push_back(0);
+		//
+		x_position.push_back(step_multiplier * step);
+		y_position.push_back(-step_multiplier * step);
+		n_pe_corrected.push_back(0);
 
 
+		//
+		x_position.push_back(-step_multiplier * step);
+		y_position.push_back(0);
+		n_pe_corrected.push_back(0);
+		//
+		x_position.push_back(step_multiplier * step);
+		y_position.push_back(0);
+		n_pe_corrected.push_back(0);
+
+
+		//
+		x_position.push_back(-step_multiplier * step);
+		y_position.push_back(step_multiplier * step);
+		n_pe_corrected.push_back(0);
+		//
+		x_position.push_back(0);
+		y_position.push_back(step_multiplier * step);
+		n_pe_corrected.push_back(0);
+		//
+		x_position.push_back(step_multiplier * step);
+		y_position.push_back(step_multiplier * step);
+		n_pe_corrected.push_back(0);
+
+		N_ch += 8;
+	}
+
+
+	TGraph2D* gr2D = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe_corrected[0]);
+	//TH2D *h_tmp = new TH2D("h_tmp", "", 1000, -49, 49, 1000, -49, 49);
+	//gr2D->Interpolate();
+	c->cd(1);	
+	//gr2D->SetHistogram(h_tmp);
+	gr2D->Draw("TRI1");
+
+	vector<double> x_test;
+	vector<double> y_test;
+	vector<double> n_pe_test;
+
+	/*test of interpolation*/
+	//for (int i = -50; i < 50; i++)
+	//{
+	//	double x = i;
+	//	double y = 0;
+	//	x_test.push_back(x);
+	//	y_test.push_back(y);
+	//	n_pe_test.push_back( gr2D->Interpolate(x, y) );
+	//}
+	//TGraph2D* gr2D_points = new TGraph2D(x_test.size(), &x_test[0], &y_test[0], &n_pe_test[0]);
+	//gr2D_points->Draw("same p0");
+
+
+
+	return gr2D;
+}
+
+void Simple_MC(TGraph2D* gr2D)
+{
+	const double h_x = 0; // диаметр источника [mm]
+	double h_c = 6;//14.3 or 6 
+	double l_x = 14.8;
+	double lambda_bar = 17.2;
+	double lambda;
+	TRandom3 rnd3;
+
+	int N_runs = 1;
+	for (int i = 0; i < N_runs; i++)
+	{
+		// глубина поглощения в LAr гамма квантов [mm]
+		while (true)
+		{
+			lambda = rnd3.Exp(lambda_bar);
+			if (lambda < 50)
+				break;
+		}
+
+
+		const double PMMA_width = 3;
+		const double LAr_dead_width = 2;
+		const double THGEM_Cathode_width = 0.5;
+		const double Al_window_width = 23;
+		double l_L = lambda + PMMA_width + LAr_dead_width + THGEM_Cathode_width + Al_window_width; // расстояние от коллиматора до экрана [mm] 
+
+
+		double h_s = (l_L + l_x * h_c / (h_c + h_x)) / (l_x / (h_c + h_x)); //ожидаемый диаметр пятна
+		//cout << "h_s = " << h_s << endl;
+		double radius = h_s / 2.0;
+
+		double x_source;
+		double y_source;
+		while (true)
+		{
+			double x_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
+			double y_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
+			if (x_tmp*x_tmp + y_tmp*y_tmp < (radius)*(radius))
+			{
+				x_source = x_tmp;
+				y_source = y_tmp;
+				break;
+			}
+		}
+		//test
+		x_source = 20;
+		y_source = 0;
+
+		vector<double> x_cog;
+		vector<double> y_cog;
+		vector<double> n_pe;
+		vector<double> x_position;
+		vector<double> y_position;
+		int N_ch = 25;
+		n_pe.resize(N_ch);
+		x_position.resize(N_ch);
+		y_position.resize(N_ch);
+
+		for (int i = 0; i < N_ch; i++)
+		{
+			int ch = GetChIdSiPMCorrect(i);
+
+			for (int j = 0; j < ChCharacteristics::GetChCharacteristics().size(); j++)
+			{
+				if (ChCharacteristics::GetChCharacteristics()[j].ch_id == ch)
+				{
+					double x_SiPM = ChCharacteristics::GetChCharacteristics()[j].x_position;
+					double y_SiPM = ChCharacteristics::GetChCharacteristics()[j].y_position;
+					double integral = 0;
+					double SiPM_size = 6;
+					int N_points_per_axis = 100;
+					double integration_step = SiPM_size / (N_points_per_axis);
+					
+					double x;
+					double y;
+					for (int i_x = 0; i_x < N_points_per_axis; i_x++)
+					{
+						x = i_x * integration_step - SiPM_size / 2.0;
+						for (int i_y = 0; i_y < N_points_per_axis; i_y++)
+						{
+							y = i_y * integration_step - SiPM_size / 2.0;
+							integral += gr2D->Interpolate(x + x_SiPM - x_source, y + y_SiPM - y_source);
+						}
+					}
+					n_pe[i] = integral * integration_step * integration_step;
+					x_position[i] = x_SiPM;
+					y_position[i] = y_SiPM;
+
+					//cout << x << "\t" << y << "\t" << n_pe[i] << endl;
+					break;
+				}
+			}
+		}
+
+		
+		TGraph2D* gr2D_shift = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe[0]);
+		TH2D *h = new TH2D("h", "", 1000, -50, 50, 1000, -50, 50);
+		//TH2D *h2;
+		//h2 = gr2D_shift->GetHistogram();
+		//h2->GetXaxis()->SetRangeUser(-50, 50);
+		//gr2D_shift->SetHistogram(h2);
+		//gr2D_shift->GetXaxis()->SetLimits(-50, 50);
+		//gr2D_shift->GetXaxis()->SetRangeUser(-50, 50);
+		//gr2D_shift->GetYaxis()->SetLimits(-50, 50);
+		c->cd(2);
+		//gPad->DrawFrame(-50, -50, 50, 50);
+		gr2D_shift->SetHistogram(h);
+		gr2D_shift->Draw("TRI1");
+		//gr2D_shift->GetHistogram()->SetMinimum(-50);
+		//h2->Draw("TRI1");
+		//cout << x_source << "\t" << y_source << endl;
+
+	}
+
+	//system("pause");
 }
 
 void XY_cog()
@@ -1000,12 +1232,16 @@ int main(int argc, char *argv[])
 {
 	cout << "\a \a \a \a";
 
+	
+
 	TStopwatch timer_total;
 	timer_total.Start();
 
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
 	//gROOT->SetBatch(kTRUE);
 
+	c = new TCanvas("c1", "c1", 0, 0, 500, 500);
+	c->Divide(2, 1);
 
 	//---------------------------------------------
 	//tree_info
@@ -1113,7 +1349,8 @@ int main(int argc, char *argv[])
 	//Show_individual_signals_in_3d();
 	//Npe_sipm_one_ch();
 	//Npe_sipm_one_ch_loop();
-	Experimental_distribution_xy();
+	//Experimental_distribution_xy();
+	Simple_MC(Experimental_distribution_xy());
 
 	//Calibration();
 	//XY_cog();
