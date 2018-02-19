@@ -609,7 +609,7 @@ TGraph2D* Experimental_distribution_xy()
 	TGraph2D* gr2D = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe_corrected[0]);
 	//TH2D *h_tmp = new TH2D("h_tmp", "", 1000, -49, 49, 1000, -49, 49);
 	//gr2D->Interpolate();
-	c->cd(1);	
+	//c->cd(1);	
 	//gr2D->SetHistogram(h_tmp);
 	gr2D->Draw("TRI1");
 
@@ -643,9 +643,15 @@ void Simple_MC(TGraph2D* gr2D)
 	double lambda;
 	TRandom3 rnd3;
 
+	ostringstream oss;
+	oss << path_name_tree << "MC_results.txt";
+	ofstream file_out(oss.str().c_str());
+
 	int N_runs = 1;
-	for (int i = 0; i < N_runs; i++)
+	for (int i_runs = 0; i_runs < N_runs; i_runs++)
 	{
+		cout << "Run = " << i_runs << endl;
+		
 		// глубина поглощения в LAr гамма квантов [mm]
 		while (true)
 		{
@@ -680,11 +686,9 @@ void Simple_MC(TGraph2D* gr2D)
 			}
 		}
 		//test
-		x_source = 20;
-		y_source = 0;
+		/*x_source = 10;
+		y_source = 10;*/
 
-		vector<double> x_cog;
-		vector<double> y_cog;
 		vector<double> n_pe;
 		vector<double> x_position;
 		vector<double> y_position;
@@ -693,6 +697,12 @@ void Simple_MC(TGraph2D* gr2D)
 		x_position.resize(N_ch);
 		y_position.resize(N_ch);
 
+		double x_cog = 0;
+		double y_cog = 0;
+		double n_pe_summ = 0;
+		//cog
+
+		//set N_pe in each ch by integrating 2D distribution
 		for (int i = 0; i < N_ch; i++)
 		{
 			int ch = GetChIdSiPMCorrect(i);
@@ -723,28 +733,40 @@ void Simple_MC(TGraph2D* gr2D)
 					x_position[i] = x_SiPM;
 					y_position[i] = y_SiPM;
 
+					x_cog += n_pe[i] * ChCharacteristics::GetChCharacteristics()[j].x_position;
+					y_cog += n_pe[i] * ChCharacteristics::GetChCharacteristics()[j].y_position;
+					n_pe_summ += n_pe[i];
 					//cout << x << "\t" << y << "\t" << n_pe[i] << endl;
 					break;
 				}
 			}
 		}
 
+		if (n_pe_summ == 0)
+		{
+			cout << "n_pe_summ == 0" << endl;
+			//system("pause");
+			//exit(1);
+		}
+		else
+		{
+			x_cog /= n_pe_summ;
+			y_cog /= n_pe_summ;
+			file_out << x_source << "\t" << y_source << "\t" << x_cog << "\t" << y_cog << "\t" << n_pe_summ << endl;
+		}
+
 		
-		TGraph2D* gr2D_shift = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe[0]);
-		TH2D *h = new TH2D("h", "", 1000, -50, 50, 1000, -50, 50);
-		//TH2D *h2;
-		//h2 = gr2D_shift->GetHistogram();
-		//h2->GetXaxis()->SetRangeUser(-50, 50);
-		//gr2D_shift->SetHistogram(h2);
-		//gr2D_shift->GetXaxis()->SetLimits(-50, 50);
-		//gr2D_shift->GetXaxis()->SetRangeUser(-50, 50);
-		//gr2D_shift->GetYaxis()->SetLimits(-50, 50);
-		c->cd(2);
-		//gPad->DrawFrame(-50, -50, 50, 50);
-		gr2D_shift->SetHistogram(h);
-		gr2D_shift->Draw("TRI1");
-		//gr2D_shift->GetHistogram()->SetMinimum(-50);
-		//h2->Draw("TRI1");
+
+		//show TGraph2D
+		//TGraph2D* gr2D_shift = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe[0]);
+		//TH2D *h = new TH2D("h", "", 1000, -50, 50, 1000, -50, 50);
+		//c->cd(2);
+		//// method to change range	
+		//// https://root-forum.cern.ch/t/tgraph2d-access-xyz-range-and-title-out-of-sync-color-bar/15722
+		//// TGraph2D: access xyz range and title, out of sync color bar
+		//gr2D_shift->SetHistogram(h);			
+		//gr2D_shift->Draw("TRI1"); 
+			
 		//cout << x_source << "\t" << y_source << endl;
 
 	}
@@ -1240,8 +1262,8 @@ int main(int argc, char *argv[])
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
 	//gROOT->SetBatch(kTRUE);
 
-	c = new TCanvas("c1", "c1", 0, 0, 500, 500);
-	c->Divide(2, 1);
+	//c = new TCanvas("c1", "c1", 0, 0, 500, 500);
+	//c->Divide(2, 1);
 
 	//---------------------------------------------
 	//tree_info
