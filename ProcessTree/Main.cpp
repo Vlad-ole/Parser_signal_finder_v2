@@ -26,10 +26,12 @@
 #include "RunDescription.h"
 #include "TypeConvertion.h"
 #include "ChCharacteristics.h"
+#include "Simple_MC.h"
+#include "Singleton.h"
 
 using namespace std;
+Singleton* Singleton::single = NULL;
 
-TCanvas* c;
 
 #define COUT(x) cout << #x " = " << x << endl;
 
@@ -605,174 +607,51 @@ TGraph2D* Experimental_distribution_xy()
 		N_ch += 8;
 	}
 
-
 	TGraph2D* gr2D = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe_corrected[0]);
-	//TH2D *h_tmp = new TH2D("h_tmp", "", 1000, -49, 49, 1000, -49, 49);
+	gr2D->SetNpx(500);
+	gr2D->SetNpy(500);
+	//TH2D *h_tmp = new TH2D("h2", "h2", 1000, -50, 50, 1000, -50, 50);
 	//gr2D->Interpolate();
-	//c->cd(1);	
+	g()->c->cd(1);	
 	//gr2D->SetHistogram(h_tmp);
-	gr2D->Draw("TRI1");
+	//gr2D->Draw("TRI1");
+
+	//fix root bug "TGraph2D interpolation problem"
+	//https://root-forum.cern.ch/t/tgraph2d-interpolation-problem/17807
+	TH2D *h_tmp = new TH2D("h2", "h2", 1000, -55, 55, 1000, -55, 55);
+	h_tmp = gr2D->GetHistogram(); 
+	h_tmp->Draw("TRI1");
+
+	////test
+	//for (int i_tmp = -50; i_tmp < 50; i_tmp++)
+	//{
+	//	//cout << i_tmp << "; z = " << gr2D->Interpolate(i_tmp, -20) << endl;
+	//	cout << i_tmp << "; z = " << h_tmp->Interpolate(i_tmp, 20) << endl;
+	//}
+	////double n_pe_tmp = gr2D->Interpolate(0, 0);
 
 	vector<double> x_test;
 	vector<double> y_test;
 	vector<double> n_pe_test;
 
 	/*test of interpolation*/
-	//for (int i = -50; i < 50; i++)
-	//{
-	//	double x = i;
-	//	double y = 0;
-	//	x_test.push_back(x);
-	//	y_test.push_back(y);
-	//	n_pe_test.push_back( gr2D->Interpolate(x, y) );
-	//}
-	//TGraph2D* gr2D_points = new TGraph2D(x_test.size(), &x_test[0], &y_test[0], &n_pe_test[0]);
-	//gr2D_points->Draw("same p0");
+	for (int i = -50; i < 50; i++)
+	{
+		double x = i;
+		double y = 10;
+		x_test.push_back(x);
+		y_test.push_back(y);
+		n_pe_test.push_back(h_tmp->Interpolate(x, y));
+	}
+	TGraph2D* gr2D_points = new TGraph2D(x_test.size(), &x_test[0], &y_test[0], &n_pe_test[0]);
+	gr2D_points->Draw("same p0");
 
 
 
 	return gr2D;
 }
 
-void Simple_MC(TGraph2D* gr2D)
-{
-	const double h_x = 0; // диаметр источника [mm]
-	double h_c = 6;//14.3 or 6 
-	double l_x = 14.8;
-	double lambda_bar = 17.2;
-	double lambda;
-	TRandom3 rnd3;
 
-	ostringstream oss;
-	oss << path_name_tree << "MC_results.txt";
-	ofstream file_out(oss.str().c_str());
-
-	int N_runs = 1;
-	for (int i_runs = 0; i_runs < N_runs; i_runs++)
-	{
-		cout << "Run = " << i_runs << endl;
-		
-		// глубина поглощения в LAr гамма квантов [mm]
-		while (true)
-		{
-			lambda = rnd3.Exp(lambda_bar);
-			if (lambda < 50)
-				break;
-		}
-
-
-		const double PMMA_width = 3;
-		const double LAr_dead_width = 2;
-		const double THGEM_Cathode_width = 0.5;
-		const double Al_window_width = 23;
-		double l_L = lambda + PMMA_width + LAr_dead_width + THGEM_Cathode_width + Al_window_width; // расстояние от коллиматора до экрана [mm] 
-
-
-		double h_s = (l_L + l_x * h_c / (h_c + h_x)) / (l_x / (h_c + h_x)); //ожидаемый диаметр пятна
-		//cout << "h_s = " << h_s << endl;
-		double radius = h_s / 2.0;
-
-		double x_source;
-		double y_source;
-		while (true)
-		{
-			double x_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
-			double y_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
-			if (x_tmp*x_tmp + y_tmp*y_tmp < (radius)*(radius))
-			{
-				x_source = x_tmp;
-				y_source = y_tmp;
-				break;
-			}
-		}
-		//test
-		/*x_source = 10;
-		y_source = 10;*/
-
-		vector<double> n_pe;
-		vector<double> x_position;
-		vector<double> y_position;
-		int N_ch = 25;
-		n_pe.resize(N_ch);
-		x_position.resize(N_ch);
-		y_position.resize(N_ch);
-
-		double x_cog = 0;
-		double y_cog = 0;
-		double n_pe_summ = 0;
-		//cog
-
-		//set N_pe in each ch by integrating 2D distribution
-		for (int i = 0; i < N_ch; i++)
-		{
-			int ch = GetChIdSiPMCorrect(i);
-
-			for (int j = 0; j < ChCharacteristics::GetChCharacteristics().size(); j++)
-			{
-				if (ChCharacteristics::GetChCharacteristics()[j].ch_id == ch)
-				{
-					double x_SiPM = ChCharacteristics::GetChCharacteristics()[j].x_position;
-					double y_SiPM = ChCharacteristics::GetChCharacteristics()[j].y_position;
-					double integral = 0;
-					double SiPM_size = 6;
-					int N_points_per_axis = 100;
-					double integration_step = SiPM_size / (N_points_per_axis);
-					
-					double x;
-					double y;
-					for (int i_x = 0; i_x < N_points_per_axis; i_x++)
-					{
-						x = i_x * integration_step - SiPM_size / 2.0;
-						for (int i_y = 0; i_y < N_points_per_axis; i_y++)
-						{
-							y = i_y * integration_step - SiPM_size / 2.0;
-							integral += gr2D->Interpolate(x + x_SiPM - x_source, y + y_SiPM - y_source);
-						}
-					}
-					n_pe[i] = integral * integration_step * integration_step;
-					x_position[i] = x_SiPM;
-					y_position[i] = y_SiPM;
-
-					x_cog += n_pe[i] * ChCharacteristics::GetChCharacteristics()[j].x_position;
-					y_cog += n_pe[i] * ChCharacteristics::GetChCharacteristics()[j].y_position;
-					n_pe_summ += n_pe[i];
-					//cout << x << "\t" << y << "\t" << n_pe[i] << endl;
-					break;
-				}
-			}
-		}
-
-		if (n_pe_summ == 0)
-		{
-			cout << "n_pe_summ == 0" << endl;
-			//system("pause");
-			//exit(1);
-		}
-		else
-		{
-			x_cog /= n_pe_summ;
-			y_cog /= n_pe_summ;
-			file_out << x_source << "\t" << y_source << "\t" << x_cog << "\t" << y_cog << "\t" << n_pe_summ << endl;
-		}
-
-		
-
-		//show TGraph2D
-		//TGraph2D* gr2D_shift = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe[0]);
-		//TH2D *h = new TH2D("h", "", 1000, -50, 50, 1000, -50, 50);
-		//c->cd(2);
-		//// method to change range	
-		//// https://root-forum.cern.ch/t/tgraph2d-access-xyz-range-and-title-out-of-sync-color-bar/15722
-		//// TGraph2D: access xyz range and title, out of sync color bar
-		//gr2D_shift->SetHistogram(h);			
-		//gr2D_shift->Draw("TRI1"); 
-			
-		//cout << x_source << "\t" << y_source << endl;
-
-	}
-
-	//system("pause");
-}
 
 void XY_cog()
 {
@@ -1262,9 +1141,7 @@ int main(int argc, char *argv[])
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
 	//gROOT->SetBatch(kTRUE);
 
-	//c = new TCanvas("c1", "c1", 0, 0, 500, 500);
-	//c->Divide(2, 1);
-
+	
 	//---------------------------------------------
 	//tree_info
 	ostringstream f_tree_info_name;
@@ -1372,7 +1249,9 @@ int main(int argc, char *argv[])
 	//Npe_sipm_one_ch();
 	//Npe_sipm_one_ch_loop();
 	//Experimental_distribution_xy();
-	Simple_MC(Experimental_distribution_xy());
+	Simple_MC sim_mc(Experimental_distribution_xy(), false, 1000);
+	sim_mc.Calc_center_shift();
+	sim_mc.Calc_MC();
 
 	//Calibration();
 	//XY_cog();
