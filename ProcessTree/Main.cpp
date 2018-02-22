@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <fstream>
 #include <conio.h>
+#include <algorithm>
 
 //root cern
 #include "TApplication.h"
@@ -28,6 +29,7 @@
 #include "ChCharacteristics.h"
 #include "Simple_MC.h"
 #include "Singleton.h"
+#include "Interpolate2D.h"
 
 using namespace std;
 Singleton* Singleton::single = NULL;
@@ -80,8 +82,8 @@ TTree *TreeInfoAllCh_tree;
 std::vector<double> *data_raw = 0;
 std::vector<double> *data_der = 0;
 std::vector<double> *data_without_slope = 0;
-double min_element;
-double max_element;
+double min_element_;
+double max_element_;
 double baseline;
 int run_id;
 int event_id;
@@ -420,7 +422,7 @@ void Npe_sipm_matrix_cuts()
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1  /*(max_element < 900) && (min_element > -900)*/  /*true*/)
+		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1  /*(max_element_ < 900) && (min_element_ > -900)*/  /*true*/)
 		{
 			double val = N_pe_total_SiPM;
 			//double val = N_pe_3PMT;
@@ -463,6 +465,7 @@ TGraph2D* Experimental_distribution_xy()
 	COUT(N_ch);
 
 	vector<bool> is_good;
+	int N_good = 0;
 	is_good.resize(n_events_one_ch);
 
 	for (int i = 0; i < n_events_one_ch; i++)
@@ -479,11 +482,14 @@ TGraph2D* Experimental_distribution_xy()
 		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1 && x_cog == 0 && y_cog == 0)
 		{
 			is_good[i] = true;
+			N_good++;
 		}
 	}
 
 	vector<double> n_pe;
+	vector<double> n_pe_raw;
 	n_pe.resize(25);
+	n_pe_raw.resize(25);
 	int internal_counter = 0;
 	for (int i = 0; i < n_events; i++)
 	{
@@ -502,8 +508,21 @@ TGraph2D* Experimental_distribution_xy()
 		{
 			tree_itermediate->GetEntry(i);
 			TreeInfoAllCh_tree->GetEntry(event_index);
+
+			//for xy distribution shape
 			n_pe[GetArrayPositionSiPM(ch_id)] += (num_of_pe_in_event__positive_part_s_int / num_of_pe_in_event_all_ch__positive_part_s_int);
+
+			//for amplitude info
+			//n_pe[GetArrayPositionSiPM(ch_id)] += (num_of_pe_in_event__positive_part_s_int / N_good);
+			n_pe_raw[GetArrayPositionSiPM(ch_id)] += num_of_pe_in_event__positive_part_s_int;
 		}
+	}
+
+	//real distribution with proper xy and amp
+	double n_pe_max = *std::max_element(n_pe.begin(), n_pe.end());
+	for (int i = 0; i < n_pe.size(); i++)
+	{
+		n_pe[i] = n_pe[i] * (n_pe_raw[GetArrayPositionSiPM(38)] / n_pe_max) / N_good;
 	}
 
 	//-----------------------
@@ -564,9 +583,11 @@ TGraph2D* Experimental_distribution_xy()
 		}
 	}
 
+	
 	//additional ch for proper extrapolation
 	{
 		int step_multiplier = 5;
+		
 		//
 		x_position.push_back(-step_multiplier*step);
 		y_position.push_back(-step_multiplier * step);
@@ -605,6 +626,42 @@ TGraph2D* Experimental_distribution_xy()
 		n_pe_corrected.push_back(0);
 
 		N_ch += 8;
+	}
+
+	{
+		double val = 0.05 * n_pe[GetArrayPositionSiPM(38)];
+		int step_multiplier = 4;
+		for (int i = -4; i <= 4; i++)
+		{
+			x_position.push_back(i * step);
+			y_position.push_back(-step_multiplier * step);
+			n_pe_corrected.push_back(val);
+			N_ch++;
+		}
+
+		for (int i = -4; i <= 4; i++)
+		{
+			x_position.push_back(i * step);
+			y_position.push_back(step_multiplier * step);
+			n_pe_corrected.push_back(val);
+			N_ch++;
+		}
+
+		for (int i = -3; i <= 3; i++)
+		{
+			x_position.push_back(-step_multiplier * step);
+			y_position.push_back(i * step);
+			n_pe_corrected.push_back(val);
+			N_ch++;
+		}
+
+		for (int i = -3; i <= 3; i++)
+		{
+			x_position.push_back(step_multiplier * step);
+			y_position.push_back(i * step);
+			n_pe_corrected.push_back(val);
+			N_ch++;
+		}
 	}
 
 	TGraph2D* gr2D = new TGraph2D(N_ch, &x_position[0], &y_position[0], &n_pe_corrected[0]);
@@ -1043,7 +1100,7 @@ void Npe_PMT()
 			cout << "event = " << i << " (" << (100 * i / (double)n_events) << " %)" << endl;
 		}
 
-		if (ch_id == ch_to_process && (max_element < 900) && (min_element > -900))
+		if (ch_id == ch_to_process && (max_element_ < 900) && (min_element_ > -900))
 		{
 			const int calib_const = 1;
 			const double val = num_of_pe_in_event__positive_part_s_int * calib_const;
@@ -1087,7 +1144,7 @@ void AvrSignal()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		if (ch_id == ch_to_process && (max_element < 900) && (min_element > -900))
+		if (ch_id == ch_to_process && (max_element_ < 900) && (min_element_ > -900))
 		{
 			cut_pass_counter++;
 			chain_all_ch->SetBranchStatus("data_raw", 1);
@@ -1217,8 +1274,8 @@ int main(int argc, char *argv[])
 	chain_all_ch->SetBranchAddress("data_der", &data_der);
 	chain_all_ch->SetBranchAddress("data_without_slope", &data_without_slope);
 
-	chain_all_ch->SetBranchAddress("min_element", &min_element);
-	chain_all_ch->SetBranchAddress("max_element", &max_element);
+	chain_all_ch->SetBranchAddress("min_element", &min_element_);
+	chain_all_ch->SetBranchAddress("max_element", &max_element_);
 	chain_all_ch->SetBranchAddress("baseline", &baseline);
 
 	chain_all_ch->SetBranchAddress("run_id", &run_id);
@@ -1249,9 +1306,14 @@ int main(int argc, char *argv[])
 	//Npe_sipm_one_ch();
 	//Npe_sipm_one_ch_loop();
 	//Experimental_distribution_xy();
+
 	Simple_MC sim_mc(Experimental_distribution_xy(), false, 1000);
 	sim_mc.Calc_center_shift();
 	sim_mc.Calc_MC();
+
+	//Interpolate2D interpol2d;
+	//interpol2d.GetValueBicubic(0, 0);
+
 
 	//Calibration();
 	//XY_cog();

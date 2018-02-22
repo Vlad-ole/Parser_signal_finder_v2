@@ -5,7 +5,7 @@
 
 using namespace std;
 
-CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec, bool is_cog)
+CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec)
 {
 	//var1: central row, central column
 	x = 0;
@@ -13,9 +13,8 @@ CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec, bool is_cog)
 	double n_pe_x = 0;
 	double n_pe_y = 0;
 
-	if (is_cog)
+	//by cog
 	{
-
 		//it is not ideal code, but right now I do not know how to make it better
 
 
@@ -116,7 +115,11 @@ CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec, bool is_cog)
 		}
 
 	}
-	else
+
+
+
+
+	//by max
 	{
 		int array_index_of_max = -1;
 		int max_val = 0;
@@ -136,8 +139,8 @@ CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec, bool is_cog)
 			{
 				if (ChCharacteristics::GetChCharacteristics()[j].ch_id == ch)
 				{
-					x = ChCharacteristics::GetChCharacteristics()[j].x_position;
-					y = ChCharacteristics::GetChCharacteristics()[j].y_position;					
+					x_by_max = ChCharacteristics::GetChCharacteristics()[j].x_position;
+					y_by_max = ChCharacteristics::GetChCharacteristics()[j].y_position;					
 					break;
 				}
 
@@ -171,4 +174,14 @@ double CoGBase::GetX()
 double CoGBase::GetY()
 {
 	return y;
+}
+
+double CoGBase::GetXByMax()
+{
+	return x_by_max;
+}
+
+double CoGBase::GetYByMax()
+{
+	return y_by_max;
 }

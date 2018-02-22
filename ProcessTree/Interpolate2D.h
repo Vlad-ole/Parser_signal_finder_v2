@@ -28,6 +28,7 @@ class Interpolate2D
 {
 public:
 	Interpolate2D(TGraph2D* gr2d);
+	Interpolate2D();
 	~Interpolate2D();
 
 	double GetValueLine(double x, double y);

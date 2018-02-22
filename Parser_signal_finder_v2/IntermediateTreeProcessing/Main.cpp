@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	TStopwatch timer_total;
 	timer_total.Start();
 
-	bool is_test = false;
+	bool is_test = true;
 
 	TApplication theApp("theApp", &argc, argv);//let's add some magic! https://root.cern.ch/phpBB3/viewtopic.php?f=3&t=22972
 	gROOT->SetBatch(kTRUE);
@@ -312,9 +312,12 @@ int main(int argc, char *argv[])
 		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int += 
 			num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
 
-		CoGBase cog_obj(num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec, false);//by cog or by max
+		CoGBase cog_obj(num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec);//by cog and by max
 		TreeInfoAllCh_obj.x_cog = cog_obj.GetX();
 		TreeInfoAllCh_obj.y_cog = cog_obj.GetY();
+		
+		TreeInfoAllCh_obj.x_cog = cog_obj.GetXByMax();
+		TreeInfoAllCh_obj.y_cog = cog_obj.GetYByMax();
 
 		/*cout << "x_cog = " << TreeInfoAllCh_obj.x_cog << endl;
 		cout << "y_cog = " << TreeInfoAllCh_obj.y_cog << endl;*/

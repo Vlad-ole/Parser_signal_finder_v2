@@ -35,10 +35,12 @@ Simple_MC::~Simple_MC()
 
 void Simple_MC::Calc_MC()
 {
-	for (int i_tmp = -50; i_tmp < 50; i_tmp++)
-	{
-		cout << i_tmp << "; " << h2D->Interpolate(i_tmp, 20) << "; " << gr2D->Interpolate(i_tmp, 20) << endl;
-	}
+	//test
+	//for (int i_tmp = -60; i_tmp < 60; i_tmp++)
+	//{
+	//	double y = 0;
+	//	cout << i_tmp << "; " << h2D->Interpolate(i_tmp, y) << "; " << gr2D->Interpolate(i_tmp, 20) << endl;
+	//}
 	
 	
 	for (int i_runs = 0; i_runs < N_runs; i_runs++)
@@ -61,6 +63,7 @@ void Simple_MC::Calc_MC()
 
 		double x_source;
 		double y_source;
+		radius = 30;
 		while (true)
 		{
 			double x_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
@@ -116,7 +119,7 @@ void Simple_MC::Calc_MC()
 							//chose area only inside LxL mm^2 area
 							double x_tmp = x + x_SiPM - x_source + x_center_shift;
 							double y_tmp = y + y_SiPM - y_source + y_center_shift;
-							double L = 23;
+							double L = 50;
 							if (abs(x_tmp) < L && abs(y_tmp) < L)
 							{
 								integral += h2D->Interpolate(x_tmp, y_tmp);
@@ -124,7 +127,11 @@ void Simple_MC::Calc_MC()
 
 						}
 					}
-					n_pe[i] = integral * integration_step * integration_step;
+					double n_pe_val = integral * integration_step * integration_step / 36.0; //6x6=36mm^2 is active area
+					
+					//n_pe[i] = rnd3.Poisson(n_pe_val);//var1
+					n_pe[i] = n_pe_val;//var2
+					
 					x_position[i] = x_SiPM;
 					y_position[i] = y_SiPM;
 
