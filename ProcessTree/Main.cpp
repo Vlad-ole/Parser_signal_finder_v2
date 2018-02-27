@@ -123,6 +123,11 @@ std::vector<double> *num_of_pe_in_one_peak = 0;
 double num_of_pe_in_event_all_ch__positive_part_s_int;
 double x_cog;
 double y_cog;
+double x_by_max;
+double y_by_max;
+double x_cog_modified;
+double y_cog_modified;
+
 //---------------------------------------------
 
 void Correlations()
@@ -209,7 +214,9 @@ double Npe_sipm_one_ch(int ch_to_process, bool is_draw_hist)
 		tree_itermediate->GetEntry(i);
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		//COUT(N_pe_3PMT);
-		if (N_pe_3PMT > 145 && N_pe_3PMT < 285)//------------------ IMPORTANT ----------------------------------//
+		bool cut = (max_element_ < 900) && (min_element_ > -900);
+		//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285
+		if (cut)//------------------ IMPORTANT ----------------------------------//
 		{
 			cut_is_good[i] = true;
 		}
@@ -361,7 +368,7 @@ void Npe_sipm_matrix()
 void Npe_sipm_matrix_cuts()
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 100);
+	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 200);
 
 	ostringstream oss;
 	oss << path_name_tree << "hist.txt";
@@ -422,13 +429,22 @@ void Npe_sipm_matrix_cuts()
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1  /*(max_element_ < 900) && (min_element_ > -900)*/  /*true*/)
+		
+		//if (N_pe_3PMT > 100 /*145*/ && N_pe_3PMT < /*285*/ 330 && N_pe_total_SiPM > 0.1 /*(max_element_ < 900) && (min_element_ > -900)*/  /*true*/)
+		bool cut_no_saturation = (max_element_ < 900) && (min_element_ > -900);
+		bool cut_Cd_20kV_PMT750_12dB_coll_2mm_real_23keV = N_pe_3PMT > 23 && N_pe_3PMT < 57;
+		bool cut_Cd_20kV_PMT750_12dB_coll_2mm_real_60_90keV = N_pe_3PMT > 100 && N_pe_3PMT < 330;
+		bool cut_SiPM_N_pe_total_th = N_pe_total_SiPM > /*10*/ 0.1;
+		if (cut_no_saturation && cut_SiPM_N_pe_total_th)
 		{
 			double val = N_pe_total_SiPM;
 			//double val = N_pe_3PMT;
 			hist->Fill(val);
 			//file_out << val << endl;
 			file_out << x_cog << " " << y_cog << endl;
+			//file_out << x_by_max << " " << y_by_max << endl;
+			//file_out << x_cog_modified << " " << y_cog_modified << endl;
+			//file_out << x_cog << " " << y_cog << " " << x_by_max << " " << y_by_max << endl;
 			//file_out << N_pe_total_SiPM << endl;
 		}
 
@@ -479,7 +495,9 @@ TGraph2D* Experimental_distribution_xy()
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		if (N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1 && x_cog == 0 && y_cog == 0)
+		bool cut = (max_element_ < 900) && (min_element_ > -900);
+		//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1 && x_by_max == 0 && y_by_max == 0;
+		if (cut && N_pe_total_SiPM > 0.1 && x_by_max == 0 && y_by_max == 0)
 		{
 			is_good[i] = true;
 			N_good++;
@@ -858,6 +876,8 @@ void Show_individual_signals_in_3d()
 	chain_all_ch->SetBranchStatus("ch_id", 1);
 	chain_all_ch->SetBranchStatus("run_id", 1);
 	chain_all_ch->SetBranchStatus("event_id", 1);
+	chain_all_ch->SetBranchStatus("max_element", 1);
+	chain_all_ch->SetBranchStatus("min_element", 1);
 
 	const int n_events = chain_all_ch->GetEntries();
 
@@ -865,8 +885,8 @@ void Show_individual_signals_in_3d()
 	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
 	n_pe.resize(n_pe_size);
 
-	int your_run_id = 30;
-	int your_event_id = 500;
+	int your_run_id = 325;
+	int your_event_id = 999;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -884,7 +904,9 @@ void Show_individual_signals_in_3d()
 		{
 			tree_itermediate->GetEntry(i);
 			double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
-			if (N_pe_3PMT > 145 && N_pe_3PMT < 285) //-------------------* important! * ---------------------------------------------//
+			bool cut = (max_element_ < 900) && (min_element_ > -900);
+			//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285;
+			if (cut) //-------------------* important! * ---------------------------------------------//
 			{
 				cut_is_ok = true;
 			}	
@@ -894,7 +916,11 @@ void Show_individual_signals_in_3d()
 			oss << path_name_tree << "xy_one_event.txt";
 			ofstream file_out(oss.str().c_str());
 			file_out << "x_cog = " << x_cog << endl <<
-						"y_cog = " << y_cog << endl;
+						"y_cog = " << y_cog << endl <<
+						"x_by_max = " << x_by_max << endl <<
+						"y_by_max = " << y_by_max << endl << 
+						"x_cog_modified = " << x_cog_modified << endl <<
+						"y_cog_modified = " << y_cog_modified << endl ;
 			//system("pause");
 
 			break;			
@@ -1252,6 +1278,10 @@ int main(int argc, char *argv[])
 	TreeInfoAllCh_tree->SetBranchAddress("num_of_pe_in_event_all_ch__positive_part_s_int", &num_of_pe_in_event_all_ch__positive_part_s_int);
 	TreeInfoAllCh_tree->SetBranchAddress("x_cog", &x_cog);
 	TreeInfoAllCh_tree->SetBranchAddress("y_cog", &y_cog);
+	TreeInfoAllCh_tree->SetBranchAddress("x_by_max", &x_by_max);
+	TreeInfoAllCh_tree->SetBranchAddress("y_by_max", &y_by_max);
+	TreeInfoAllCh_tree->SetBranchAddress("x_cog_modified", &x_cog_modified);
+	TreeInfoAllCh_tree->SetBranchAddress("y_cog_modified", &y_cog_modified);
 	//---------------------------------------------
 
 
@@ -1299,7 +1329,7 @@ int main(int argc, char *argv[])
 	//Npe_sipm_matrix();
 
 	//Correlations();
-	//Npe_sipm_matrix_cuts();
+	Npe_sipm_matrix_cuts();
 
 	//Show_individual_signals();
 	//Show_individual_signals_in_3d();
@@ -1307,9 +1337,9 @@ int main(int argc, char *argv[])
 	//Npe_sipm_one_ch_loop();
 	//Experimental_distribution_xy();
 
-	Simple_MC sim_mc(Experimental_distribution_xy(), false, 1000);
-	sim_mc.Calc_center_shift();
-	sim_mc.Calc_MC();
+	//Simple_MC sim_mc(Experimental_distribution_xy(), false, 1000);
+	//sim_mc.Calc_center_shift();
+	//sim_mc.Calc_MC();
 
 	//Interpolate2D interpol2d;
 	//interpol2d.GetValueBicubic(0, 0);

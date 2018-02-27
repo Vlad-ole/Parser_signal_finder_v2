@@ -63,7 +63,7 @@ void Simple_MC::Calc_MC()
 
 		double x_source;
 		double y_source;
-		radius = 30;
+		radius = 40;
 		while (true)
 		{
 			double x_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
@@ -117,12 +117,12 @@ void Simple_MC::Calc_MC()
 							y = i_y * integration_step - SiPM_size / 2.0;
 
 							//chose area only inside LxL mm^2 area
-							double x_tmp = x + x_SiPM - x_source + x_center_shift;
-							double y_tmp = y + y_SiPM - y_source + y_center_shift;
-							double L = 50;
+							double x_tmp = x + x_SiPM - x_source - x_center_shift;
+							double y_tmp = y + y_SiPM - y_source - y_center_shift;
+							double L = 13;
 							if (abs(x_tmp) < L && abs(y_tmp) < L)
 							{
-								integral += h2D->Interpolate(x_tmp, y_tmp);
+								integral += h2D->Interpolate(x_tmp , y_tmp);
 							}
 
 						}

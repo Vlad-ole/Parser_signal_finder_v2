@@ -13,11 +13,19 @@ public:
 
 	double GetXByMax();
 	double GetYByMax();
+
+	double GetXCoGModified();
+	double GetYCoGModified();
+
 private:
+	
 	double x;
 	double y;
 
 	double x_by_max;
 	double y_by_max;
+
+	double x_cog_modified;
+	double y_cog_modified;
 };
 

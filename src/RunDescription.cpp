@@ -288,10 +288,10 @@ const bool is_sipm_ch = true;
 //const int start_run_number = 362;
 //const int stop_run_number = 373;
 //
-//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
-//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
-//const int start_run_number = 374;
-//const int stop_run_number = 384;
+std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
+std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
+const int start_run_number = 374;
+const int stop_run_number = 384;
 //
 //std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_6kV_PMT700_0dB_coll_6mm\\";
 //std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_6kV_PMT700_0dB_coll_6mm\\";
@@ -310,10 +310,10 @@ const bool is_sipm_ch = true;
 //const int start_run_number = 140;
 //const int stop_run_number = 161;
 //
-std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\Cd_20kV_PMT750_12dB_coll_2mm_real\\";
-std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\Cd_20kV_PMT750_12dB_coll_2mm_real\\";
-const int start_run_number = 163;
-const int stop_run_number = 200;
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\Cd_20kV_PMT750_12dB_coll_2mm_real\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\Cd_20kV_PMT750_12dB_coll_2mm_real\\";
+//const int start_run_number = 163;
+//const int stop_run_number = 200;
 ////
 //
 //std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\Cd_18kV_PMT750_12dB_coll_6mm_real\\";

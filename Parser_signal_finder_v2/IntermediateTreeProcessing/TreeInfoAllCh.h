@@ -23,10 +23,14 @@ public:
 	TTree *tree;
 
 	double num_of_pe_in_event_all_ch__positive_part_s_int;
+	
 	double x_cog;
 	double y_cog;
 
 	double x_by_max;
 	double y_by_max;
+
+	double x_cog_modified;
+	double y_cog_modified;
 };
 

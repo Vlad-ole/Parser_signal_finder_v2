@@ -12,6 +12,9 @@ CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec)
 	y = 0;
 	double n_pe_x = 0;
 	double n_pe_y = 0;
+	x_cog_modified = 0;
+	y_cog_modified = 0;
+
 
 	//by cog
 	{
@@ -159,6 +162,51 @@ CoGBase::CoGBase(std::vector<double> &num_of_pe_in_event_vec)
 
 	}
 
+
+
+
+
+	//by cog_modified
+	{
+		double n_pe = 0;
+		for (int i = 0; i < num_of_pe_in_event_vec.size(); i++)
+		{
+			int ch = GetChIdSiPMCorrect(i);
+
+
+			for (int j = 0; j < ChCharacteristics::GetChCharacteristics().size(); j++)
+			{
+				if (ChCharacteristics::GetChCharacteristics()[j].ch_id == ch && 
+					abs(ChCharacteristics::GetChCharacteristics()[j].x_position - x_by_max) < 13 &&
+					abs(ChCharacteristics::GetChCharacteristics()[j].y_position - y_by_max) < 13)
+				{
+					x_cog_modified += num_of_pe_in_event_vec[i] * ChCharacteristics::GetChCharacteristics()[j].x_position;
+					y_cog_modified += num_of_pe_in_event_vec[i] * ChCharacteristics::GetChCharacteristics()[j].y_position;
+					n_pe += num_of_pe_in_event_vec[i];
+					break;
+				}
+			}
+
+		}
+
+
+		if (n_pe == 0)
+		{
+			cout << "n_pe == 0" << endl;
+			//system("pause");
+			//exit(1);
+		}
+		else
+		{
+			x_cog_modified /= n_pe;
+			y_cog_modified /= n_pe;
+			
+		}
+
+	}
+
+
+
 	
 }
 
@@ -184,4 +232,14 @@ double CoGBase::GetXByMax()
 double CoGBase::GetYByMax()
 {
 	return y_by_max;
+}
+
+double CoGBase::GetXCoGModified()
+{
+	return x_cog_modified;
+}
+
+double CoGBase::GetYCoGModified()
+{
+	return y_cog_modified;
 }
