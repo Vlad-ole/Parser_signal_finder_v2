@@ -368,7 +368,7 @@ void Npe_sipm_matrix()
 void Npe_sipm_matrix_cuts()
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 200);
+	TH1F *hist = new TH1F("hist", "hist", 1000, 0, 1500);
 
 	ostringstream oss;
 	oss << path_name_tree << "hist.txt";
@@ -426,21 +426,32 @@ void Npe_sipm_matrix_cuts()
 		tree_itermediate->GetEntry(index);
 		chain_all_ch->GetEntry(index);
 
-		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
+		double dB = 12;
+		double SPE = 2.1325E-8;//3PMT 750V
+		//double SPE = 8.80454E-9;//3PMT 700V
+		//double SPE = 3.314E-9;//3PMT 650V
+		//double SPE = 3.55935E-10;//3PMT 550V
+		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (dB / 20.0)) / SPE;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
 		
 		//if (N_pe_3PMT > 100 /*145*/ && N_pe_3PMT < /*285*/ 330 && N_pe_total_SiPM > 0.1 /*(max_element_ < 900) && (min_element_ > -900)*/  /*true*/)
 		bool cut_no_saturation = (max_element_ < 900) && (min_element_ > -900);
-		bool cut_Cd_20kV_PMT750_12dB_coll_2mm_real_23keV = N_pe_3PMT > 23 && N_pe_3PMT < 57;
-		bool cut_Cd_20kV_PMT750_12dB_coll_2mm_real_60_90keV = N_pe_3PMT > 100 && N_pe_3PMT < 330;
-		bool cut_SiPM_N_pe_total_th = N_pe_total_SiPM > /*10*/ 0.1;
-		if (cut_no_saturation && cut_SiPM_N_pe_total_th)
+		bool cut_energy_cut = N_pe_3PMT > 100 && N_pe_3PMT < 330;
+		//bool cut_rectangle_cut = (N_pe_3PMT > 200 && N_pe_3PMT < 250) && (N_pe_total_SiPM > 40 && N_pe_total_SiPM < 100);
+		//bool cut_SiPM_N_pe_total_th = N_pe_total_SiPM > 0.1 /*0.1*/;
+		bool cut_SiPM_N_pe_region = N_pe_total_SiPM > 90 && N_pe_total_SiPM < 310;
+
+		bool Npe_th_low = N_pe_total_SiPM > 100;
+		bool Npe_th_high = N_pe_total_SiPM < 300;
+
+		if (/*true*/ cut_no_saturation && cut_SiPM_N_pe_region /*&& cut_energy_cut*/ /*&& Npe_th_low*/ /*&& Npe_th_high*/)
 		{
-			double val = N_pe_total_SiPM;
+			//double val = N_pe_total_SiPM;
 			//double val = N_pe_3PMT;
-			hist->Fill(val);
+			//hist->Fill(val);
 			//file_out << val << endl;
+			//file_out << N_pe_3PMT << " " << N_pe_total_SiPM << endl;
 			file_out << x_cog << " " << y_cog << endl;
 			//file_out << x_by_max << " " << y_by_max << endl;
 			//file_out << x_cog_modified << " " << y_cog_modified << endl;
@@ -495,14 +506,20 @@ TGraph2D* Experimental_distribution_xy()
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
 
-		bool cut = (max_element_ < 900) && (min_element_ > -900);
+		bool no_saturation_cut = (max_element_ < 900) && (min_element_ > -900);
 		//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285 && N_pe_total_SiPM > 0.1 && x_by_max == 0 && y_by_max == 0;
-		if (cut && N_pe_total_SiPM > 0.1 && x_by_max == 0 && y_by_max == 0)
+		//bool energy_cut = N_pe_3PMT > 100 && N_pe_3PMT < 410;//<--------------------------------------------------------------------------
+		bool Npe_th_low = N_pe_total_SiPM > /*0.1*/ 100;
+		bool Npe_th_high = N_pe_total_SiPM < 10000;
+		bool energy_cut = (70 < N_pe_3PMT) && (N_pe_3PMT < 85);
+		if (no_saturation_cut && x_by_max == 0 && y_by_max == 0 /*&& energy_cut*/ && Npe_th_low && Npe_th_high)
 		{
 			is_good[i] = true;
 			N_good++;
 		}
 	}
+
+	cout << "N_events after cut = " << N_good << endl;
 
 	vector<double> n_pe;
 	vector<double> n_pe_raw;
@@ -768,7 +785,7 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 38 && run_id == 63 && event_id == 500)
+		REMEMBER_CUT(ch_id == 38 && run_id == 355 && event_id == 500)
 			if (cut_condition_bool && ch_id > 2)
 			{
 				cout << "in if (cut_condition_bool)" << endl;
@@ -885,8 +902,8 @@ void Show_individual_signals_in_3d()
 	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
 	n_pe.resize(n_pe_size);
 
-	int your_run_id = 325;
-	int your_event_id = 999;
+	int your_run_id = 204;
+	int your_event_id = 507;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -904,7 +921,7 @@ void Show_individual_signals_in_3d()
 		{
 			tree_itermediate->GetEntry(i);
 			double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
-			bool cut = (max_element_ < 900) && (min_element_ > -900);
+			bool cut = (max_element_ < 900) && (min_element_ > -900) /*&& (num_of_pe_in_event_all_ch__positive_part_s_int > 0)*/;
 			//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285;
 			if (cut) //-------------------* important! * ---------------------------------------------//
 			{
@@ -1049,10 +1066,13 @@ void TimeSpectrum()
 	vector<double> n_pe_in_peak;
 
 	const int n_events = chain_all_ch->GetEntries();
+	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
+
 	for (int i = 0; i < n_events; i++)
 	{
 		chain_all_ch->GetEntry(i);
-		tree_itermediate->GetEntry(i);
+		tree_itermediate->GetEntry(i);		
+		TreeInfoAllCh_tree->GetEntry(i % n_events_one_ch);
 
 		if (i % 1000 == 0 || i == (n_events - 1))
 		{
@@ -1064,7 +1084,10 @@ void TimeSpectrum()
 		{
 			for (int j = 0; j < (*signals_x_start).size(); j++)
 			{
-				if ((*integral_one_peak)[j] > 1000)
+				double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
+				bool cut_integral_one_peak = (*integral_one_peak)[j] > 1000;
+				bool cut_num_of_pe = N_pe_total_SiPM > 100 && N_pe_total_SiPM < 200;
+				if (cut_integral_one_peak /*&& cut_num_of_pe*/)
 				{
 					time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
 					//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
@@ -1077,17 +1100,18 @@ void TimeSpectrum()
 
 	}
 
-	TH2F *hist2 = new TH2F("h2", "hist2", 160, 0, 160E3, 1000, 0, 50000);
+
+	TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix all ch", 160, 0, 160E3, 1000, 0, 50000);
 	for (int i = 0; i < time_position.size(); i++)
 	{
 		hist2->Fill(time_position[i], n_pe_in_peak[i]/*, n_pe_in_peak[i]*/);
 	}
 	//hist2->Draw();
 	TH1D * projh2X = hist2->ProjectionX();
-	projh2X->Draw();
+	//projh2X->Draw();
 
 	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
-	//gr->Draw("AP");
+	gr->Draw("AP");
 
 }
 
@@ -1203,7 +1227,7 @@ void AvrSignal()
 	}
 
 	TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &data_raw_average[0]);
-	gr->SetTitle("Average signal");
+	gr->SetTitle("Average signal from 3PMT");
 	gr->Draw("APL");
 
 	vector<double> baseline(WAVE_ARRAY_COUNT);
@@ -1337,9 +1361,9 @@ int main(int argc, char *argv[])
 	//Npe_sipm_one_ch_loop();
 	//Experimental_distribution_xy();
 
-	//Simple_MC sim_mc(Experimental_distribution_xy(), false, 1000);
-	//sim_mc.Calc_center_shift();
-	//sim_mc.Calc_MC();
+	/*Simple_MC sim_mc(Experimental_distribution_xy(), false, 1000);
+	sim_mc.Calc_center_shift();
+	sim_mc.Calc_MC();*/
 
 	//Interpolate2D interpol2d;
 	//interpol2d.GetValueBicubic(0, 0);
@@ -1348,6 +1372,7 @@ int main(int argc, char *argv[])
 	//Calibration();
 	//XY_cog();
 	//TimeSpectrum();
+	
 	//AvrSignal();
 
 

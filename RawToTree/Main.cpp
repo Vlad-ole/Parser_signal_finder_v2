@@ -30,6 +30,9 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+	cout << "Press any key to confirm the execution." << endl;
+	system("pause");
+	
 	TStopwatch timer_total;	
 	timer_total.Start();
 

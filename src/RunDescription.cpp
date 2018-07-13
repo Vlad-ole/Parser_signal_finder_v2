@@ -115,6 +115,36 @@ const bool is_sipm_ch = true;
 
 
 ////---------------------------------------------
+//Feb 22  2018
+//
+//1000 events per file
+//
+
+/*x-ray*/
+//
+//std::string folder_name = "8kV_SiPM_46V_xray_240Hz\\";
+//const int start_run_number = 59;
+//const int stop_run_number = 61;
+//
+//std::string folder_name = "8kV_SiPM_46V_xray_240Hz_PMT_750V\\";
+//const int start_run_number = 63;
+//const int stop_run_number = 65;
+//
+//std::string folder_name = "14kV_SiPM_46V_xray_240Hz\\";
+//const int start_run_number = 14;
+//const int stop_run_number = 16;
+
+
+
+//std::string common_path = "E:\\180222\\";
+//std::string date = "180222";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+////---------------------------------------------
+
+
+
+////---------------------------------------------
 //January 25  2018
 //
 //1000 events per file
@@ -193,6 +223,30 @@ const bool is_sipm_ch = true;
 
 /*Cd*/
 //
+//std::string folder_name = "Bkg_20kV_SiPM_48V_THGEM_2200V_coll_6mm\\";
+//const int start_run_number = 571;
+//const int stop_run_number = 579;
+//
+//std::string folder_name = "Cd_20kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 185;
+//const int stop_run_number = 221;
+//
+//std::string folder_name = "Cd_20kV_SiPM_46V_THGEM_2200V_coll_xmm\\";
+//const int start_run_number = 376;
+//const int stop_run_number = 419;
+//
+//std::string folder_name = "Cd_14kV_SiPM_46V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 285;
+//const int stop_run_number = 306;
+//
+//std::string folder_name = "Cd_16kV_SiPM_46V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 308;
+//const int stop_run_number = 328;
+//
+//std::string folder_name = "Cd_20kV_SiPM_48V_THGEM_2000V_coll_2mm\\";
+//const int start_run_number = 159;
+//const int stop_run_number = 183;
+//
 //std::string folder_name = "Cd_18kV_SiPM_46V_THGEM_2000V_coll_2mm\\";
 //const int start_run_number = 1;
 //const int stop_run_number = 20;
@@ -201,17 +255,17 @@ const bool is_sipm_ch = true;
 //const int start_run_number = 137;
 //const int stop_run_number = 157;
 //
-//std::string folder_name = "Cd_18kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
-//const int start_run_number = 223;
-//const int stop_run_number = 242;
+std::string folder_name = "Cd_18kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
+const int start_run_number = 223;
+const int stop_run_number = 242;
 //
 //std::string folder_name = "Cd_18kV_SiPM_46V_THGEM_2200V_coll_2mm\\";
 //const int start_run_number = 330;
 //const int stop_run_number = 352;
 //
-//std::string folder_name = "Cd_20kV_SiPM_46V_THGEM_2200V_coll_xmm\\";
-//const int start_run_number = 376;
-//const int stop_run_number = 419;
+//std::string folder_name = "Cd_20kV_SiPM_46V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 354;
+//const int stop_run_number = 374;
 //
 //std::string folder_name = "Cd_20kV_SiPM_46V_THGEM_0V_coll_6mm\\";
 //const int start_run_number = 581;
@@ -236,8 +290,27 @@ const bool is_sipm_ch = true;
 //std::string folder_name = "Cd_16kV_SiPM_46V_THGEM_2000V_coll_2mm\\";
 //const int start_run_number = 44;
 //const int stop_run_number = 63;
-
-
+//
+//std::string folder_name = "Cd_16kV_SiPM_48V_THGEM_2000V_coll_2mm\\";
+//const int start_run_number = 108;
+//const int stop_run_number = 127;
+//
+//std::string folder_name = "Cd_16kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 244;
+//const int stop_run_number = 261;
+//
+//std::string folder_name = "Cd_14kV_SiPM_46V_THGEM_2000V_coll_2mm\\";
+//const int start_run_number = 65;
+//const int stop_run_number = 84;
+//
+//std::string folder_name = "Cd_14kV_SiPM_48V_THGEM_2000V_coll_2mm\\";
+//const int start_run_number = 86;
+//const int stop_run_number = 106;
+//
+//std::string folder_name = "Cd_14kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 263;
+//const int stop_run_number = 283;
+//
 
 
 /*x-ray*/
@@ -248,10 +321,10 @@ const bool is_sipm_ch = true;
 
 
 
-//std::string common_path = "E:\\171130\\";
-//std::string date = "171130";
-//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
-//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+std::string common_path = "E:\\171130\\";
+std::string date = "171130";
+std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
 ////---------------------------------------------
 
@@ -288,10 +361,10 @@ const bool is_sipm_ch = true;
 //const int start_run_number = 362;
 //const int stop_run_number = 373;
 //
-std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
-std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
-const int start_run_number = 374;
-const int stop_run_number = 384;
+//std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
+//std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_10kV_PMT550_0dB_coll_2mm\\";
+//const int start_run_number = 374;
+//const int stop_run_number = 384;
 //
 //std::string path_name_tree = "D:\\Data_work\\171123_caen_trees\\x_ray_6kV_PMT700_0dB_coll_6mm\\";
 //std::string PathInfo_path_name = "D:\\Data_work\\171123_caen_raw\\x_ray_6kV_PMT700_0dB_coll_6mm\\";
@@ -395,7 +468,7 @@ const int stop_run_number = 384;
 //std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_46Vsipm_700Vpmt_int_coll_Cd\\";
 //std::string PathInfo_path_name = "D:\\Data_work\\170803_caen_raw\\event_20kV_46Vsipm_700Vpmt_int_coll_Cd\\";
 //const int start_run_number = 539;
-//const int stop_run_number = 564;
+//const int stop_run_number = 563;
 //
 ////34000 events, 20 kV, Cd, V(PMT) = 700V, V(SiPM) = 48V, dV(GEM) = 2200, internal 2mm, trigger from 3PMT (th = 128 mV) + 6 dB att.
 //std::string path_name_tree = "D:\\Data_work\\170803_caen_trees\\event_20kV_48Vsipm_700Vpmt_int_coll_Cd_2200gem_offset\\";

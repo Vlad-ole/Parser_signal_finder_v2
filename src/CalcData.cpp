@@ -58,9 +58,9 @@ std::vector<double> CalcData::Get_data_der()
 
 std::vector<double> CalcData::Get_data_without_slope()
 {
-	const bool without_slope = false;
+	const bool compensate_slope = true;
 	
-	if (without_slope)
+	if (compensate_slope)
 	{
 		CalcBaselineZeroComp calc_baseline_zero_comp(invert_data, 0 /*Cd 20000; x-ray 35000*/, /*HORIZ_INTERVAL * 9999*/ /*150000*/ 150000, -baseline, HORIZ_INTERVAL);
 		return TypeConvertion::GetDifference(invert_data, calc_baseline_zero_comp.GetBaselineVec());

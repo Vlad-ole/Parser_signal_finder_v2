@@ -5,9 +5,9 @@ using namespace std;
 Simple_MC::Simple_MC(TGraph2D* gr2D, bool is_draw, int N_runs) : gr2D(gr2D), is_draw(is_draw), N_runs(N_runs)
 {
 	h_x = 0; // диаметр источника [mm]
-	h_c = 6;//14.3 or 6 
-	l_x = 14.8;
-	lambda_bar = 17.2;
+	h_c = 2;//14.3 or 6 or 2 [mm]
+	l_x = 64;//mm
+	lambda_bar = 1.28;//mm
 
 	ostringstream oss;
 	oss << path_name_tree << "MC_results.txt";
@@ -63,7 +63,7 @@ void Simple_MC::Calc_MC()
 
 		double x_source;
 		double y_source;
-		radius = 40;
+		radius = 20;//test
 		while (true)
 		{
 			double x_tmp = (rnd3.Uniform() - 0.5) * 2 * radius;
@@ -119,7 +119,7 @@ void Simple_MC::Calc_MC()
 							//chose area only inside LxL mm^2 area
 							double x_tmp = x + x_SiPM - x_source - x_center_shift;
 							double y_tmp = y + y_SiPM - y_source - y_center_shift;
-							double L = 13;
+							double L = 100;//important to change depend on task
 							if (abs(x_tmp) < L && abs(y_tmp) < L)
 							{
 								integral += h2D->Interpolate(x_tmp , y_tmp);
