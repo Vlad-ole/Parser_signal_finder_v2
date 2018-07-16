@@ -95,7 +95,10 @@
     <ClCompile Include="..\src\TypeConvertion.cpp" />
     <ClCompile Include="Interpolate2D.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Simple_MC.cpp" />
+    <ClCompile Include="Simple_MC.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Singleton.cpp" />
   </ItemGroup>
   <ItemGroup>

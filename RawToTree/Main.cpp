@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
 	
 	//-----------------------------------------------------
 	comm_info str_comm;
-	str_comm.HORIZ_INTERVAL = 16;//ns per point;
-	str_comm.WAVE_ARRAY_COUNT = 9999;//number of points in one event
+	str_comm.HORIZ_INTERVAL = 4/*16*/;//ns per point;
+	str_comm.WAVE_ARRAY_COUNT = 40000/*9999*/;//number of points in one event
 
 	//tree settings
 	const int runs_per_tree_file = 5;
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	TThread::Initialize();//we need additional magic!
 		
 	//loop by chs
-#pragma omp parallel for num_threads(5)
+#pragma omp parallel for num_threads(3)
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
@@ -128,9 +128,10 @@ int main(int argc, char *argv[])
 
 			//loop by events
 			for (int temp_event_id = 0; temp_event_id < PathInfo.events_per_file; temp_event_id++)
+			
 			{
 				bool is_invert = false;
-				if (GetChId(i) > 2) //for SiPM only
+				if (GetChId(i) == 0 || GetChId(i) == 1 || GetChId(i) == 5 || GetChId(6) == 6 || GetChId(i) == 7) //for neg signals
 					is_invert = true;
 				
 				
@@ -148,18 +149,16 @@ int main(int argc, char *argv[])
 
 				tree_raw_obj->data_raw = rdt.GetDataDouble()[temp_event_id][0];
 
-				TStopwatch timer_calc_der;
-				
+				//TStopwatch timer_calc_der;
+				//if (GetChId(i) > 2) //for SiPM only
+				//{
+				//	tree_raw_obj->data_der = calc_data.Get_data_der();
 
-				if (GetChId(i) > 2) //for SiPM only
-				{
-					tree_raw_obj->data_der = calc_data.Get_data_der();
-
-					timer_calc_der.Start();
-					tree_raw_obj->data_without_slope = calc_data.Get_data_without_slope();
-					timer_calc_der.Stop();
-					time_calc_der += timer_calc_der.RealTime();
-				}				
+				//	timer_calc_der.Start();
+				//	tree_raw_obj->data_without_slope = calc_data.Get_data_without_slope();
+				//	timer_calc_der.Stop();
+				//	time_calc_der += timer_calc_der.RealTime();
+				//}				
 
 #pragma omp critical //magic should be here too. Unfortunately :(
 				{

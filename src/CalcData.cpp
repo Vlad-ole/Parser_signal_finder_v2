@@ -58,7 +58,7 @@ std::vector<double> CalcData::Get_data_der()
 
 std::vector<double> CalcData::Get_data_without_slope()
 {
-	const bool compensate_slope = true;
+	const bool compensate_slope = false;
 	
 	if (compensate_slope)
 	{

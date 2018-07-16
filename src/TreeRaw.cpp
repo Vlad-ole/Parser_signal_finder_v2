@@ -15,8 +15,8 @@ TreeRaw::TreeRaw() //: tree("tree_raw", "Tree raw")
 	tree->Branch("baseline", &baseline);
 
 	tree->Branch("data_raw", &data_raw);
-	tree->Branch("data_der", &data_der);
-	tree->Branch("data_without_slope", &data_without_slope);
+	//tree->Branch("data_der", &data_der);
+	//tree->Branch("data_without_slope", &data_without_slope);
 }
 
 

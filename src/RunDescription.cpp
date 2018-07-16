@@ -3,43 +3,132 @@
 using namespace std;
 
 
-const int n_ch = 28; //(25 SiPM + 3PMT + 1PMT + GEM)
+//const int n_ch = 28; //(25 SiPM + 3PMT + 1PMT + GEM)
+
+//int GetChId(int array_position)
+//{	
+//	//return array_position + 32;
+//	
+//	//return 0;
+//	
+//	int ch_id;
+//	
+//	////if you use 3PMT, 1PMT, GEM and 32 SiPM channels
+//	//if (array_position >= 0 && array_position <= 2)
+//	//	ch_id = array_position;
+//	//else if (array_position >= 3 && array_position < 35)
+//	//	ch_id = array_position + 32 - 3;
+//	//else
+//	//{
+//	//	cout << "Unknown channel in GetChId " << endl;
+//	//	system("pause");
+//	//	exit(1);		
+//	//}
+//
+//	////if you use 32 SiPM channels only
+//	//if (array_position >= 0 && array_position <= 31)
+//	//	ch_id = array_position + 32;
+//	//else
+//	//{
+//	//	cout << "Unknown channel in GetChId " << endl;
+//	//	exit(1);
+//	//}
+//
+//	//if you use 3PMT, 1PMT, GEM and 25 SiPM channels
+//	if (array_position >= 0 && array_position <= 2)
+//		ch_id = array_position;
+//	else if (array_position >= 3 && array_position <= 15)
+//		ch_id = array_position + 32 - 3;
+//	else if (array_position >= 16 && array_position <= 27)
+//		ch_id = array_position + 32 - 3 + 3;
+//	else
+//	{
+//		cout << "Unknown channel in GetChId " << endl;
+//		system("pause");
+//		exit(1);		
+//	}
+//
+//
+//	return ch_id;
+//}
+
+//
+//int GetArrayPosition(int ch_id)
+//{
+//	int array_position;
+//	
+//	//if you use 3PMT, 1PMT, GEM and 25 SiPM channels
+//	if (ch_id >= 0 && ch_id <= 2)
+//		array_position = ch_id;
+//	else if (ch_id >= 32 && ch_id <= 44)
+//		array_position = ch_id - 29;
+//	else if (ch_id >= 48 && ch_id <= 59)
+//		array_position = ch_id - 32;
+//	else
+//	{
+//		cout << "Unknown array_position in GetArrayPosition " << endl;
+//		system("pause");
+//		exit(1);
+//	}
+//	
+//	return array_position;
+//}
+
+//
+//int GetChIdSiPM(int array_position)
+//{
+//	return array_position + 32;
+//}
+
+//
+//int GetChIdSiPMCorrect(int array_position)
+//{
+//	int ch_id;
+//	if (array_position <= 12)
+//	{
+//		ch_id = array_position + 32;
+//	}
+//	else if (array_position >= 13 && array_position < 25)
+//	{
+//		ch_id = array_position + 32 + 3;
+//	}
+//
+//	return ch_id;
+//}
+
+//
+//int GetArrayPositionSiPM(int ch_id)
+//{
+//	int array_position;
+//
+//	//if 25 SiPM channels
+//	if (ch_id >= 32 && ch_id <= 44)
+//		array_position = ch_id - 32;
+//	else if (ch_id >= 48 && ch_id <= 59)
+//		array_position = ch_id - 3 - 32;
+//	else
+//	{
+//		cout << "Unknown array_position in GetArrayPosition " << endl;
+//		system("pause");
+//		exit(1);
+//	}
+//
+//	return array_position;
+//}
+
+const bool is_sipm_ch = true;
+
+////---------------------------------------------
+//for neutron runs
+const int n_ch = 8; //(1ch_3PMT + 4ch_n_counters + 3ch_PMT)
+
 int GetChId(int array_position)
 {	
-	//return array_position + 32;
-	
-	//return 0;
 	
 	int ch_id;
 	
-	////if you use 3PMT, 1PMT, GEM and 32 SiPM channels
-	//if (array_position >= 0 && array_position <= 2)
-	//	ch_id = array_position;
-	//else if (array_position >= 3 && array_position < 35)
-	//	ch_id = array_position + 32 - 3;
-	//else
-	//{
-	//	cout << "Unknown channel in GetChId " << endl;
-	//	system("pause");
-	//	exit(1);		
-	//}
-
-	////if you use 32 SiPM channels only
-	//if (array_position >= 0 && array_position <= 31)
-	//	ch_id = array_position + 32;
-	//else
-	//{
-	//	cout << "Unknown channel in GetChId " << endl;
-	//	exit(1);
-	//}
-
-	//if you use 3PMT, 1PMT, GEM and 25 SiPM channels
-	if (array_position >= 0 && array_position <= 2)
+	if (array_position >= 0 && array_position <= 7)
 		ch_id = array_position;
-	else if (array_position >= 3 && array_position <= 15)
-		ch_id = array_position + 32 - 3;
-	else if (array_position >= 16 && array_position <= 27)
-		ch_id = array_position + 32 - 3 + 3;
 	else
 	{
 		cout << "Unknown channel in GetChId " << endl;
@@ -51,67 +140,25 @@ int GetChId(int array_position)
 	return ch_id;
 }
 
-int GetArrayPosition(int ch_id)
-{
-	int array_position;
-	
-	//if you use 3PMT, 1PMT, GEM and 25 SiPM channels
-	if (ch_id >= 0 && ch_id <= 2)
-		array_position = ch_id;
-	else if (ch_id >= 32 && ch_id <= 44)
-		array_position = ch_id - 29;
-	else if (ch_id >= 48 && ch_id <= 59)
-		array_position = ch_id - 32;
-	else
-	{
-		cout << "Unknown array_position in GetArrayPosition " << endl;
-		system("pause");
-		exit(1);
-	}
-	
-	return array_position;
-}
 
-int GetChIdSiPM(int array_position)
-{
-	return array_position + 32;
-}
 
-int GetChIdSiPMCorrect(int array_position)
-{
-	int ch_id;
-	if (array_position <= 12)
-	{
-		ch_id = array_position + 32;
-	}
-	else if (array_position >= 13 && array_position < 25)
-	{
-		ch_id = array_position + 32 + 3;
-	}
+////---------------------------------------------
+//180517
+/*Am*/
+//
+std::string folder_name = "20kV_700V_6dB_Am_100mV\\";
+const int start_run_number = 1;
+const int stop_run_number = 5 /*20*/;
 
-	return ch_id;
-}
+std::string common_path = "E:\\180517\\";
+std::string date = "180517";
+std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
-int GetArrayPositionSiPM(int ch_id)
-{
-	int array_position;
+////---------------------------------------------
 
-	//if 25 SiPM channels
-	if (ch_id >= 32 && ch_id <= 44)
-		array_position = ch_id - 32;
-	else if (ch_id >= 48 && ch_id <= 59)
-		array_position = ch_id - 3 - 32;
-	else
-	{
-		cout << "Unknown array_position in GetArrayPosition " << endl;
-		system("pause");
-		exit(1);
-	}
 
-	return array_position;
-}
 
-const bool is_sipm_ch = true;
 
 
 ////---------------------------------------------
@@ -119,8 +166,8 @@ const bool is_sipm_ch = true;
 //
 //1000 events per file
 //
-
-/*x-ray*/
+//
+///*x-ray*/
 //
 //std::string folder_name = "8kV_SiPM_46V_xray_240Hz\\";
 //const int start_run_number = 59;
@@ -133,9 +180,9 @@ const bool is_sipm_ch = true;
 //std::string folder_name = "14kV_SiPM_46V_xray_240Hz\\";
 //const int start_run_number = 14;
 //const int stop_run_number = 16;
-
-
-
+//
+//
+//
 //std::string common_path = "E:\\180222\\";
 //std::string date = "180222";
 //std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
@@ -255,9 +302,9 @@ const bool is_sipm_ch = true;
 //const int start_run_number = 137;
 //const int stop_run_number = 157;
 //
-std::string folder_name = "Cd_18kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
-const int start_run_number = 223;
-const int stop_run_number = 242;
+//std::string folder_name = "Cd_18kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 223;
+//const int stop_run_number = 242;
 //
 //std::string folder_name = "Cd_18kV_SiPM_46V_THGEM_2200V_coll_2mm\\";
 //const int start_run_number = 330;
@@ -321,10 +368,10 @@ const int stop_run_number = 242;
 
 
 
-std::string common_path = "E:\\171130\\";
-std::string date = "171130";
-std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
-std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+//std::string common_path = "E:\\171130\\";
+//std::string date = "171130";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
 ////---------------------------------------------
 

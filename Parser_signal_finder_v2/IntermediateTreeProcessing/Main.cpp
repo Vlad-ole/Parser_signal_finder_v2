@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
 	cout << "Press any key to confirm the execution." << endl;
 	system("pause");
-	
+
 	TStopwatch timer_total;
 	timer_total.Start();
 
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 	//---------------------------------------------
 	//braches info for tree_raw
 	std::vector<double> *data_raw = 0;
-	std::vector<double> *data_der = 0;
-	std::vector<double> *data_without_slope = 0;
+	//std::vector<double> *data_der = 0;
+	//std::vector<double> *data_without_slope = 0;
 	double min_element;
 	double max_element;
 	double baseline;
@@ -87,11 +87,11 @@ int main(int argc, char *argv[])
 
 
 
-	
+
 	//---------------------------------------------
 
 
-	const int n_ch_sipm = 25;
+	const int n_ch_sipm = 0;
 
 	//Yes, it will take too many RAM. But how to write better?
 	int n_events_one_ch;
@@ -103,14 +103,14 @@ int main(int argc, char *argv[])
 	{
 		n_events_one_ch = is_test;	//test 
 	}
-	
-	
-	vector< vector<double> > num_of_pe_in_event_all_ch__positive_part_s_int;
+
+
+	/*vector< vector<double> > num_of_pe_in_event_all_ch__positive_part_s_int;
 	num_of_pe_in_event_all_ch__positive_part_s_int.resize(n_ch_sipm);
 	for (int i = 0; i < n_ch_sipm; i++)
 	{
-		num_of_pe_in_event_all_ch__positive_part_s_int[i].resize(n_events_one_ch);
-	}
+	num_of_pe_in_event_all_ch__positive_part_s_int[i].resize(n_events_one_ch);
+	}*/
 
 	TFile* f_tree_intermediate = NULL;
 	if (is_recalc_full)
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 		ostringstream f_tree_intermediate_name;
 		f_tree_intermediate_name << path_name_tree << "tree_intermediate.root";
 		cout << f_tree_intermediate_name.str().c_str() << endl;
-		f_tree_intermediate = TFile::Open(f_tree_intermediate_name.str().c_str(), "RECREATE");		
+		f_tree_intermediate = TFile::Open(f_tree_intermediate_name.str().c_str(), "RECREATE");
 	}
 	IntermediateTreeInfo tree_intermediate_obj;
 
@@ -155,8 +155,8 @@ int main(int argc, char *argv[])
 			//-----------------------------------
 			//SetBranchAddress
 			chain.SetBranchAddress("data_raw", &data_raw);
-			chain.SetBranchAddress("data_der", &data_der);
-			chain.SetBranchAddress("data_without_slope", &data_without_slope);
+			//chain.SetBranchAddress("data_der", &data_der);
+			//chain.SetBranchAddress("data_without_slope", &data_without_slope);
 
 			chain.SetBranchAddress("min_element", &min_element);
 			chain.SetBranchAddress("max_element", &max_element);
@@ -176,18 +176,18 @@ int main(int argc, char *argv[])
 					cout << "ch_id = " << GetChId(i) << "; event = " << temp_event_id << " (" << setprecision(3) << val << " %)" << endl;
 				}
 
-				if (GetChId(i) < 3) //process only SiPM ch
+				if (GetChId(i) < 8) //process only PMT ch
 				{
-					tree_intermediate_obj.signals_x_start.resize(0);
-					tree_intermediate_obj.signals_x_stop.resize(0);
-					tree_intermediate_obj.local_baseline.resize(0);
-					tree_intermediate_obj.one_peak_y_maximum.resize(0);
-					tree_intermediate_obj.num_of_pe_in_one_peak.resize(0);
-					tree_intermediate_obj.integral_one_peak.resize(0);
+					//tree_intermediate_obj.signals_x_start.resize(0);
+					//tree_intermediate_obj.signals_x_stop.resize(0);
+					//tree_intermediate_obj.local_baseline.resize(0);
+					//tree_intermediate_obj.one_peak_y_maximum.resize(0);
+					//tree_intermediate_obj.num_of_pe_in_one_peak.resize(0);
+					//tree_intermediate_obj.integral_one_peak.resize(0);
 
 					//for Cd
 					CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
-					
+
 					////for x-ray 20kV
 					//CalcIntegral calc_integral(*data_raw, baseline, 35000, 68200, HORIZ_INTERVAL);
 
@@ -209,104 +209,104 @@ int main(int argc, char *argv[])
 					tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int =
 						calc_integral.GetIntegrtal();
 				}
-				else
-				{
-					tree_intermediate_obj.signals_x_start.clear();
-					tree_intermediate_obj.signals_x_stop.clear();
-					tree_intermediate_obj.local_baseline.clear();
-					tree_intermediate_obj.integral_one_peak.clear();
-					tree_intermediate_obj.one_peak_y_maximum.clear();
-					tree_intermediate_obj.num_of_pe_in_one_peak.clear();
+				//else
+				//{
+				//	tree_intermediate_obj.signals_x_start.clear();
+				//	tree_intermediate_obj.signals_x_stop.clear();
+				//	tree_intermediate_obj.local_baseline.clear();
+				//	tree_intermediate_obj.integral_one_peak.clear();
+				//	tree_intermediate_obj.one_peak_y_maximum.clear();
+				//	tree_intermediate_obj.num_of_pe_in_one_peak.clear();
 
-					//PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
-					PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
-					tree_intermediate_obj.local_baseline = peak_finder_find.GetLocalBaselineV();
+				//	//PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
+				//	PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
+				//	tree_intermediate_obj.local_baseline = peak_finder_find.GetLocalBaselineV();
 
-					//----------------------------------------
-					//peak left/right edges
-					vector< pair<int, int> > pair_vec = peak_finder_find.GetPeakPositions();
-					tree_intermediate_obj.signals_x_start.resize(pair_vec.size());
-					tree_intermediate_obj.signals_x_stop.resize(pair_vec.size());
-					for (int j = 0; j < pair_vec.size(); j++)
-					{
-						tree_intermediate_obj.signals_x_start[j] = pair_vec[j].first;
-						tree_intermediate_obj.signals_x_stop[j] = pair_vec[j].second;
-					}
-					//----------------------------------------
+				//	//----------------------------------------
+				//	//peak left/right edges
+				//	vector< pair<int, int> > pair_vec = peak_finder_find.GetPeakPositions();
+				//	tree_intermediate_obj.signals_x_start.resize(pair_vec.size());
+				//	tree_intermediate_obj.signals_x_stop.resize(pair_vec.size());
+				//	for (int j = 0; j < pair_vec.size(); j++)
+				//	{
+				//		tree_intermediate_obj.signals_x_start[j] = pair_vec[j].first;
+				//		tree_intermediate_obj.signals_x_stop[j] = pair_vec[j].second;
+				//	}
+				//	//----------------------------------------
 
 
-					//----------------------------------------
-					//caclulate intergal of individual peaks
-					double integral_one_event_tmp = 0;
-					for (int j = 0; j < pair_vec.size(); j++)
-					{
-						//choose region (for calib only) 
-						//if ((tree_intermediate_obj.signals_x_stop[j] * HORIZ_INTERVAL) > 80000 && (tree_intermediate_obj.signals_x_start[j] * HORIZ_INTERVAL) < 150000)
-						{
-							double integral_tmp = 0;
-							double one_peak_y_maximum_tmp = -1100;
-							for (int k = tree_intermediate_obj.signals_x_start[j]; k < tree_intermediate_obj.signals_x_stop[j]; k++)
-							{
-								double tmp_val = (*data_without_slope)[k] - tree_intermediate_obj.local_baseline[j];
-								integral_tmp += tmp_val * HORIZ_INTERVAL;
-								if (tmp_val > one_peak_y_maximum_tmp)
-									one_peak_y_maximum_tmp = tmp_val;
-							}
-							tree_intermediate_obj.integral_one_peak.push_back(integral_tmp);
-							tree_intermediate_obj.one_peak_y_maximum.push_back(one_peak_y_maximum_tmp);
-						}
-					}
-					//----------------------------------------
-					//SiPM signal gates
+				//	//----------------------------------------
+				//	//caclulate intergal of individual peaks
+				//	double integral_one_event_tmp = 0;
+				//	for (int j = 0; j < pair_vec.size(); j++)
+				//	{
+				//		//choose region (for calib only) 
+				//		//if ((tree_intermediate_obj.signals_x_stop[j] * HORIZ_INTERVAL) > 80000 && (tree_intermediate_obj.signals_x_start[j] * HORIZ_INTERVAL) < 150000)
+				//		{
+				//			double integral_tmp = 0;
+				//			double one_peak_y_maximum_tmp = -1100;
+				//			for (int k = tree_intermediate_obj.signals_x_start[j]; k < tree_intermediate_obj.signals_x_stop[j]; k++)
+				//			{
+				//				double tmp_val = (*data_without_slope)[k] - tree_intermediate_obj.local_baseline[j];
+				//				integral_tmp += tmp_val * HORIZ_INTERVAL;
+				//				if (tmp_val > one_peak_y_maximum_tmp)
+				//					one_peak_y_maximum_tmp = tmp_val;
+				//			}
+				//			tree_intermediate_obj.integral_one_peak.push_back(integral_tmp);
+				//			tree_intermediate_obj.one_peak_y_maximum.push_back(one_peak_y_maximum_tmp);
+				//		}
+				//	}
+				//	//----------------------------------------
+				//	//SiPM signal gates
 
-					//for Cd
-					int point_from = 25000 / HORIZ_INTERVAL;
-					int point_to = 55000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				//	//for Cd
+				//	int point_from = 25000 / HORIZ_INTERVAL;
+				//	int point_to = 55000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
-					////for x-ray 20kV, 18, 16, 14
-					//int point_from = 40000 / HORIZ_INTERVAL;
-					//int point_to = 80000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				//	////for x-ray 20kV, 18, 16, 14
+				//	//int point_from = 40000 / HORIZ_INTERVAL;
+				//	//int point_to = 80000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
-					////for x-ray 12, 10kV
-					//int point_from = 45000 / HORIZ_INTERVAL;
-					//int point_to = 90000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				//	////for x-ray 12, 10kV
+				//	//int point_from = 45000 / HORIZ_INTERVAL;
+				//	//int point_to = 90000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
-					//////for x-ray 8kV
-					//int point_from = 50000 / HORIZ_INTERVAL;
-					//int point_to = 100000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+				//	//////for x-ray 8kV
+				//	//int point_from = 50000 / HORIZ_INTERVAL;
+				//	//int point_to = 100000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
-					//----------------------------------------
-					//calc num of pe for one event
-					vector<ChCharacteristicsStruct> ch_characteristics_struct = ChCharacteristics::GetChCharacteristics();
-					double num_of_pe_in_event__positive_part_s_int_tmp = 0;
-					for (int k = 0; k < ch_characteristics_struct.size(); k++)
-					{
-						if (ch_characteristics_struct[k].ch_id == GetChId(i) && ch_characteristics_struct[k].is_spe_separated_from_noise &&
-							ch_characteristics_struct[k].is_physical)
-						{
-							for (int j = 0; j < tree_intermediate_obj.integral_one_peak.size(); j++)
-							{
-								//algorithm is not ideal, so I should add some cuts (depend from ch_id)
-								if (tree_intermediate_obj.integral_one_peak[j] > ch_characteristics_struct[k].spe_min)
-								{
-									double n_pe_one_peak_tmp = tree_intermediate_obj.integral_one_peak[j] / ch_characteristics_struct[k].spe_mean;
-									tree_intermediate_obj.num_of_pe_in_one_peak.push_back(n_pe_one_peak_tmp);
+				//	//----------------------------------------
+				//	//calc num of pe for one event
+				//	vector<ChCharacteristicsStruct> ch_characteristics_struct = ChCharacteristics::GetChCharacteristics();
+				//	double num_of_pe_in_event__positive_part_s_int_tmp = 0;
+				//	for (int k = 0; k < ch_characteristics_struct.size(); k++)
+				//	{
+				//		if (ch_characteristics_struct[k].ch_id == GetChId(i) && ch_characteristics_struct[k].is_spe_separated_from_noise &&
+				//			ch_characteristics_struct[k].is_physical)
+				//		{
+				//			for (int j = 0; j < tree_intermediate_obj.integral_one_peak.size(); j++)
+				//			{
+				//				//algorithm is not ideal, so I should add some cuts (depend from ch_id)
+				//				if (tree_intermediate_obj.integral_one_peak[j] > ch_characteristics_struct[k].spe_min)
+				//				{
+				//					double n_pe_one_peak_tmp = tree_intermediate_obj.integral_one_peak[j] / ch_characteristics_struct[k].spe_mean;
+				//					tree_intermediate_obj.num_of_pe_in_one_peak.push_back(n_pe_one_peak_tmp);
 
-									if (pair_vec[j].first >= point_from && pair_vec[j].second < point_to)
-									{
-										num_of_pe_in_event__positive_part_s_int_tmp += n_pe_one_peak_tmp;
-									}
+				//					if (pair_vec[j].first >= point_from && pair_vec[j].second < point_to)
+				//					{
+				//						num_of_pe_in_event__positive_part_s_int_tmp += n_pe_one_peak_tmp;
+				//					}
 
-								}
-							}
-						}
-					}
+				//				}
+				//			}
+				//		}
+				//	}
 
-					tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int = num_of_pe_in_event__positive_part_s_int_tmp;
-					num_of_pe_in_event_all_ch__positive_part_s_int[i - 3][temp_event_id] = num_of_pe_in_event__positive_part_s_int_tmp;
-					////----------------------------------------
+				//	tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int = num_of_pe_in_event__positive_part_s_int_tmp;
+				//	num_of_pe_in_event_all_ch__positive_part_s_int[i - 3][temp_event_id] = num_of_pe_in_event__positive_part_s_int_tmp;
+				//	////----------------------------------------
 
-				}
+				//}
 
 				tree_intermediate_obj.tree->Fill();
 
@@ -323,127 +323,127 @@ int main(int argc, char *argv[])
 		tree_intermediate_obj.tree->Write();
 		f_tree_intermediate->Close();
 
-		
+
 	}
 
-
+{
 	//----------------------------------------------------------
-	ostringstream f_TreeInfoAllCh_name;
-	f_TreeInfoAllCh_name << path_name_tree << "TreeInfoAllCh.root";
-	cout << f_TreeInfoAllCh_name.str().c_str() << endl;
-	TFile* f_TreeInfoAllCh = TFile::Open(f_TreeInfoAllCh_name.str().c_str(), "RECREATE");
-	TreeInfoAllCh TreeInfoAllCh_obj;
+	//ostringstream f_TreeInfoAllCh_name;
+	//f_TreeInfoAllCh_name << path_name_tree << "TreeInfoAllCh.root";
+	//cout << f_TreeInfoAllCh_name.str().c_str() << endl;
+	//TFile* f_TreeInfoAllCh = TFile::Open(f_TreeInfoAllCh_name.str().c_str(), "RECREATE");
+	//TreeInfoAllCh TreeInfoAllCh_obj;
 
-	for (int i = 0; i < n_events_one_ch; i++)
-	{
-		
-		vector<double> num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec;
-		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec.resize(n_ch_sipm);
+	//for (int i = 0; i < n_events_one_ch; i++)
+	//{
+	//	
+	//	vector<double> num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec;
+	//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec.resize(n_ch_sipm);
 
-		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int = 0;
-		
-		//case when ch44 is bad
-		//-------------------------------------
-		for (int j = 0; j < n_ch_sipm; j++)
-		{
-			if (GetChIdSiPM(j) != 44)
-			{
-				TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
-					num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+	//	TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int = 0;
+	//	
+	//	//case when ch44 is bad
+	//	//-------------------------------------
+	//	for (int j = 0; j < n_ch_sipm; j++)
+	//	{
+	//		if (GetChIdSiPM(j) != 44)
+	//		{
+	//			TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+	//				num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
 
-				num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
-			}			
-		}
-		//add special channels
-		//ch 44
-		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] = 
-			(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] + 
-			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
-			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
+	//			num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+	//		}			
+	//	}
+	//	//add special channels
+	//	//ch 44
+	//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] = 
+	//		(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] + 
+	//		num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
+	//		num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
 
-		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int += 
-			num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
-		//-------------------------------------
-
-
-
-		////case when ch37, ch56, ch43, ch44 are bad
-		////-------------------------------------
-		//for (int j = 0; j < n_ch_sipm; j++)
-		//{
-		//	if (GetChIdSiPM(j) != 37 && GetChIdSiPM(j) != 56 && GetChIdSiPM(j) != 43 && GetChIdSiPM(j) != 44)
-		//	{
-		//		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
-		//			num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
-
-		//		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
-		//	}
-		//}
-		////add special channels
-
-		////ch37
-		//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(37)] =
-		//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(34)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(36)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(54)][i]) / 3.0;
-		//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
-		//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(37)];
-
-		////ch56
-		//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(56)] =
-		//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(39)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(41)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i]) / 4.0;
-		//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
-		//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(56)];
-
-		////ch43
-		//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(43)] =
-		//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(40)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(42)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(58)][i]) / 3.0;
-		//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
-		//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(43)];
+	//	TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int += 
+	//		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
+	//	//-------------------------------------
 
 
-		////ch 44
-		//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] =
-		//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
-		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
-		//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
-		//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
 
-		//
-		////-------------------------------------
-		
-		
-		
-		CoGBase cog_obj(num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec);//by cog and by max
-		
-		TreeInfoAllCh_obj.x_cog = cog_obj.GetX();
-		TreeInfoAllCh_obj.y_cog = cog_obj.GetY();
-		
-		TreeInfoAllCh_obj.x_by_max = cog_obj.GetXByMax();
-		TreeInfoAllCh_obj.y_by_max = cog_obj.GetYByMax();
+	//	////case when ch37, ch56, ch43, ch44 are bad
+	//	////-------------------------------------
+	//	//for (int j = 0; j < n_ch_sipm; j++)
+	//	//{
+	//	//	if (GetChIdSiPM(j) != 37 && GetChIdSiPM(j) != 56 && GetChIdSiPM(j) != 43 && GetChIdSiPM(j) != 44)
+	//	//	{
+	//	//		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+	//	//			num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
 
-		TreeInfoAllCh_obj.x_cog_modified = cog_obj.GetXCoGModified();
-		TreeInfoAllCh_obj.y_cog_modified = cog_obj.GetYCoGModified();
+	//	//		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+	//	//	}
+	//	//}
+	//	////add special channels
 
-		//cout << "x_cog = " << TreeInfoAllCh_obj.x_cog << endl;
-		//cout << "y_cog = " << TreeInfoAllCh_obj.y_cog << endl;
-		//cout << "x_by_max = " << TreeInfoAllCh_obj.x_by_max << endl;
-		//cout << "y_by_max = " << TreeInfoAllCh_obj.y_by_max << endl;
+	//	////ch37
+	//	//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(37)] =
+	//	//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(34)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(36)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(54)][i]) / 3.0;
+	//	//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+	//	//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(37)];
 
-		TreeInfoAllCh_obj.tree->Fill();
-	}	
+	//	////ch56
+	//	//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(56)] =
+	//	//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(39)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(41)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i]) / 4.0;
+	//	//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+	//	//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(56)];
 
-	f_TreeInfoAllCh->cd();
-	TreeInfoAllCh_obj.tree->Write();
-	f_TreeInfoAllCh->Close();
+	//	////ch43
+	//	//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(43)] =
+	//	//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(40)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(42)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(58)][i]) / 3.0;
+	//	//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+	//	//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(43)];
+
+
+	//	////ch 44
+	//	//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] =
+	//	//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
+	//	//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
+	//	//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+	//	//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
+
+	//	//
+	//	////-------------------------------------
+	//	
+	//	
+	//	
+	//	CoGBase cog_obj(num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec);//by cog and by max
+	//	
+	//	TreeInfoAllCh_obj.x_cog = cog_obj.GetX();
+	//	TreeInfoAllCh_obj.y_cog = cog_obj.GetY();
+	//	
+	//	TreeInfoAllCh_obj.x_by_max = cog_obj.GetXByMax();
+	//	TreeInfoAllCh_obj.y_by_max = cog_obj.GetYByMax();
+
+	//	TreeInfoAllCh_obj.x_cog_modified = cog_obj.GetXCoGModified();
+	//	TreeInfoAllCh_obj.y_cog_modified = cog_obj.GetYCoGModified();
+
+	//	//cout << "x_cog = " << TreeInfoAllCh_obj.x_cog << endl;
+	//	//cout << "y_cog = " << TreeInfoAllCh_obj.y_cog << endl;
+	//	//cout << "x_by_max = " << TreeInfoAllCh_obj.x_by_max << endl;
+	//	//cout << "y_by_max = " << TreeInfoAllCh_obj.y_by_max << endl;
+
+	//	TreeInfoAllCh_obj.tree->Fill();
+	//}	
+
+	//f_TreeInfoAllCh->cd();
+	//TreeInfoAllCh_obj.tree->Write();
+	//f_TreeInfoAllCh->Close();
 	//----------------------------------------------------------
-
+}
 
 	timer_total.Stop();
 	//cout << "n_events = " << n_events << endl;
