@@ -101,19 +101,10 @@
     <ClInclude Include="ReadData_Cean_OneFile.h">
       <Filter>Header Files\ReadData</Filter>
     </ClInclude>
-    <ClInclude Include="CalcDer.h">
-      <Filter>Header Files\CalcData</Filter>
-    </ClInclude>
-    <ClInclude Include="CalcData.h">
-      <Filter>Header Files\CalcData</Filter>
-    </ClInclude>
     <ClInclude Include="CalcBaseline.h">
       <Filter>Header Files\CalcData\CalcBaseline</Filter>
     </ClInclude>
     <ClInclude Include="CalcBaselineZeroComp.h">
-      <Filter>Header Files\CalcData\CalcBaseline</Filter>
-    </ClInclude>
-    <ClInclude Include="CalcBaselineTrivial.h">
       <Filter>Header Files\CalcData\CalcBaseline</Filter>
     </ClInclude>
     <ClInclude Include="..\include\IntermediateTreeInfo.h">
@@ -127,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="..\include\TreeInfo.h">
       <Filter>Header Files\Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CalcData.h">
+      <Filter>Header Files\CalcData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CalcDer.h">
+      <Filter>Header Files\CalcData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CalcBaselineTrivial.h">
+      <Filter>Header Files\CalcData\CalcBaseline</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

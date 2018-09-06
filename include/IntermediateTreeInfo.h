@@ -22,6 +22,8 @@ public:
 
 	TTree *tree;
 	double num_of_pe_in_event__positive_part_s_int;
+	double num_of_pe_in_event__positive_part_s_int_slow;
+	int points_shift_from_trigg;
 	std::vector<int> signals_x_start;
 	std::vector<int> signals_x_stop;
 	std::vector<double> local_baseline;

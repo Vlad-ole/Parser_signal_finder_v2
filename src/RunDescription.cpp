@@ -146,19 +146,73 @@ int GetChId(int array_position)
 //180517
 /*Am*/
 //
-std::string folder_name = "20kV_700V_6dB_Am_100mV\\";
-const int start_run_number = 1;
-const int stop_run_number = 5 /*20*/;
+//std::string folder_name = "20kV_700V_6dB_Am_100mV\\";
+//const int start_run_number = 1;
+//const int stop_run_number = 20;
+//
+//std::string folder_name = "20kV_700V_6dB_Am_100mV_bkg\\";
+//const int start_run_number = 22;
+//const int stop_run_number = 32;
+////
+//std::string folder_name = "20kV_700V_6dB_Cd_100mV\\";
+//const int start_run_number = 765;
+//const int stop_run_number = 786;
+//
+//std::string folder_name = "20kV_700V_6dB_NdetTrigg_neu_3counters\\";
+//const int start_run_number = 62;
+//const int stop_run_number = /*63*/ 135;
+//
+//std::string folder_name = "20kV_700V_6dB_NdetTrigg_neu_3counters_run2\\";
+//const int start_run_number = 1;
+//const int stop_run_number = 763;
+//
+//std::string folder_name = "20kV_700V_6dB_NdetTrigg_bkg_3counters\\";
+//const int start_run_number = 34;
+//const int stop_run_number = 60;
 
-std::string common_path = "E:\\180517\\";
-std::string date = "180517";
-std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
-std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+
+
+//std::string common_path = "E:\\180517\\";
+//std::string date = "180517";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
 ////---------------------------------------------
 
 
 
+
+
+////---------------------------------------------
+//180510
+//
+//std::string folder_name = "20kV_700V_6dB_Am_20mV\\";
+//const int start_run_number = 52;
+//const int stop_run_number = 72;
+//
+//std::string folder_name = "20kV_700V_6dB_Cd_no_coll\\";
+//const int start_run_number = 1;
+//const int stop_run_number = 27;
+//
+//std::string folder_name = "20kV_700V_6dB_Cd_no_coll_5mV\\";
+//const int start_run_number = 29;
+//const int stop_run_number = 50;
+//
+//std::string folder_name = "20kV_700V_6dB_bkg\\";
+//const int start_run_number = 466;
+//const int stop_run_number = 510;
+//
+std::string folder_name = "20kV_700V_6dB_Neu_NdetTrigg\\";
+const int start_run_number = 79;
+const int stop_run_number = 464;
+
+
+
+std::string common_path = "E:\\180510\\";
+std::string date = "180510";
+std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+////---------------------------------------------
 
 
 ////---------------------------------------------

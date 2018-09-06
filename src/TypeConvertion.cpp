@@ -10,6 +10,7 @@ TypeConvertion::~TypeConvertion()
 {
 }
 
+
 std::vector<double> TypeConvertion::GetVectorMultiplyToScalar(std::vector<double> & yv_double, double scalar)
 {
 	std::vector<double> vec(yv_double.size());

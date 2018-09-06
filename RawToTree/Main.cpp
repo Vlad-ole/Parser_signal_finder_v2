@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	TThread::Initialize();//we need additional magic!
 		
 	//loop by chs
-#pragma omp parallel for num_threads(3)
+#pragma omp parallel for num_threads(2)
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
 			
 			{
 				bool is_invert = false;
-				if (GetChId(i) == 0 || GetChId(i) == 1 || GetChId(i) == 5 || GetChId(6) == 6 || GetChId(i) == 7) //for neg signals
-					is_invert = true;
+				//if (GetChId(i) == 0 || GetChId(i) == 1 || GetChId(i) == 5 || GetChId(6) == 6 || GetChId(i) == 7) //for neg signals
+				//	is_invert = true;
 				
 				
 				CalcData calc_data(rdt.GetDataDouble()[temp_event_id][0], str_comm.HORIZ_INTERVAL, is_invert);
@@ -142,10 +142,14 @@ int main(int argc, char *argv[])
 				tree_raw_obj->run_number = run_number;
 				tree_raw_obj->event_id = temp_event_id;
 				
+				tree_raw_obj->pos_point_min_element = calc_data.Get_pos_point_min_element();
+				tree_raw_obj->pos_point_max_element = calc_data.Get_pos_point_max_element();
+
 				tree_raw_obj->min_element = calc_data.Get_min_element();
 				tree_raw_obj->max_element = calc_data.Get_max_element();
 
 				tree_raw_obj->baseline = calc_data.Get_baseline();
+				tree_raw_obj->baseline_end = calc_data.Get_baseline_end();
 
 				tree_raw_obj->data_raw = rdt.GetDataDouble()[temp_event_id][0];
 

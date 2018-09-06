@@ -46,9 +46,14 @@ int main(int argc, char *argv[])
 	std::vector<double> *data_raw = 0;
 	//std::vector<double> *data_der = 0;
 	//std::vector<double> *data_without_slope = 0;
+	int pos_point_min_element;
+	int pos_point_max_element;
 	double min_element;
 	double max_element;
 	double baseline;
+	int run_id;
+	int event_id;
+	int ch_id;
 	//---------------------------------------------
 
 
@@ -155,8 +160,16 @@ int main(int argc, char *argv[])
 			//-----------------------------------
 			//SetBranchAddress
 			chain.SetBranchAddress("data_raw", &data_raw);
+			chain.SetBranchAddress("ch_id", &ch_id);
+			chain.SetBranchAddress("run_id", &run_id);
+			chain.SetBranchAddress("event_id", &event_id);
+
 			//chain.SetBranchAddress("data_der", &data_der);
 			//chain.SetBranchAddress("data_without_slope", &data_without_slope);
+
+			
+			chain.SetBranchAddress("pos_point_min_element", &pos_point_min_element);
+			chain.SetBranchAddress("pos_point_max_element", &pos_point_max_element);
 
 			chain.SetBranchAddress("min_element", &min_element);
 			chain.SetBranchAddress("max_element", &max_element);
@@ -186,7 +199,40 @@ int main(int argc, char *argv[])
 					//tree_intermediate_obj.integral_one_peak.resize(0);
 
 					//for Cd
-					CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
+					//
+					//CalcIntegral *calc_integral;
+					double time_from_integral_fast = 0;
+					double time_from_integral_slow = 0;
+					double time_to_integral_fast = 0;
+					double time_to_integral_slow = 0;
+
+					if (GetChId(i) == 6 || GetChId(i) == 7 /*&& run_id == 62 && event_id == 6*/)
+					{						
+						tree_intermediate_obj.points_shift_from_trigg = pos_point_min_element - (32000 / HORIZ_INTERVAL);
+						
+						time_from_integral_fast = (pos_point_min_element*HORIZ_INTERVAL - 30) / HORIZ_INTERVAL > 0 ? (pos_point_min_element*HORIZ_INTERVAL - 30) : 0;
+						time_to_integral_fast = (pos_point_min_element*HORIZ_INTERVAL + 30) / HORIZ_INTERVAL > 0 ? (pos_point_min_element*HORIZ_INTERVAL + 30) : HORIZ_INTERVAL*(WAVE_ARRAY_COUNT - 1);
+						
+						time_from_integral_slow = time_to_integral_fast;
+						time_to_integral_slow = (pos_point_min_element*HORIZ_INTERVAL + 100) / HORIZ_INTERVAL < WAVE_ARRAY_COUNT ? (pos_point_min_element*HORIZ_INTERVAL + 100) : HORIZ_INTERVAL*(WAVE_ARRAY_COUNT-1);
+					}
+					else if (GetChId(i) == 0)
+					{
+						time_from_integral_fast = (pos_point_min_element*HORIZ_INTERVAL - 150) / HORIZ_INTERVAL > 0 ? (pos_point_min_element*HORIZ_INTERVAL - 150) : 0;
+						time_to_integral_fast = (pos_point_min_element*HORIZ_INTERVAL + 350) / HORIZ_INTERVAL < WAVE_ARRAY_COUNT ? (pos_point_min_element*HORIZ_INTERVAL + 350) : HORIZ_INTERVAL*(WAVE_ARRAY_COUNT - 1);
+						
+						
+						time_from_integral_slow = (pos_point_min_element*HORIZ_INTERVAL - 2000) / HORIZ_INTERVAL > 0 ? (pos_point_min_element*HORIZ_INTERVAL - 2000) : 0;
+						time_to_integral_slow = (pos_point_min_element*HORIZ_INTERVAL + 7800) / HORIZ_INTERVAL < WAVE_ARRAY_COUNT ? (pos_point_min_element*HORIZ_INTERVAL + 7800) : HORIZ_INTERVAL*(WAVE_ARRAY_COUNT - 1);
+					}
+					else
+					{
+						time_from_integral_fast = 30000;
+						time_to_integral_fast = 40200;
+					}
+
+					CalcIntegral calc_integral_fast(*data_raw, baseline, time_from_integral_fast, time_to_integral_fast, HORIZ_INTERVAL);
+					CalcIntegral calc_integral_slow(*data_raw, baseline, time_from_integral_slow, time_to_integral_slow, HORIZ_INTERVAL);
 
 					////for x-ray 20kV
 					//CalcIntegral calc_integral(*data_raw, baseline, 35000, 68200, HORIZ_INTERVAL);
@@ -206,8 +252,26 @@ int main(int argc, char *argv[])
 					////for x-ray 8kV
 					//CalcIntegral calc_integral(*data_raw, baseline, 55000, 79070, HORIZ_INTERVAL);
 
-					tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int =
-						calc_integral.GetIntegrtal();
+					
+
+					
+					if (GetChId(i) == 0 || GetChId(i) == 1 || GetChId(i) == 5 || GetChId(i) == 6 || GetChId(i) == 7) //for neg signals
+					{
+						tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int =
+							calc_integral_fast.GetIntegrtal()*(-1);
+
+						tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int_slow =
+							calc_integral_slow.GetIntegrtal()*(-1);
+					}
+					else
+					{
+						tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int =
+							calc_integral_fast.GetIntegrtal()*(1);
+
+						tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int_slow =
+							calc_integral_slow.GetIntegrtal()*(1);
+					}
+					
 				}
 				//else
 				//{

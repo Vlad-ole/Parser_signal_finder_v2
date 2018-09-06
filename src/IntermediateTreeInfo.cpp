@@ -4,8 +4,10 @@
 IntermediateTreeInfo::IntermediateTreeInfo() //: tree("tree_intermediate", "Intermediate tree")
 {
 	tree = new TTree("tree_intermediate", "Intermediate tree");
-
-	tree->Branch("num_of_pe_in_event__positive_part_s_int", &num_of_pe_in_event__positive_part_s_int);	
+	
+	tree->Branch("num_of_pe_in_event__positive_part_s_int_slow", &num_of_pe_in_event__positive_part_s_int_slow);
+	tree->Branch("num_of_pe_in_event__positive_part_s_int", &num_of_pe_in_event__positive_part_s_int);
+	tree->Branch("points_shift_from_trigg", &points_shift_from_trigg);
 	//tree->Branch("signals_x_start", &signals_x_start);
 	//tree->Branch("signals_x_stop", &signals_x_stop);
 	//tree->Branch("local_baseline", &local_baseline);

@@ -32,9 +32,12 @@ public:
 	std::vector<double> data_der;
 	std::vector<double> data_without_slope;
 
+	int pos_point_min_element;
+	int pos_point_max_element;
 	double min_element;
 	double max_element;
 	double baseline;
+	double baseline_end;
 	
 };
 

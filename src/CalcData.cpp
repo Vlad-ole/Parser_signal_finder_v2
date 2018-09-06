@@ -18,6 +18,9 @@ CalcData::CalcData(std::vector<double> &data_raw, double HORIZ_INTERVAL, bool is
 
 	CalcBaselineTrivial calc_baseline(data_raw, 30000, HORIZ_INTERVAL);
 	baseline = calc_baseline.GetBaseline();
+
+	CalcBaselineTrivial calc_baseline_end(data_raw, 40000 * HORIZ_INTERVAL - 20000, 40000 * HORIZ_INTERVAL, HORIZ_INTERVAL);
+	baseline_end = calc_baseline_end.GetBaseline();
 }
 
 
@@ -30,6 +33,11 @@ double CalcData::Get_baseline()
 	return baseline;
 }
 
+double CalcData::Get_baseline_end()
+{
+	return baseline_end;
+}
+
 double CalcData::Get_min_element()
 {
 	return *min_element(data_raw.begin(), data_raw.end());
@@ -38,6 +46,16 @@ double CalcData::Get_min_element()
 double CalcData::Get_max_element()
 {
 	return *max_element(data_raw.begin(), data_raw.end());
+}
+
+double CalcData::Get_pos_point_min_element()
+{
+	return distance(data_raw.begin(), min_element(data_raw.begin(), data_raw.end()));
+}
+
+double CalcData::Get_pos_point_max_element()
+{
+	return distance(data_raw.begin(), max_element(data_raw.begin(), data_raw.end()));
 }
 
 std::vector<double> CalcData::Get_data_der()

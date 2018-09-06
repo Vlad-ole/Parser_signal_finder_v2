@@ -23,10 +23,15 @@ public:
 	double Get_min_element();
 	double Get_max_element();
 
+	double Get_pos_point_min_element();
+	double Get_pos_point_max_element();
+
 	std::vector<double> Get_data_der();
 	std::vector<double> Get_data_without_slope();
 
 	double CalcData::Get_baseline();
+	double CalcData::Get_baseline_end();
+
 
 private:
 	std::vector<double> &data_raw;
@@ -35,6 +40,7 @@ private:
 	std::vector<double> baseline_vec;
 
 	double baseline;
+	double baseline_end;
 
 	const double HORIZ_INTERVAL;
 };
