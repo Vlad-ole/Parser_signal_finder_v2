@@ -24,6 +24,7 @@
 #include "TreeInfoAllCh.h"
 #include "CoGBase.h"
 #include "CalcIntegral.h"
+#include "TypeConvertion.h"
 
 using namespace std;
 
@@ -168,7 +169,12 @@ int main(int argc, char *argv[])
 			//loop by events
 			for (int temp_event_id = 0; temp_event_id < n_events; temp_event_id++)
 			{
-				chain.GetEntry(temp_event_id);
+				//test
+				//if (GetChId(i) == 36 && temp_event_id == 10341)
+				{
+					chain.GetEntry(temp_event_id);					
+				}
+				//continue;
 
 				if (temp_event_id % 100 == 0 || temp_event_id == (n_events - 1))
 				{
@@ -176,17 +182,31 @@ int main(int argc, char *argv[])
 					cout << "ch_id = " << GetChId(i) << "; event = " << temp_event_id << " (" << setprecision(3) << val << " %)" << endl;
 				}
 
-				if (GetChId(i) < 3) //process only SiPM ch
+				tree_intermediate_obj.signals_x_start.clear();
+				tree_intermediate_obj.signals_x_stop.clear();
+				tree_intermediate_obj.local_baseline.clear();
+				tree_intermediate_obj.integral_one_peak.clear();
+				tree_intermediate_obj.one_peak_y_maximum.clear();
+				//tree_intermediate_obj.num_of_pe_in_one_peak.clear();
+
+				if (GetChId(i) < 2) //process only PMTs ch
 				{
-					tree_intermediate_obj.signals_x_start.resize(0);
+					//continue;
+					/*tree_intermediate_obj.signals_x_start.resize(0);
 					tree_intermediate_obj.signals_x_stop.resize(0);
 					tree_intermediate_obj.local_baseline.resize(0);
 					tree_intermediate_obj.one_peak_y_maximum.resize(0);
 					tree_intermediate_obj.num_of_pe_in_one_peak.resize(0);
+					tree_intermediate_obj.integral_one_peak.resize(0);*/
+
 					tree_intermediate_obj.integral_one_peak.resize(0);
 
+
+					//for X-ray NBrS
+					CalcIntegral calc_integral(*data_raw, baseline, 32000, 40000, HORIZ_INTERVAL);
+
 					//for Cd
-					CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
+					//CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
 					
 					////for x-ray 20kV
 					//CalcIntegral calc_integral(*data_raw, baseline, 35000, 68200, HORIZ_INTERVAL);
@@ -208,18 +228,105 @@ int main(int argc, char *argv[])
 
 					tree_intermediate_obj.num_of_pe_in_event__positive_part_s_int =
 						calc_integral.GetIntegrtal();
+
+					PeakFinderFind *peak_finder_find = NULL;
+					if (GetChId(i) == 0)
+					{
+						//PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 20, 2 /*change this*/, HORIZ_INTERVAL, false);//3PMT 800V
+						peak_finder_find = new PeakFinderFind(*data_without_slope, *data_der, 20, 2 /*change this*/, HORIZ_INTERVAL, false);//3PMT 800V;
+					}
+					if (GetChId(i) == 1)
+					{
+						//PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 20, 4 /*change this*/, HORIZ_INTERVAL, false);//3PMT 800V
+						peak_finder_find = new PeakFinderFind(*data_without_slope, *data_der, 20, 4 /*change this*/, HORIZ_INTERVAL, false);//3PMT 800V;
+					}
+
+					tree_intermediate_obj.local_baseline = peak_finder_find->GetLocalBaselineV();
+
+					//----------------------------------------
+					//peak left/right edges
+					vector< pair<int, int> > pair_vec = peak_finder_find->GetPeakPositions();
+					tree_intermediate_obj.signals_x_start.resize(pair_vec.size());
+					tree_intermediate_obj.signals_x_stop.resize(pair_vec.size());
+					for (int j = 0; j < pair_vec.size(); j++)
+					{
+						tree_intermediate_obj.signals_x_start[j] = pair_vec[j].first;
+						tree_intermediate_obj.signals_x_stop[j] = pair_vec[j].second;
+					}
+					//----------------------------------------
+
+
+
+					//----------------------------------------
+					//caclulate intergal of individual peaks
+					double integral_one_event_tmp = 0;
+					for (int j = 0; j < pair_vec.size(); j++)
+					{
+						//choose region (for calib only) 
+						//if ((tree_intermediate_obj.signals_x_stop[j] * HORIZ_INTERVAL) > 80000 && (tree_intermediate_obj.signals_x_start[j] * HORIZ_INTERVAL) < 150000)
+						{
+							double integral_tmp = 0;
+							double one_peak_y_maximum_tmp = -1100;
+							for (int k = tree_intermediate_obj.signals_x_start[j]; k < tree_intermediate_obj.signals_x_stop[j]; k++)
+							{
+								double tmp_val = (*data_without_slope)[k] - tree_intermediate_obj.local_baseline[j];
+								integral_tmp += tmp_val * HORIZ_INTERVAL;
+								if (tmp_val > one_peak_y_maximum_tmp)
+									one_peak_y_maximum_tmp = tmp_val;
+							}
+							tree_intermediate_obj.integral_one_peak.push_back(integral_tmp);
+							tree_intermediate_obj.one_peak_y_maximum.push_back(one_peak_y_maximum_tmp);
+						}
+					}
+					//----------------------------------------
+
+					delete peak_finder_find;
+
 				}
-				else
+				else if (GetChId(i) >= 32)
 				{
-					tree_intermediate_obj.signals_x_start.clear();
+					////test
+					////-------------
+
+					/*if ((temp_event_id % 10000 == 0) && GetChId(i) == 36)
+					{
+						int x = 0;
+					}
+
+					if ( (temp_event_id % 1000 == 0) && GetChId(i) == 36)
+					{
+						int x = 0;
+					}
+
+					if ((temp_event_id % 100 == 0) && GetChId(i) == 36)
+					{
+						int x = 0;
+					}
+
+					if ((temp_event_id == 10340) && GetChId(i) == 36)
+					{
+						int x = 0;
+					}
+
+					if ((temp_event_id % 10 == 0) && GetChId(i) == 36)
+					{
+						int x = 0;
+					}*/
+
+					////-------------
+					
+					/*tree_intermediate_obj.signals_x_start.clear();
 					tree_intermediate_obj.signals_x_stop.clear();
 					tree_intermediate_obj.local_baseline.clear();
 					tree_intermediate_obj.integral_one_peak.clear();
 					tree_intermediate_obj.one_peak_y_maximum.clear();
+					tree_intermediate_obj.num_of_pe_in_one_peak.clear();*/
 					tree_intermediate_obj.num_of_pe_in_one_peak.clear();
 
 					//PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
-					PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
+					//PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 13 /*this parameter is very important*/, 1 /*this parameter is very important*/, HORIZ_INTERVAL);
+					//PeakFinderFind peak_finder_find(TypeConvertion::GetVectorMultiplyToScalar(TypeConvertion::GetDifference(*data_raw), -1.0), *data_der, 25 /*this parameter is very important*/, 1 /*change this*/ /*this parameter is very important*/, HORIZ_INTERVAL);//49V
+					PeakFinderFind peak_finder_find(*data_without_slope, *data_der, 20, 1 /*change this*/, HORIZ_INTERVAL, true);//49V
 					tree_intermediate_obj.local_baseline = peak_finder_find.GetLocalBaselineV();
 
 					//----------------------------------------
@@ -259,9 +366,14 @@ int main(int argc, char *argv[])
 					//----------------------------------------
 					//SiPM signal gates
 
+
+					//for X-ray NBrS
+					int point_from = 32000 / HORIZ_INTERVAL;
+					int point_to = 40000 / HORIZ_INTERVAL;
+
 					//for Cd
-					int point_from = 25000 / HORIZ_INTERVAL;
-					int point_to = 55000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+					//int point_from = 25000 / HORIZ_INTERVAL;
+					//int point_to = 55000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
 					////for x-ray 20kV, 18, 16, 14
 					//int point_from = 40000 / HORIZ_INTERVAL;
@@ -342,28 +454,62 @@ int main(int argc, char *argv[])
 
 		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int = 0;
 		
-		//case when ch44 is bad
+		////case when ch44 is bad
+		////-------------------------------------
+		//for (int j = 0; j < n_ch_sipm; j++)
+		//{
+		//	if (GetChIdSiPM(j) != 44)
+		//	{
+		//		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+		//			num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+
+		//		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
+		//	}			
+		//}
+		////add special channels
+		////ch 44
+		//num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] = 
+		//	(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] + 
+		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
+		//	num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
+
+		//TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int += 
+		//	num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
+		////-------------------------------------
+
+
+		//case when ch43 && ch44 are bad
 		//-------------------------------------
 		for (int j = 0; j < n_ch_sipm; j++)
 		{
-			if (GetChIdSiPM(j) != 44)
+			if (GetChIdSiPM(j) != 43 && GetChIdSiPM(j) != 44)
 			{
 				TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
 					num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
 
 				num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[j] = num_of_pe_in_event_all_ch__positive_part_s_int[j][i];
-			}			
+			}
 		}
 		//add special channels
 		//ch 44
-		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] = 
-			(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] + 
+		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)] =
+			(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(59)][i] +
 			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(57)][i] +
 			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(56)][i] / sqrt(2)) / 3.0;
 
-		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int += 
+		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
 			num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(44)];
+		//-------------------------------------		
+		//ch 43
+		num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(43)] =
+			(num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(40)][i] +
+			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(42)][i] +
+			num_of_pe_in_event_all_ch__positive_part_s_int[GetArrayPositionSiPM(58)][i] ) / 3.0;
+
+		TreeInfoAllCh_obj.num_of_pe_in_event_all_ch__positive_part_s_int +=
+			num_of_pe_in_event__positive_part_s_int_one_event_one_ch_vec[GetArrayPositionSiPM(43)];
 		//-------------------------------------
+
 
 
 

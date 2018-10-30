@@ -115,6 +115,135 @@ const bool is_sipm_ch = true;
 
 
 ////---------------------------------------------
+//180830 Ar pure
+//
+//std::string folder_name = "180830_Xray_0kV_600V_12bB_49V_1ph_35mm_coll\\";
+//const int start_run_number = 23;
+//const int stop_run_number = 38;
+//
+//std::string folder_name = "180830_Xray_20kV_600V_12bB_49V_1ph_35mm_coll\\";
+//const int start_run_number = 40;
+//const int stop_run_number = 49;
+//
+//
+//
+//std::string common_path = "E:\\180830\\";
+//std::string date = "180830";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+////---------------------------------------------
+
+
+
+
+////---------------------------------------------
+//181025 Ar + 5% CH4
+//
+std::string folder_name = "f5_181025_0kV_800V_12bB_49V_coll35_1ph\\";
+const int start_run_number = 18;
+const int stop_run_number = 40;
+//
+std::string common_path = "E:\\181025\\";
+std::string date = "181025";
+std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+////---------------------------------------------
+
+
+
+
+
+
+////---------------------------------------------
+//181018 Ar + 1% CH4
+//
+//std::string folder_name = "f5_181018_0kV_800V_12bB_49V_coll35_1ph\\";
+//const int start_run_number = 17;
+//const int stop_run_number = 28;
+//
+//std::string folder_name = "f10_180913_Xray_0kV_800V_6bB_49V_1ph_35mm_coll\\";
+//const int start_run_number = 30;
+//const int stop_run_number = 39;
+//
+//
+//
+//std::string common_path = "E:\\181018\\";
+//std::string date = "181018";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+////---------------------------------------------
+
+
+
+
+////---------------------------------------------
+//180913 Ar + 1% CH4
+//
+//std::string folder_name = "f1_180913_Xray_20kV_800V_6bB_49V_1ph_35mm_coll\\";
+//const int start_run_number = 1;
+//const int stop_run_number = 3;
+//
+//std::string folder_name = "f10_180913_Xray_0kV_800V_6bB_49V_1ph_35mm_coll\\";
+//const int start_run_number = 30;
+//const int stop_run_number = 39;
+//
+//
+//
+//std::string common_path = "E:\\180913\\";
+//std::string date = "180913";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+////---------------------------------------------
+
+
+
+
+
+
+//////---------------------------------------------
+////180920 Ar + 0.1% CH4
+////
+//std::string folder_name = "f11_180920_0kV_800V_12bB_49V_1ph\\";
+//const int start_run_number = 91;
+//const int stop_run_number = 100;
+////
+////std::string folder_name = "f6_180920_20kV_800V_12bB_49V_1ph\\";
+////const int start_run_number = 66;
+////const int stop_run_number = 68;
+//
+//
+//std::string common_path = "E:\\180920\\";
+//std::string date = "180920";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+//////---------------------------------------------
+
+
+
+
+
+
+//////---------------------------------------------
+////181004 Ar + 0.01% CH4
+////
+//std::string folder_name = "f9_181004_0kV_800V_12bB_49V_1ph\\";
+//const int start_run_number = 35;
+//const int stop_run_number = 45;
+//
+//std::string common_path = "E:\\181004\\";
+//std::string date = "181004";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+//////---------------------------------------------
+
+
+
+
+
+
+
+
+////---------------------------------------------
 //Feb 22  2018
 //
 //1000 events per file
@@ -255,9 +384,9 @@ const bool is_sipm_ch = true;
 //const int start_run_number = 137;
 //const int stop_run_number = 157;
 //
-std::string folder_name = "Cd_18kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
-const int start_run_number = 223;
-const int stop_run_number = 242;
+//std::string folder_name = "Cd_18kV_SiPM_48V_THGEM_2200V_coll_2mm\\";
+//const int start_run_number = 223;
+//const int stop_run_number = 242;
 //
 //std::string folder_name = "Cd_18kV_SiPM_46V_THGEM_2200V_coll_2mm\\";
 //const int start_run_number = 330;
@@ -321,10 +450,10 @@ const int stop_run_number = 242;
 
 
 
-std::string common_path = "E:\\171130\\";
-std::string date = "171130";
-std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
-std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
+//std::string common_path = "E:\\171130\\";
+//std::string date = "171130";
+//std::string path_name_tree = common_path + date + "_caen_trees\\" + folder_name;
+//std::string PathInfo_path_name = common_path + date + "_caen_raw\\" + folder_name;
 
 ////---------------------------------------------
 

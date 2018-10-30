@@ -14,7 +14,7 @@ CalcBaselineZeroComp::CalcBaselineZeroComp(std::vector<double> yv, const int tim
 	
 	std::vector<float> yv_float = TypeConvertion::GetVectorFloat(yv);
 	s = new TSpectrum();
-	s->Background(&yv_float[point_left], point_right - point_left, 50, TSpectrum::kBackIncreasingWindow, TSpectrum::kBackOrder2, kTRUE, TSpectrum::kBackSmoothing3, kFALSE);
+	s->Background(&yv_float[point_left], point_right+1 - point_left , 50, TSpectrum::kBackIncreasingWindow, TSpectrum::kBackOrder2, kTRUE, TSpectrum::kBackSmoothing3, kFALSE);
 
 	baseline_vec = TypeConvertion::GetVectorDouble(yv_float);
 

@@ -11,9 +11,15 @@ using namespace std;
 
 CalcData::CalcData(std::vector<double> &data_raw, double HORIZ_INTERVAL, bool is_invert) : data_raw(data_raw), is_invert(is_invert), HORIZ_INTERVAL(HORIZ_INTERVAL)
 {
+	calc_baseline_zero_comp = NULL;
+	
 	if (is_invert)
 	{
 		invert_data = TypeConvertion::GetVectorDoubleInvert(data_raw);
+	}
+	else
+	{
+		invert_data = TypeConvertion::GetVectorMultiplyToScalar(data_raw, 1);
 	}
 
 	CalcBaselineTrivial calc_baseline(data_raw, 30000, HORIZ_INTERVAL);
@@ -23,6 +29,7 @@ CalcData::CalcData(std::vector<double> &data_raw, double HORIZ_INTERVAL, bool is
 
 CalcData::~CalcData()
 {
+	delete calc_baseline_zero_comp;
 }
 
 double CalcData::Get_baseline()
@@ -58,16 +65,37 @@ std::vector<double> CalcData::Get_data_der()
 
 std::vector<double> CalcData::Get_data_without_slope()
 {
-	const bool compensate_slope = true;
+	const bool compensate_slope = false;
 	
 	if (compensate_slope)
 	{
-		CalcBaselineZeroComp calc_baseline_zero_comp(invert_data, 0 /*Cd 20000; x-ray 35000*/, /*HORIZ_INTERVAL * 9999*/ /*150000*/ 150000, -baseline, HORIZ_INTERVAL);
-		return TypeConvertion::GetDifference(invert_data, calc_baseline_zero_comp.GetBaselineVec());
+		
+		
+		if (is_invert)
+		{
+			calc_baseline_zero_comp = new CalcBaselineZeroComp(invert_data, 0 /*Cd 20000; x-ray 35000*/, HORIZ_INTERVAL * (9999 - 1) /*150000*/ /*150000*/, -baseline, HORIZ_INTERVAL);
+			//CalcBaselineZeroComp calc_baseline_zero_comp(invert_data, 0 /*Cd 20000; x-ray 35000*/, HORIZ_INTERVAL * (9999 - 1) /*150000*/ /*150000*/, -baseline, HORIZ_INTERVAL);
+		}
+		else
+		{
+			calc_baseline_zero_comp = new CalcBaselineZeroComp(invert_data, 0 /*Cd 20000; x-ray 35000*/, HORIZ_INTERVAL * (9999 - 1) /*150000*/ /*150000*/, baseline, HORIZ_INTERVAL);
+		}
+
+		return TypeConvertion::GetDifference(invert_data, calc_baseline_zero_comp->GetBaselineVec());
+
+		
 	}
 	else
 	{
-		return TypeConvertion::GetDifference(invert_data, -baseline);
+		if (is_invert)
+		{
+			return TypeConvertion::GetDifference(invert_data, -baseline);
+		}
+		else
+		{
+			return TypeConvertion::GetDifference(invert_data, baseline);
+		}
+		
 	}
 
 }

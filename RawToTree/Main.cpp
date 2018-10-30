@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	TThread::Initialize();//we need additional magic!
 		
 	//loop by chs
-#pragma omp parallel for num_threads(5)
+#pragma omp parallel for num_threads(4)
 	for (int i = 0; i < n_ch; i++)
 	{
 		vector<ch_info> ch_list;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
 				TStopwatch timer_calc_der;
 				
 
-				if (GetChId(i) > 2) //for SiPM only
+				//if (GetChId(i) > 2) //for SiPM only
 				{
 					tree_raw_obj->data_der = calc_data.Get_data_der();
 

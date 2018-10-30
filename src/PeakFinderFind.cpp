@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 
-PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_der, const double th, const double th_der, const double HORIZ_INTERVAL)
+PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_der, const double th, const double th_der, const double HORIZ_INTERVAL, bool is_by_amp)
 {
 	bool is_search = true;
 	int position_tmp;
@@ -23,7 +23,7 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 	const int local_baseline_window_shift_p = local_baseline_window_shift / HORIZ_INTERVAL;
 	const int check_overlapping_window_p = check_overlapping_window / HORIZ_INTERVAL;
 
-	bool is_by_amp = true;
+	//bool is_by_amp = true;
 
 	if (!is_by_amp)
 	{
@@ -31,7 +31,7 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 		for (int i = 0; i < yv.size(); i++)
 		{
 			//cout << yv_der[i] << endl;
-			
+
 			if ((yv_der[i] > th_der) && is_search)
 			{
 				is_search = false;
@@ -39,7 +39,7 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 
 				local_baseline = 0;
 				const double j_from = (i - local_baseline_window_shift_p - local_baseline_window_p) > 0 ? i - local_baseline_window_shift_p - local_baseline_window_p : 0;
-		
+
 				for (int j = j_from; j < i - local_baseline_window_shift_p; j++)
 				{
 					local_baseline += yv[j];
@@ -60,20 +60,25 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 
 			}
 
-			if (!is_search && (i > position_tmp) && (yv_der[i] < th_der) )
+			if (!is_search && (i > position_tmp) && (yv_der[i] < th_der))
 			{
 				if (yv[i] < local_baseline)
 				{
 					bool is_overlapped = false;
-					for (int j = i; j < i + check_overlapping_window_p; j++)
+					if ((i + check_overlapping_window_p) < yv.size())
 					{
-						if ( abs(yv_der[j]) > th_der)
+						for (int j = i; j < i + check_overlapping_window_p; j++)
 						{
-							is_overlapped = true;
-							break;
+							if (abs(yv_der[j]) > th_der)
+							{
+								is_overlapped = true;
+								break;
+							}
 						}
+
 					}
-					
+
+
 					if (!is_overlapped)
 					{
 						is_search = true;
@@ -81,7 +86,7 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 						pair_v.push_back(pair_var);
 						//cout << pair_var.first << "\t" << pair_var.second << endl;
 					}
-				}			
+				}
 			}
 
 			//if (!is_search)
@@ -98,10 +103,10 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 			//	is_search = true;
 			//	peak_position.push_back(pair_value.first);
 			//}
-		} 
+		}
 	}
 
-	
+
 
 	if (is_by_amp)
 	{
@@ -145,12 +150,15 @@ PeakFinderFind::PeakFinderFind(std::vector<double>& yv, std::vector<double>& yv_
 				if (yv[i] < local_baseline)
 				{
 					bool is_overlapped = false;
-					for (int j = i; j < i + check_overlapping_window_p; j++)
+					if ((i + check_overlapping_window_p) < yv.size())//can be error
 					{
-						if (yv[j] > th)
+						for (int j = i; j < i + check_overlapping_window_p; j++)
 						{
-							is_overlapped = true;
-							break;
+							if (yv[j] > th)//error?
+							{
+								is_overlapped = true;
+								break;
+							}
 						}
 					}
 

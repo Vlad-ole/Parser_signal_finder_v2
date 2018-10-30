@@ -122,6 +122,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\CalcData.h" />
     <ClInclude Include="..\include\IntermediateTreeInfo.h" />
     <ClInclude Include="..\include\TreeInfo.h" />
     <ClInclude Include="..\include\TreeRaw.h" />
@@ -129,7 +130,6 @@
     <ClInclude Include="CalcBaseline.h" />
     <ClInclude Include="CalcBaselineTrivial.h" />
     <ClInclude Include="CalcBaselineZeroComp.h" />
-    <ClInclude Include="CalcData.h" />
     <ClInclude Include="CalcDer.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="ReadData_CAEN.h" />

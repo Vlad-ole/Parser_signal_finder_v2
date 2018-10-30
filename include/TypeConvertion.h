@@ -17,6 +17,8 @@ public:
 	static std::vector<double> GetVectorDoubleInvert(std::vector<double> & yv_double);
 	static std::vector<double> GetDifference(std::vector<double> yv_minuend, std::vector<double> yv_subtrahend);
 	static std::vector<double> GetDifference(std::vector<double> yv_minuend, double y_subtrahend);
+
+	static std::vector<double> TypeConvertion::GetSumm(std::vector<double> yv_summ1, std::vector<double> yv_summ2);
 private:
 
 };

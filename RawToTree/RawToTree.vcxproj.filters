@@ -104,9 +104,6 @@
     <ClInclude Include="CalcDer.h">
       <Filter>Header Files\CalcData</Filter>
     </ClInclude>
-    <ClInclude Include="CalcData.h">
-      <Filter>Header Files\CalcData</Filter>
-    </ClInclude>
     <ClInclude Include="CalcBaseline.h">
       <Filter>Header Files\CalcData\CalcBaseline</Filter>
     </ClInclude>
@@ -127,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="..\include\TreeInfo.h">
       <Filter>Header Files\Trees</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CalcData.h">
+      <Filter>Header Files\CalcData</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

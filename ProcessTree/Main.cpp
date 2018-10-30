@@ -176,7 +176,7 @@ void Correlations()
 double Npe_sipm_one_ch(int ch_to_process, bool is_draw_hist)
 {
 	//Npe_sipm_matrix
-	TH1F *hist = new TH1F("hist", "hist", 100, 0.1, 30);
+	TH1F *hist = new TH1F("hist", "hist", 1000, 0/*0.1*/, 20);
 	//const int ch_to_process = 59;
 	COUT(ch_to_process);
 
@@ -214,7 +214,7 @@ double Npe_sipm_one_ch(int ch_to_process, bool is_draw_hist)
 		tree_itermediate->GetEntry(i);
 		double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
 		//COUT(N_pe_3PMT);
-		bool cut = (max_element_ < 900) && (min_element_ > -900);
+		bool cut = (max_element_ < 1000) && (min_element_ > -1000);
 		//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285
 		if (cut)//------------------ IMPORTANT ----------------------------------//
 		{
@@ -281,11 +281,15 @@ void Npe_sipm_one_ch_loop()
 	bool is_drar_hist = false;
 
 	
-	//-----------------------
+	//-----------------------	
+	double N_pe_40 = Npe_sipm_one_ch(40, is_drar_hist);
+	double N_pe_42 = Npe_sipm_one_ch(42, is_drar_hist);
 	double N_pe_56 = Npe_sipm_one_ch(56, is_drar_hist);
 	double N_pe_57 = Npe_sipm_one_ch(57, is_drar_hist);
+	double N_pe_58 = Npe_sipm_one_ch(58, is_drar_hist);
 	double N_pe_59 = Npe_sipm_one_ch(59, is_drar_hist);
 	double N_pe_44 = (N_pe_59 + N_pe_57 + N_pe_56 / sqrt(2)) / 3.0;
+	double N_pe_43 = (N_pe_40 + N_pe_42 + N_pe_58 ) / 3.0;
 	//n_pe[44 - 32] = (n_pe[59 - 32] + n_pe[57 - 32] + n_pe[56 - 32] / sqrt(2)) / 3.0;
 
 	//row1
@@ -298,10 +302,10 @@ void Npe_sipm_one_ch_loop()
 	file_out << Npe_sipm_one_ch(52, is_drar_hist) /*ch52*/ << "\t" << Npe_sipm_one_ch(53, is_drar_hist)  /*ch53*/ << "\t" << Npe_sipm_one_ch(38, is_drar_hist)  /*ch38*/ << "\t" << Npe_sipm_one_ch(39, is_drar_hist)  /*ch39*/ << "\t" << Npe_sipm_one_ch(54, is_drar_hist)  /*ch54*/ << endl;
 
 	//row4
-	file_out << Npe_sipm_one_ch(55, is_drar_hist) /*ch55*/ << "\t" << Npe_sipm_one_ch(40, is_drar_hist)  /*ch40*/ << "\t" << Npe_sipm_one_ch(41, is_drar_hist)  /*ch41*/ << "\t" << N_pe_56  /*ch56*/ << "\t" << N_pe_57  /*ch57*/ << endl;
+	file_out << Npe_sipm_one_ch(55, is_drar_hist) /*ch55*/ << "\t" << N_pe_40  /*ch40*/ << "\t" << Npe_sipm_one_ch(41, is_drar_hist)  /*ch41*/ << "\t" << N_pe_56  /*ch56*/ << "\t" << N_pe_57  /*ch57*/ << endl;
 
 	//row5
-	file_out << Npe_sipm_one_ch(42, is_drar_hist) /*ch42*/ << "\t" << Npe_sipm_one_ch(43, is_drar_hist)  /*ch43*/ << "\t" << Npe_sipm_one_ch(58, is_drar_hist)  /*ch58*/ << "\t" << N_pe_59  /*ch59*/ << "\t" << N_pe_44  /*ch44*/ << endl;
+	file_out << N_pe_42 /*ch42*/ << "\t" << N_pe_43  /*ch43*/ << "\t" << N_pe_58  /*ch58*/ << "\t" << N_pe_59  /*ch59*/ << "\t" << N_pe_44  /*ch44*/ << endl;
 	//-----------------------
 }
 
@@ -767,6 +771,7 @@ void Show_individual_signals()
 	chain_all_ch->SetBranchStatus("run_id", 1);
 	chain_all_ch->SetBranchStatus("event_id", 1);
 	chain_all_ch->SetBranchStatus("baseline", 1);
+	//chain_all_ch->SetBranchStatus("max_element", 1);
 
 	vector<double> time(WAVE_ARRAY_COUNT);
 	for (int i = 0; i < time.size(); i++)
@@ -785,8 +790,8 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 38 && run_id == 355 && event_id == 500)
-			if (cut_condition_bool && ch_id > 2)
+		REMEMBER_CUT(ch_id == 38 && run_id == 18 && event_id == 2)
+			if (cut_condition_bool /*&& ch_id > 2*/)
 			{
 				cout << "in if (cut_condition_bool)" << endl;
 
@@ -807,6 +812,7 @@ void Show_individual_signals()
 				gr->SetLineColor(kPink);
 				gr->Draw("ALP");*/
 
+				//TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((TypeConvertion::GetVectorDoubleInvert(*data_raw))[0]));
 				TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_without_slope)[0]));
 				gr_3->SetMarkerStyle(20);
 				gr_3->SetMarkerSize(0.5);
@@ -814,6 +820,14 @@ void Show_individual_signals()
 				gr_3->SetLineColor(kPink);
 				gr_3->SetTitle(cut_condition_srt.c_str());
 				gr_3->Draw("ALP");
+
+				TGraph *gr_der = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_der)[0]));
+				gr_der->SetMarkerStyle(20);
+				gr_der->SetMarkerSize(0.5);
+				gr_der->SetMarkerColor(kMagenta);
+				gr_der->SetLineColor(kMagenta);
+				gr_der->SetTitle(cut_condition_srt.c_str());
+				gr_der->Draw("LP same");
 
 				/*TGraph *gr_2 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &(TypeConvertion::GetVectorFromScalar(WAVE_ARRAY_COUNT, baseline))[0]);
 				gr_2->SetLineColor(kGreen);
@@ -868,22 +882,30 @@ void Show_individual_signals()
 
 				break;
 			}
-			else if (cut_condition_bool && ch_id <= 2)
-			{
-				chain_all_ch->SetBranchStatus("data_raw", 1);
-				chain_all_ch->SetBranchAddress("data_raw", &data_raw);
-				chain_all_ch->GetEntry(i);
+			//else if (cut_condition_bool && ch_id <= 2)
+			//{
+			//	chain_all_ch->SetBranchStatus("data_raw", 1);
+			//	chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			//	chain_all_ch->GetEntry(i);
 
-				TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &((*data_raw)[0]));
-				gr_3->SetMarkerStyle(20);
-				gr_3->SetMarkerSize(0.5);
-				//gr_3->SetMarkerColor(kRed);
-				gr_3->SetLineColor(kPink);
-				gr_3->SetTitle(cut_condition_srt.c_str());
-				gr_3->Draw("ALP");
+			//	vector<double> data_without_global_baseline = TypeConvertion::GetDifference((*data_raw), baseline);
+			//	TGraph *gr_3 = new TGraph(WAVE_ARRAY_COUNT, &time[0], &(data_without_global_baseline[0]));
+			//	gr_3->SetMarkerStyle(20);
+			//	gr_3->SetMarkerSize(0.5);
+			//	//gr_3->SetMarkerColor(kRed);
+			//	gr_3->SetLineColor(kPink);
+			//	gr_3->SetTitle(cut_condition_srt.c_str());
+			//	gr_3->Draw("ALP");
 
-				break;
-			}
+			//	vector<double> data_zero_baseline((*data_raw).size());
+			//	TGraph *gr_zero_baseline = new TGraph(WAVE_ARRAY_COUNT, &time[0], &data_zero_baseline[0]);
+			//	//gr_zero_baseline->SetMarkerSize(1);
+			//	//gr_zero_baseline->SetMarkerStyle(20);
+			//	gr_zero_baseline->SetLineColor(kGreen);
+			//	gr_zero_baseline->Draw("same L");
+
+			//	break;
+			//}
 	}
 }
 
@@ -902,8 +924,8 @@ void Show_individual_signals_in_3d()
 	const int n_pe_size = /*32*/ 28;//60, 61, 62, 63 are inactive, so 28 is enough
 	n_pe.resize(n_pe_size);
 
-	int your_run_id = 204;
-	int your_event_id = 507;
+	int your_run_id = 22;
+	int your_event_id = 700;
 	bool cut_is_ok = false;
 
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
@@ -921,24 +943,24 @@ void Show_individual_signals_in_3d()
 		{
 			tree_itermediate->GetEntry(i);
 			double N_pe_3PMT = num_of_pe_in_event__positive_part_s_int * 1E-12 * pow(10, (12.0 / 20.0)) / 2.1325E-8;
-			bool cut = (max_element_ < 900) && (min_element_ > -900) /*&& (num_of_pe_in_event_all_ch__positive_part_s_int > 0)*/;
+			bool cut = (max_element_ < 1000) && (min_element_ > -1000) /*&& (num_of_pe_in_event_all_ch__positive_part_s_int > 0)*/;
 			//cut = N_pe_3PMT > 145 && N_pe_3PMT < 285;
 			if (cut) //-------------------* important! * ---------------------------------------------//
 			{
 				cut_is_ok = true;
 			}	
 
-			TreeInfoAllCh_tree->GetEntry(i);
-			ostringstream oss;
-			oss << path_name_tree << "xy_one_event.txt";
-			ofstream file_out(oss.str().c_str());
-			file_out << "x_cog = " << x_cog << endl <<
-						"y_cog = " << y_cog << endl <<
-						"x_by_max = " << x_by_max << endl <<
-						"y_by_max = " << y_by_max << endl << 
-						"x_cog_modified = " << x_cog_modified << endl <<
-						"y_cog_modified = " << y_cog_modified << endl ;
-			//system("pause");
+			//TreeInfoAllCh_tree->GetEntry(i);
+			//ostringstream oss;
+			//oss << path_name_tree << "xy_one_event.txt";
+			//ofstream file_out(oss.str().c_str());
+			//file_out << "x_cog = " << x_cog << endl <<
+			//			"y_cog = " << y_cog << endl <<
+			//			"x_by_max = " << x_by_max << endl <<
+			//			"y_by_max = " << y_by_max << endl << 
+			//			"x_cog_modified = " << x_cog_modified << endl <<
+			//			"y_cog_modified = " << y_cog_modified << endl ;
+			////system("pause");
 
 			break;			
 		}
@@ -988,6 +1010,7 @@ void Show_individual_signals_in_3d()
 
 		//-----------------------
 		n_pe[44 - 32] = (n_pe[59 - 32] + n_pe[57 - 32] + n_pe[56 - 32] / sqrt(2)) / 3.0;
+		n_pe[43 - 32] = (n_pe[40 - 32] + n_pe[42 - 32] + n_pe[58 - 32] ) / 3.0;
 
 		//row1
 		file_out << n_pe[32 - 32] /*ch32*/ << "\t" << n_pe[33 - 32]  /*ch33*/ << "\t" << n_pe[48 - 32]  /*ch48*/ << "\t" << n_pe[49 - 32]  /*ch49*/ << "\t" << n_pe[34 - 32]  /*ch34*/ << endl;
@@ -1019,9 +1042,16 @@ void Calibration()
 	chain_all_ch->SetBranchStatus("run_id", 1);
 	chain_all_ch->SetBranchStatus("event_id", 1);
 
+	string file_out_s = path_name_tree + "file_out.txt";
+	ofstream file_out(file_out_s.c_str());
 
 
-	TH1F *h = new TH1F("hist", "", 1500, 0, 50000);
+	TH1F *h_width = new TH1F("hist peak width", "", 100, 0, 1600);
+	//TH1F *h = new TH1F("hist", "", 1800, 0, 50000);//mV*ns SiPM	
+	//TH1F *h = new TH1F("hist", "", 1000, 0, 600);//mV SiPM
+
+	TH1F *h = new TH1F("hist", "", 3000, 0, 100000);//mV*ns 3PMT
+	//TH1F *h = new TH1F("hist", "", 1000, 0, 1000);//mV 3PMT
 
 	const int n_events = chain_all_ch->GetEntries();
 	for (int i = 0; i < n_events; i++)
@@ -1034,25 +1064,39 @@ void Calibration()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 33)
+		REMEMBER_CUT(ch_id == 1)
 			if (cut_condition_bool)
 			{
 				tree_itermediate->GetEntry(i);
 
 				for (int j = 0; j < (*integral_one_peak).size(); j++)
 				{
-					//h->Fill((*integral_one_peak)[j]);
-					h->Fill((*integral_one_peak)[j]);
+					double peak_width = ((*signals_x_stop)[j] - (*signals_x_start)[j]) * HORIZ_INTERVAL;
+					h_width->Fill(peak_width);
+					
+					
+					//if (peak_width < 250 && peak_width > 150)//ns
+					//if ((*integral_one_peak)[j] < 30000 && (*integral_one_peak)[j] > 20000)//ns
+					//if ((*one_peak_y_maximum)[j] < 20)
+					{
+						h->Fill((*integral_one_peak)[j]);
+						//h->Fill((*one_peak_y_maximum)[j]);	
+
+						//file_out << run_id << "\t" << event_id << "\t" << (*signals_x_start)[j] * 16 << "\t" << (*signals_x_stop)[j] * 16 << "\t" << peak_width << "\t" << (*integral_one_peak)[j] << endl;
+					}
+									
 				}
 
 			}
 
 	}
 
-	//h->GetBinWidth(1);
+	////h->GetBinWidth(1);
 	h->SetTitle(cut_condition_srt.c_str());
 	h->Draw();
 
+	//h_width->SetTitle(cut_condition_srt.c_str());
+	//h_width->Draw();
 }
 
 void TimeSpectrum()
@@ -1068,6 +1112,8 @@ void TimeSpectrum()
 	const int n_events = chain_all_ch->GetEntries();
 	const int n_events_one_ch = n_events_per_file * (run_to - run_from + 1);
 
+	int conter_tmp = 0;
+
 	for (int i = 0; i < n_events; i++)
 	{
 		chain_all_ch->GetEntry(i);
@@ -1080,38 +1126,82 @@ void TimeSpectrum()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		if (ch_id > 2)
+		if (ch_id >= 32)
 		{
-			for (int j = 0; j < (*signals_x_start).size(); j++)
-			{
-				double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
-				bool cut_integral_one_peak = (*integral_one_peak)[j] > 1000;
-				bool cut_num_of_pe = N_pe_total_SiPM > 100 && N_pe_total_SiPM < 200;
-				if (cut_integral_one_peak /*&& cut_num_of_pe*/)
-				{
-					time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
-					//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
-					n_pe_in_peak.push_back((*integral_one_peak)[j]);
-					//cout << time_position[j] << "; " << n_pe_in_peak[j] << endl;
-				}
+			//var1 old
+			//for (int j = 0; j < (*signals_x_start).size(); j++)
+			//{
+			//	double N_pe_total_SiPM = num_of_pe_in_event_all_ch__positive_part_s_int;
+			//	bool cut_integral_one_peak = (*integral_one_peak)[j] > 1000;
+			//	bool cut_num_of_pe = N_pe_total_SiPM > 100 && N_pe_total_SiPM < 200;
+			//	if (cut_integral_one_peak /*&& cut_num_of_pe*/)
+			//	{
+			//		time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
+			//		//n_pe_in_peak.push_back((*num_of_pe_in_one_peak)[j]);
+			//		n_pe_in_peak.push_back((*integral_one_peak)[j]);
+			//		//cout << time_position[j] << "; " << n_pe_in_peak[j] << endl;
+			//	}
 
+			//}
+
+			//var2 new
+			vector<ChCharacteristicsStruct> ch_characteristics_struct = ChCharacteristics::GetChCharacteristics();
+			for (int k = 0; k < ch_characteristics_struct.size(); k++)
+			{
+				if (ch_characteristics_struct[k].ch_id == ch_id && ch_characteristics_struct[k].is_spe_separated_from_noise &&
+					ch_characteristics_struct[k].is_physical /*&& ch_id == 32*/)
+				{
+					conter_tmp++;
+					for (int j = 0; j < (*integral_one_peak).size(); j++)
+					{
+						//algorithm is not ideal, so I should add some cuts (depend from ch_id)
+						if ( (*integral_one_peak)[j] > ch_characteristics_struct[k].spe_min)
+						{						
+							//if ((*signals_x_start)[j] >= point_from && (*signals_x_stop)[j] < point_to)
+							//{
+								double n_pe_one_peak_tmp = (*integral_one_peak)[j] / ch_characteristics_struct[k].spe_mean;
+								//if (n_pe_one_peak_tmp < 100)/*-------------------IMPORTANT!------------------*/
+								{
+									time_position.push_back(HORIZ_INTERVAL * ((*signals_x_start)[j] + (*signals_x_stop)[j]) / 2.0);
+									n_pe_in_peak.push_back(n_pe_one_peak_tmp);
+								}
+								
+							//}
+						}
+					}
+				}
 			}
+
+
+
 		}
 
 	}
 
+	string file_out_s = path_name_tree + "file_out.txt";
+	ofstream file_out(file_out_s.c_str());
 
-	TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix all ch", 160, 0, 160E3, 1000, 0, 50000);
+	//TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix", 1600*2, 0, 160E3, 1000, 0, 50000);
+	TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix", 5333, 0, 160E3, 1000, 0, 50000);
 	for (int i = 0; i < time_position.size(); i++)
 	{
-		hist2->Fill(time_position[i], n_pe_in_peak[i]/*, n_pe_in_peak[i]*/);
+		//hist2->Fill(time_position[i], n_pe_in_peak[i], n_pe_in_peak[i]);//Position & amp info
+		hist2->Fill(time_position[i], n_pe_in_peak[i]);//Position info
+		file_out << time_position[i]/1000.0 << endl;//us
 	}
-	//hist2->Draw();
 	TH1D * projh2X = hist2->ProjectionX();
-	//projh2X->Draw();
+	projh2X->Draw();
+
+	/*for (int i = 0; i < projh2X->GetNbinsX(); i++)
+	{
+		file_out << projh2X->GetBinCenter(i) / 1000.0 << "\t" << projh2X->GetBinContent(i) << endl;;
+	}*/
+	
 
 	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
-	gr->Draw("AP");
+	//gr->Draw("AP");
+	
+	COUT(conter_tmp);
 
 }
 
@@ -1178,7 +1268,10 @@ void AvrSignal()
 	chain_all_ch->SetBranchStatus("min_element", 1);
 	chain_all_ch->SetBranchStatus("max_element", 1);
 
-	const int ch_to_process = 0;
+	string file_out_s = path_name_tree + "file_out.txt";
+	ofstream file_out(file_out_s.c_str());
+
+	const int ch_to_process = 1;//<-------------------------
 	vector<double> data_raw_average;
 	data_raw_average.resize(WAVE_ARRAY_COUNT);
 
@@ -1194,16 +1287,31 @@ void AvrSignal()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		if (ch_id == ch_to_process && (max_element_ < 900) && (min_element_ > -900))
+
+
+		//bool ch_cut = ((ch_id >= 32 && ch_id <= 42) || (ch_id >= 48 && ch_id <= 59));//SiPM
+		bool ch_cut = (ch_id == ch_to_process);//PMT
+
+		if (ch_cut && (max_element_ < 1000) && (min_element_ > -1000))
 		{
 			cut_pass_counter++;
 			chain_all_ch->SetBranchStatus("data_raw", 1);
 			chain_all_ch->SetBranchAddress("data_raw", &data_raw);
+			//chain_all_ch->SetBranchStatus("data_without_slope", 1);
+			//chain_all_ch->SetBranchAddress("data_without_slope", &data_without_slope);
 			chain_all_ch->GetEntry(i);
+
+			/*double baseline_tmp = 0;
+			int point_to = (20000 / HORIZ_INTERVAL);
+			for (int j = 0; j < point_to; j++)
+			{
+				baseline_tmp += (*data_without_slope)[j];
+			}
+			baseline_tmp /= point_to;*/
 
 			for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
 			{
-				data_raw_average[j] += ((*data_raw)[j] - baseline);
+				data_raw_average[j] += ((*data_raw)[j] - baseline) /*(*data_without_slope)[j] - baseline_tmp*/;
 			}
 		}
 
@@ -1213,11 +1321,28 @@ void AvrSignal()
 		}
 	}
 
+
+
+
+
+
+
+
+
+
+
+
 	for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
 	{
 		//	data_raw_average[j] = -((data_raw_average[j] / cut_pass_counter) - baseline_average);
 		data_raw_average[j] /= cut_pass_counter;
 	}
+
+	for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
+	{
+		file_out << "\t" << data_raw_average[j] << endl;
+	}
+
 	COUT(cut_pass_counter);
 
 	vector<double> time(WAVE_ARRAY_COUNT);
@@ -1230,9 +1355,9 @@ void AvrSignal()
 	gr->SetTitle("Average signal from 3PMT");
 	gr->Draw("APL");
 
-	vector<double> baseline(WAVE_ARRAY_COUNT);
+	/*vector<double> baseline(WAVE_ARRAY_COUNT);
 	TGraph *gr_baseline = new TGraph(WAVE_ARRAY_COUNT, &time[0], &baseline[0]);
-	gr_baseline->Draw("same");
+	gr_baseline->Draw("same");*/
 
 }
 
@@ -1353,11 +1478,11 @@ int main(int argc, char *argv[])
 	//Npe_sipm_matrix();
 
 	//Correlations();
-	Npe_sipm_matrix_cuts();
+	//Npe_sipm_matrix_cuts();
 
 	//Show_individual_signals();
 	//Show_individual_signals_in_3d();
-	//Npe_sipm_one_ch();
+	//Npe_sipm_one_ch(38, true);
 	//Npe_sipm_one_ch_loop();
 	//Experimental_distribution_xy();
 
@@ -1371,7 +1496,7 @@ int main(int argc, char *argv[])
 
 	//Calibration();
 	//XY_cog();
-	//TimeSpectrum();
+	TimeSpectrum();
 	
 	//AvrSignal();
 

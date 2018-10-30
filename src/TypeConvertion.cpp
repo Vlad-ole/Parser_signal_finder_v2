@@ -88,3 +88,15 @@ std::vector<double> TypeConvertion::GetDifference(std::vector<double> yv_minuend
 
 	return result;
 }
+
+std::vector<double> TypeConvertion::GetSumm(std::vector<double> yv_summ1, std::vector<double> yv_summ2)
+{
+	//assert(yv_minuend.size() != yv_subtrahend.size() && "Error! yv_minuend.size() == yv_subtrahend.size()");
+	std::vector<double> result(yv_summ1.size());
+	for (int i = 0; i < yv_summ1.size(); i++)
+	{
+		result[i] = yv_summ1[i] + yv_summ2[i];
+	}
+
+	return result;
+}

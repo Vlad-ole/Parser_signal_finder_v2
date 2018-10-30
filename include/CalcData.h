@@ -14,6 +14,9 @@
 #include "TFile.h"
 #include "TTree.h"
 
+//my
+#include "CalcBaselineZeroComp.h"
+
 class CalcData
 {
 public:
@@ -33,6 +36,7 @@ private:
 	const bool is_invert;
 	std::vector<double> invert_data;
 	std::vector<double> baseline_vec;
+	CalcBaselineZeroComp *calc_baseline_zero_comp;
 
 	double baseline;
 
