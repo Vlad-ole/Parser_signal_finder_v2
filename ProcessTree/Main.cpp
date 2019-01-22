@@ -790,7 +790,7 @@ void Show_individual_signals()
 			cout << "event = " << i << " (" << val << " %)" << endl;
 		}
 
-		REMEMBER_CUT(ch_id == 38 && run_id == 18 && event_id == 2)
+		REMEMBER_CUT(ch_id == 38 && run_id == 29 && event_id == 500)
 			if (cut_condition_bool /*&& ch_id > 2*/)
 			{
 				cout << "in if (cut_condition_bool)" << endl;
@@ -1182,20 +1182,20 @@ void TimeSpectrum()
 	ofstream file_out(file_out_s.c_str());
 
 	//TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix", 1600*2, 0, 160E3, 1000, 0, 50000);
-	TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix", 5333, 0, 160E3, 1000, 0, 50000);
+	TH2F *hist2 = new TH2F("h2", "Time spectrum: SiPM-matrix", /*4000*/4000, 0, 160E3, 1000, 0, 50000);
 	for (int i = 0; i < time_position.size(); i++)
 	{
-		//hist2->Fill(time_position[i], n_pe_in_peak[i], n_pe_in_peak[i]);//Position & amp info
-		hist2->Fill(time_position[i], n_pe_in_peak[i]);//Position info
-		file_out << time_position[i]/1000.0 << endl;//us
+		hist2->Fill(time_position[i], n_pe_in_peak[i], n_pe_in_peak[i]);//Position & amp info
+		//hist2->Fill(time_position[i], n_pe_in_peak[i]);//Position info
+		//file_out << time_position[i]/1000.0 << endl;//us
 	}
 	TH1D * projh2X = hist2->ProjectionX();
 	projh2X->Draw();
 
-	/*for (int i = 0; i < projh2X->GetNbinsX(); i++)
+	for (int i = 0; i < projh2X->GetNbinsX(); i++)
 	{
 		file_out << projh2X->GetBinCenter(i) / 1000.0 << "\t" << projh2X->GetBinContent(i) << endl;;
-	}*/
+	}
 	
 
 	TGraph *gr = new TGraph(time_position.size(), &time_position[0], &n_pe_in_peak[0]);
@@ -1320,18 +1320,7 @@ void AvrSignal()
 			break;
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
+	
 	for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
 	{
 		//	data_raw_average[j] = -((data_raw_average[j] / cut_pass_counter) - baseline_average);
@@ -1340,7 +1329,7 @@ void AvrSignal()
 
 	for (int j = 0; j < WAVE_ARRAY_COUNT; j++)
 	{
-		file_out << "\t" << data_raw_average[j] << endl;
+		file_out << data_raw_average[j] << endl;
 	}
 
 	COUT(cut_pass_counter);
@@ -1352,7 +1341,7 @@ void AvrSignal()
 	}
 
 	TGraph *gr = new TGraph(WAVE_ARRAY_COUNT, &time[0], &data_raw_average[0]);
-	gr->SetTitle("Average signal from 3PMT");
+	gr->SetTitle("Average signal");
 	gr->Draw("APL");
 
 	/*vector<double> baseline(WAVE_ARRAY_COUNT);
@@ -1496,9 +1485,9 @@ int main(int argc, char *argv[])
 
 	//Calibration();
 	//XY_cog();
-	TimeSpectrum();
+	//TimeSpectrum();
 	
-	//AvrSignal();
+	AvrSignal();
 
 
 	cout << "all is ok" << endl;
