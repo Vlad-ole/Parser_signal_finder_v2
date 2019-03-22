@@ -4,10 +4,10 @@ using namespace std;
 
 Simple_MC::Simple_MC(TGraph2D* gr2D, bool is_draw, int N_runs) : gr2D(gr2D), is_draw(is_draw), N_runs(N_runs)
 {
-	h_x = 0; // диаметр источника [mm]
+	h_x = 1; // диаметр источника [mm]
 	h_c = 2;//14.3 or 6 or 2 [mm]
 	l_x = 64;//mm
-	lambda_bar = 1.28;//mm
+	lambda_bar = /*1.28*/27.8;//mm
 
 	ostringstream oss;
 	oss << path_name_tree << "MC_results.txt";
@@ -45,7 +45,7 @@ void Simple_MC::Calc_MC()
 	
 	for (int i_runs = 0; i_runs < N_runs; i_runs++)
 	{
-		cout << "Run = " << i_runs << endl;
+		
 
 		// глубина поглощения в LAr гамма квантов [mm]
 		while (true)
@@ -60,6 +60,8 @@ void Simple_MC::Calc_MC()
 		double h_s = (l_L + l_x * h_c / (h_c + h_x)) / (l_x / (h_c + h_x)); //ожидаемый диаметр пятна
 		//cout << "h_s = " << h_s << endl;
 		double radius = h_s / 2.0;
+
+		cout << "Run = " << i_runs << "; l_L = " << l_L << "; h_s = " << h_s << endl;
 
 		double x_source;
 		double y_source;

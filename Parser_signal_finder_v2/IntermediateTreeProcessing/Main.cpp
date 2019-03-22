@@ -202,11 +202,11 @@ int main(int argc, char *argv[])
 					tree_intermediate_obj.integral_one_peak.resize(0);
 
 
-					//for X-ray NBrS
-					CalcIntegral calc_integral(*data_raw, baseline, 32000, 40000, HORIZ_INTERVAL);
+					////for X-ray NBrS
+					//CalcIntegral calc_integral(*data_raw, baseline, 32000, 40000, HORIZ_INTERVAL);
 
 					//for Cd
-					//CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
+					CalcIntegral calc_integral(*data_raw, baseline, 30000, 41700, HORIZ_INTERVAL);
 					
 					////for x-ray 20kV
 					//CalcIntegral calc_integral(*data_raw, baseline, 35000, 68200, HORIZ_INTERVAL);
@@ -368,12 +368,20 @@ int main(int argc, char *argv[])
 
 
 					//for X-ray NBrS
-					int point_from = 32000 / HORIZ_INTERVAL;
-					int point_to = 40000 / HORIZ_INTERVAL;
+					/*int point_from = 32000 / HORIZ_INTERVAL;
+					int point_to = 40000 / HORIZ_INTERVAL;*/
 
 					//for Cd
 					//int point_from = 25000 / HORIZ_INTERVAL;
 					//int point_to = 55000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+
+					////for Cd, 20kV, THGEM 2.2kV
+					//int point_from = 25000 / HORIZ_INTERVAL;
+					//int point_to = 80000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
+
+					//for Cd, 20kV, THGEM 2.2kV //standart
+					int point_from = 25000 / HORIZ_INTERVAL;
+					int point_to = 65000 / HORIZ_INTERVAL;//it's not so easy to find range of positive part
 
 					////for x-ray 20kV, 18, 16, 14
 					//int point_from = 40000 / HORIZ_INTERVAL;
